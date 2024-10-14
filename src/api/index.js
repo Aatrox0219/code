@@ -31,7 +31,7 @@ const api = {
     // global_edu_baseURL: ':8012/edu',
     global_edu_baseURL: ':8012',
     // global_online_baseURL: '/stj-boot/stj/online',/* online表单接口公共url */
-    global_online_baseURL: ':35367/stj/online',/* online表单接口公共url */
+    global_online_baseURL: 'http://111.229.140.21:35367/stj/online',/* online表单接口公共url */
     // global_online_baseURL: 'http://14.55.6.35:8082/stj/online/',/* online表单接口公共url */
     global_erp_baseURL: '/erp',/* online表单接口公共url */
     global_ada_online_baseURL: '/Ada/online', /*报表配置接口*/
@@ -39,7 +39,7 @@ const api = {
     global_order_baseURL: '/order',/* 采购订单 */
     global_crm_baseURL: '/crm',/* 客户关系 */
     // global_fmaking_baseURL: 'http://14.55.6.35:38072',/* 表单设计器接口公共url */
-    global_fmaking_baseURL: ':8025',/* 表单设计器接口公共url */
+    global_fmaking_baseURL: 'http://111.229.140.21:8025',/* 表单设计器接口公共url */
 
     global_workapij_baseURL: '/workflow',/* 工作流接口公共url */
     global_wmsapij_baseURL: '/wms',/* 工作流接口公共url */

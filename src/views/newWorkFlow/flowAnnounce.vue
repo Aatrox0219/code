@@ -28,7 +28,7 @@
                   @change="onChange"
                 />
                 <a-button-group style="margin-left: 20px">
-                  <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px width:50%"
+                  <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px"
                     >查询</a-button
                   >
                   <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
@@ -70,7 +70,7 @@
                   </a-range-picker>
 
                   <a-button-group style="margin-left: 20px">
-                    <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px width:50%"
+                    <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px"
                       >查询</a-button
                     >
                     <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
@@ -104,7 +104,7 @@
                   </a-select-option>
                 </a-select>
                 <a-button-group style="margin-left: 20px">
-                  <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px width:50%"
+                  <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px"
                     >查询</a-button
                   >
                   <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
@@ -136,7 +136,7 @@
                   </a-select-option>
                 </a-select>
                 <a-button-group style="margin-left: 20px">
-                  <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px width:50%"
+                  <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px"
                     >查询</a-button
                   >
                   <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
@@ -168,7 +168,7 @@
                   </a-select-option>
                 </a-select>
                 <a-button-group style="margin-left: 20px">
-                  <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px width:50%"
+                  <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px"
                     >查询</a-button
                   >
                   <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
@@ -603,6 +603,7 @@ export default {
     },
     //处理该任务
     announceTask(record) {
+      console.log('record1', record);
       if (record.flag) {
         this.$refs.approveModel.announceRollTask(record)
       } else {
