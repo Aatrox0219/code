@@ -36,7 +36,8 @@ const user = {
       state.info = info
     },
     SET_TENANT: (state, id) => {
-      state.tenantid = id
+      // state.tenantid = id
+      state.tenantid = '1'
     },
   },
 

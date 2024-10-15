@@ -69,11 +69,14 @@
 
         username:'',
         orgCode:'',
-        tenant_id:'',
+        tenant_id:'1',
 
         validate_status1: "",
         validate_status2: "",
       }
+    },
+    mounted() {
+      this.selectOk(); // 在组件挂载后立即调用 selectOk 方法
     },
     computed:{
       title(){
@@ -108,7 +111,7 @@
           });
           this.isMultiDepart = false
         }else if(multi_depart==2){
-          this.visible=true
+          this.visible=false
           this.isMultiDepart = true
           this.departList = loginResult.departs
         }else {
@@ -119,10 +122,10 @@
         if(!ids || ids.length==0){
           this.isMultiTenant = false
         } else if(ids.indexOf(',')<0){
-          this.tenant_id = ids;
+          // this.tenant_id = ids;
           this.isMultiTenant = false
         }else{
-          this.visible = true
+          this.visible = false
           this.isMultiTenant = true
           getAction('/sys/tenant/queryList', {ids: ids}).then(res=>{
             this.tenantList = res.result
@@ -200,9 +203,9 @@
       },
       handleTenantChange(e){
         this.validate_status1 = ''
-        this.tenant_id = e
+        // this.tenant_id = e
         this.$store.commit('SET_TENANT', e);
-        // console.log('租户id',e)
+        console.log('租户id',e)
       },
       handleDepartChange(e){
         this.validate_status2 = ''
