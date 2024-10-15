@@ -149,7 +149,8 @@
           </el-select>
         </el-form-item>
         <el-form-item label="选择用户:"  v-show="node.assignment_type==='Assignee'">
-       <el-select size="small" v-model="userAssginee" multiple value-key="id" placeholder="请选择" :disabled='roleAssginee.id!=undefined' filterable allow-create clearable>
+       <!-- <el-select size="small" v-model="userAssginee" multiple value-key="id" placeholder="请选择" :disabled='roleAssginee.id!=undefined' filterable allow-create clearable> -->
+       <el-select size="small" v-model="userAssginee" multiple value-key="id" placeholder="请选择" :disabled='roleAssginee.id!=undefined'  allow-create clearable>
             <el-option v-for="item in userAssgineeList" :key="item.id" :label="item.name" :value="item"> </el-option>
           </el-select>
         </el-form-item>
@@ -393,7 +394,7 @@
           referrerpolicy="no-referrer"
           src="https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng096494320fc014d16cfa3fa68c4ac231773f1364bcb1376625d7698d27f657d5"
         />
-        <span class="node-form-header-text">表单属性</span></span>
+        <span class="node-form-header-text">表单属性</span>
         <img
           v-if="attMenu2Open"
           class="node-form-header-icon2"
