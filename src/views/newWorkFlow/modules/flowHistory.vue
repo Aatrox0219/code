@@ -134,35 +134,35 @@ export default {
           console.log("diagram/getByProcInstId  response",res)
           this.visible = true
 
-          // var oldIdsList =res.result.startProcessVO.slice(1,-1)
-          // var arrayForm = new Array()
-          // for (var i = oldIdsList.length-1; i >=0; i--) {
-          //   var formObj={}
-          //   formObj.taskName = oldIdsList[i].nodeName
-          //   formObj.createDateStr = oldIdsList[i].createDate
-          //   formObj['prevForm_designer_id']= oldIdsList[i].formDesignerId
-          //   formObj['prevOnline_table_id']= oldIdsList[i].onlineTableId
-          //   formObj['prevOnline_data_id']= oldIdsList[i].onlineDataId
-          //   arrayForm.push(formObj)
-          // }
-          // console.log(arrayForm)
-          // this.formArr = arrayForm
-          // 猜测是流程详情，后端接口没给这个数据
-          this.dataSource = res.result.historyInfo
-          var formArr = new Array()
-          for (var i = 0; i < this.dataSource.length; i++) {
-            var formObj = {}
-            formObj.taskName = this.dataSource[i].nodeName
-            formObj.createDateStr = this.dataSource[i].createDate
-            if (this.dataSource[i].url != null) {
-              formObj['prevForm_designer_id'] = this.dataSource[i].url.substring(0, 32)
-              formObj['prevOnline_table_id'] = this.dataSource[i].url.substring(33, 65)
-              formObj['prevOnline_data_id'] = this.dataSource[i].url.substring(66, 87)
-            }
-            formArr.push(formObj)
+          var oldIdsList =res.result.startProcessVO.slice(1,-1)
+          var arrayForm = new Array()
+          for (var i = oldIdsList.length-1; i >=0; i--) {
+            var formObj={}
+            // formObj.taskName = oldIdsList[i].nodeName
+            // formObj.createDateStr = oldIdsList[i].createDate
+            formObj['prevForm_designer_id']= oldIdsList[i].formDesignerId
+            formObj['prevOnline_table_id']= oldIdsList[i].onlineTableId
+            formObj['prevOnline_data_id']= oldIdsList[i].onlineDataId
+            arrayForm.push(formObj)
           }
-          console.log(formArr)
-          this.formArr = formArr
+          console.log(arrayForm)
+          this.formArr = arrayForm
+          // 猜测是流程详情，后端接口没给这个数据
+          // this.dataSource = res.result.historyInfo
+          // var formArr = new Array()
+          // for (var i = 0; i < this.dataSource.length; i++) {
+          //   var formObj = {}
+          //   formObj.taskName = this.dataSource[i].nodeName
+          //   formObj.createDateStr = this.dataSource[i].createDate
+          //   if (this.dataSource[i].url != null) {
+          //     formObj['prevForm_designer_id'] = this.dataSource[i].url.substring(0, 32)
+          //     formObj['prevOnline_table_id'] = this.dataSource[i].url.substring(33, 65)
+          //     formObj['prevOnline_data_id'] = this.dataSource[i].url.substring(66, 87)
+          //   }
+          //   formArr.push(formObj)
+          // }
+          // console.log(formArr)
+          // this.formArr = formArr
           this.returnJson = res.result.returnJson
         })
         .catch((error) => {})

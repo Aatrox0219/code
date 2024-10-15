@@ -227,7 +227,7 @@ export default {
             .Logout({})
             .then(() => {
               // update-begin author:wangshuai date:20200601 for: 退出登录跳转登录页面
-              that.$router.push({ path: '/user/login' })
+              that.$router.push({ path: '/user/entry-select' })
               // update-end author:wangshuai date:20200601 for: 退出登录跳转登录页面
               //window.location.reload()
             })

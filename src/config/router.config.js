@@ -295,12 +295,22 @@ export const asyncRouterMap = [
  * @type { *[] }
  */
 export const constantRouterMap = [
+  // {
+  //   path: '/',
+  //   redirect: '/user/entry-select',  // 确保根路径重定向到入口选择页面
+  //   hidden: true
+  // },
   {
     path: '/user',
     component: UserLayout,
     redirect: '/user/login',
     hidden: true,
     children: [
+      {
+        path: 'entry-select',
+        name: 'entrySelect',
+        component: () => import(/* webpackChunkName: "user" */ '@/views/user/EntrySelect'), 
+      },
       {
         path: 'login',
         name: 'login',
@@ -324,7 +334,7 @@ export const constantRouterMap = [
     ]
   },
   {
-    path:'/stjlangchain',
+    path: '/stjlangchain',
     component: () => import('@/views/newWorkFlow/langchain/wenda')
   },
 
