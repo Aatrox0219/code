@@ -36,7 +36,8 @@ const user = {
       state.info = info
     },
     SET_TENANT: (state, id) => {
-      state.tenantid = id
+      // state.tenantid = id
+      state.tenantid = '1'
     },
   },
 
@@ -200,7 +201,8 @@ const user = {
     },
     saveTenant({ commit }, id){
       Vue.ls.set(TENANT_ID, id, 7 * 24 * 60 * 60 * 1000)
-      commit('SET_TENANT', id)
+      // commit('SET_TENANT', id)
+      commit('SET_TENANT', '1')
     }
 
 

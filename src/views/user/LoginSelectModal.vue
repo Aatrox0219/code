@@ -231,7 +231,8 @@ export default {
       this.validate_status1 = ''
       this.tenant_id = e
       //调用store保存租户编码
-      this.$store.commit('SET_TENANT', e);
+      // this.$store.commit('SET_TENANT', e);
+      this.$store.commit('SET_TENANT', '1');
 
     },
     handleDepartChange(e) {
