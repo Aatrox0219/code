@@ -1,32 +1,22 @@
 <template>
   <div class="main">
-    <div element-loading-text="Loading..."  v-loading.fullscreen.lock="hasToken" element-loading-background="rgba(255, 255, 255, 1)"></div>
+    <div element-loading-text="Loading..." v-loading.fullscreen.lock="hasToken"
+      element-loading-background="rgba(255, 255, 255, 1)"></div>
     <a-form v-show="!hasToken" :form="form" class="user-layout-login" ref="formLogin" id="formLogin">
-      <a-tabs
-        :activeKey="customActiveKey"
-        :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
-        @change="handleTabClick"
-      >
+      <a-tabs :activeKey="customActiveKey" :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
+        @change="handleTabClick">
         <a-tab-pane key="tab1" tab="账号密码登录">
           <a-form-item>
-            <a-input
-              size="large"
-              v-decorator="['username', validatorRules.username, { validator: this.handleUsernameOrEmail }]"
-              type="text"
-              placeholder="请输入帐户名"
-            >
+            <a-input size="large"
+              v-decorator="['username', validatorRules.username, { validator: this.handleUsernameOrEmail }]" type="text"
+              placeholder="请输入帐户名">
               <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input>
           </a-form-item>
 
           <a-form-item>
-            <a-input
-              v-decorator="['password', validatorRules.password]"
-              size="large"
-              type="password"
-              autocomplete="false"
-              placeholder="密码"
-            >
+            <a-input v-decorator="['password', validatorRules.password]" size="large" type="password"
+              autocomplete="false" placeholder="密码">
               <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input>
           </a-form-item>
@@ -34,24 +24,15 @@
           <a-row :gutter="0">
             <a-col :span="16">
               <a-form-item>
-                <a-input
-                  v-decorator="['inputCode', validatorRules.inputCode]"
-                  size="large"
-                  type="text"
-                  @change="inputCodeChange"
-                  placeholder="请输入验证码"
-                >
+                <a-input v-decorator="['inputCode', validatorRules.inputCode]" size="large" type="text"
+                  @change="inputCodeChange" placeholder="请输入验证码">
                   <a-icon slot="prefix" type="smile" :style="{ color: 'rgba(0,0,0,.25)' }" />
                 </a-input>
               </a-form-item>
             </a-col>
             <a-col :span="8" style="text-align: right">
-              <img
-                v-if="requestCodeSuccess"
-                style="margin-top: 2px"
-                :src="randCodeImage"
-                @click="handleChangeCheckCode"
-              />
+              <img v-if="requestCodeSuccess" style="margin-top: 2px" :src="randCodeImage"
+                @click="handleChangeCheckCode" />
               <img v-else style="margin-top: 2px" src="../../assets/checkcode.png" @click="handleChangeCheckCode" />
             </a-col>
           </a-row>
@@ -66,24 +47,15 @@
           <a-row :gutter="16">
             <a-col class="gutter-row" :span="16">
               <a-form-item>
-                <a-input
-                  v-decorator="['captcha', validatorRules.captcha]"
-                  size="large"
-                  type="text"
-                  placeholder="请输入验证码"
-                >
+                <a-input v-decorator="['captcha', validatorRules.captcha]" size="large" type="text"
+                  placeholder="请输入验证码">
                   <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }" />
                 </a-input>
               </a-form-item>
             </a-col>
             <a-col class="gutter-row" :span="8">
-              <a-button
-                class="getCaptcha"
-                tabindex="-1"
-                :disabled="state.smsSendBtn"
-                @click.stop.prevent="getCaptcha"
-                v-text="(!state.smsSendBtn && '获取验证码') || state.time + ' s'"
-              ></a-button>
+              <a-button class="getCaptcha" tabindex="-1" :disabled="state.smsSendBtn" @click.stop.prevent="getCaptcha"
+                v-text="(!state.smsSendBtn && '获取验证码') || state.time + ' s'"></a-button>
             </a-col>
           </a-row>
         </a-tab-pane>
@@ -100,27 +72,21 @@
       </a-form-item> -->
 
       <a-form-item style="margin-top: 24px">
-        <a-button
-          size="large"
-          type="primary"
-          htmlType="submit"
-          class="login-button"
-          :loading="loginBtn"
-          @click.stop.prevent="handleSubmit"
-          :disabled="loginBtn"
-          >确定
+        <a-button size="large" type="primary" htmlType="submit" class="login-button" :loading="loginBtn"
+          @click.stop.prevent="handleSubmit" :disabled="loginBtn">确定
         </a-button>
+
+        <a href="https://m12333.cn/policy/mazrc.html#:~:text=%E7%AC%AC%E4%B8%80%E6%9D%A1%20%E4%B8%BA%E4%BE%9D%E6%B3%95%E4%BF%9D%E6%8A%A4%E5%86%9C"
+          target="_blank" style="margin-left: 10px;">
+          操作指南
+        </a>
+
       </a-form-item>
     </a-form>
 
-    <two-step-captcha
-      v-if="requiredTwoStepCaptcha"
-      :visible="stepCaptchaVisible"
-      @success="stepCaptchaSuccess"
-      @cancel="stepCaptchaCancel"
-      v-show="!hasToken"
-    ></two-step-captcha>
-    <login-select-tenant  v-show="!hasToken" ref="loginSelect" @success="loginSelectOk"></login-select-tenant>
+    <two-step-captcha v-if="requiredTwoStepCaptcha" :visible="stepCaptchaVisible" @success="stepCaptchaSuccess"
+      @cancel="stepCaptchaCancel" v-show="!hasToken"></two-step-captcha>
+    <login-select-tenant v-show="!hasToken" ref="loginSelect" @success="loginSelectOk"></login-select-tenant>
     <!-- <third-login ref="thirdLogin"></third-login> -->
   </div>
 </template>
@@ -181,7 +147,7 @@ export default {
       currdatetime: '',
       randCodeImage: '',
       requestCodeSuccess: false,
-      hasToken:false,
+      hasToken: false,
       _token: '',
     }
   },
@@ -217,7 +183,7 @@ export default {
       console.log("Token:", this._token); // 输出获取到的token值
 
       // 获取之后去除url中的token
-      history.pushState({}, '', url.replace("token=" + this._token,""));
+      history.pushState({}, '', url.replace("token=" + this._token, ""));
 
       // // 创建一个Date对象表示当前时间
       // const currentDate = new Date();
@@ -234,10 +200,10 @@ export default {
       //   "value":this._token,
       //   "expire":futureTimestamp
       // }
-      if(this._token) {
+      if (this._token) {
         // localStorage.setItem("pro__Access-Token", JSON.stringify(obj));
-        this.hasToken=true;
-        
+        this.hasToken = true;
+
         this.validToken();
 
 
@@ -253,28 +219,28 @@ export default {
       }
     },
     validToken() {
-       // 验证token是否有效
-       axios({
-                    method: 'POST',
-                    url: "https://ai.wust.edu.cn/llm-kg/subject-one/jeecg-stj/stj/sys/getUserByToken",
-                    // url: "http://14.55.6.35:8082/stj/sys/getUserByToken",
-                    data: {
-                        "token": this._token,
-                    },
-                }).then((response) => {
-                    if(response.data.code == 200) {
-                        // 验证成功后用这个token进行一次等于，否则登出接口会失败
-                        // localStorage.clear();
-                        this.handleSubmit();
-                    } else  {
-                        Message({
-                        showClose: true,
-                        message: '请重新登录!',
-                        type: 'warning',
-                        })
-                        this.hasToken = false;
-                    }
-                });
+      // 验证token是否有效
+      axios({
+        method: 'POST',
+        url: "https://ai.wust.edu.cn/llm-kg/subject-one/jeecg-stj/stj/sys/getUserByToken",
+        // url: "http://14.55.6.35:8082/stj/sys/getUserByToken",
+        data: {
+          "token": this._token,
+        },
+      }).then((response) => {
+        if (response.data.code == 200) {
+          // 验证成功后用这个token进行一次等于，否则登出接口会失败
+          // localStorage.clear();
+          this.handleSubmit();
+        } else {
+          Message({
+            showClose: true,
+            message: '请重新登录!',
+            type: 'warning',
+          })
+          this.hasToken = false;
+        }
+      });
     },
     // handler
     handleUsernameOrEmail(rule, value, callback) {
@@ -312,7 +278,7 @@ export default {
               loginParams.checkKey = that.currdatetime
 
               // 如果携带token，则直接登陆
-              if(that.hasToken) {
+              if (that.hasToken) {
                 loginParams.tokenParam = that._token;
               } else {
                 loginParams.tokenParam = "";
@@ -551,8 +517,9 @@ export default {
     }
   }
 }
+
 .loading {
-  height:200px;
+  height: 200px;
   width: 400px;
   margin: 200px auto;
 }
