@@ -170,7 +170,7 @@ export default {
   },
   mounted() {
     this.getToken()
-
+    // this.$forceUpdate()
   },
   methods: {
     ...mapActions(['Login', 'Logout', 'PhoneLogin']),
@@ -181,6 +181,7 @@ export default {
       const params = new URLSearchParams(new URL(url).search);
       this._token = params.get('token');
       console.log("Token:", this._token); // 输出获取到的token值
+      console.log('第一次' + this.$route.path)
 
       // 获取之后去除url中的token
       history.pushState({}, '', url.replace("token=" + this._token, ""));
@@ -216,7 +217,7 @@ export default {
         //   this.$router.push('/llm-kg/subject-one/stj-front#/langchain')
         // }
 
-      }
+      } 
     },
     validToken() {
       // 验证token是否有效
@@ -242,6 +243,7 @@ export default {
         }
       });
     },
+
     // handler
     handleUsernameOrEmail(rule, value, callback) {
       const regex = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/
@@ -376,6 +378,7 @@ export default {
       })
     },
     stepCaptchaSuccess() {
+      console.log('成功调用了stepCaptchaSuccess()')
       this.loginSuccess()
     },
     stepCaptchaCancel() {
@@ -401,6 +404,7 @@ export default {
         })
     },
     loginSuccess() {
+      console.log('怎么登录成功了？？路由' + this.$route.path)
       this.$router.push({ path: '/dashboard/analysis' }).catch(() => {
         console.log('登录跳转首页出错,这个错误从哪里来的')
       })
@@ -445,6 +449,8 @@ export default {
       this.inputCodeContent = e.target.value
     },
     loginSelectOk() {
+      console.log('loginSelectOk triggered, hasToken:', this.hasToken);
+      console.log('成功调用了loginSelectOk() ')
       this.loginSuccess()
     },
     getRouterData() {
