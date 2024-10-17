@@ -4,22 +4,22 @@
       <div class="top">
         <div class="header">
           <!-- <a href="/"> -->
-            <!-- <img src="~@/assets/scene3.png" class="logo" alt="logo" /> -->
-            <span class="title" v-show="!hasToken">案件执法流程系统</span>
+          <!-- <img src="~@/assets/background.png" class="logo" alt="logo" /> -->
+          <span class="title" v-show="!hasToken">案件执法流程系统</span>
           <!-- </a> -->
         </div>
         <!-- <div class="desc">中信科移动</div> -->
       </div>
 
-      <route-view></route-view>
+      <route-view :class="routeClass"></route-view>
 
       <div class="footer">
         <!-- <div class="links">
           <a href="http://doc.jeecg.com" target="_blank">帮助</a>
           <a href="https://github.com/zhangdaiscott/jeecg-boot" target="_blank">隐私</a>
           <a href="https://github.com/zhangdaiscott/jeecg-boot/blob/master/LICENSE" target="_blank">条款</a>
-        </div> -->
-        <!-- <div class="copyright">
+        </div>
+        <div class="copyright">
           Copyright &copy; 2020 <a>仿真实训平台</a>
         </div> -->
       </div>
@@ -37,7 +37,7 @@ export default {
   mixins: [mixinDevice],
   data() {
     return {
-      hasToken:false,
+      hasToken: false,
     }
   },
   created() {
@@ -49,14 +49,26 @@ export default {
   beforeDestroy() {
     document.body.classList.remove('userLayout')
   },
+  computed: {
+    routeClass() {
+      const currentRoute = this.$route.path
+      console.log('currentRoute', currentRoute);
+      if (currentRoute === '/user/entry-select') {
+        return 'middle'
+      } else if (currentRoute === '/user/login') {
+        return ''
+      }
+      return ''
+    },
+  },
   methods: {
     // 解析token，存入localstore
     getToken() {
-      const url = window.location.href;
-      const params = new URLSearchParams(new URL(url).search);
-      const token = params.get('token');
-      if(token) {
-        this.hasToken=true;
+      const url = window.location.href
+      const params = new URLSearchParams(new URL(url).search)
+      const token = params.get('token')
+      if (token) {
+        this.hasToken = true
       }
     },
   },
@@ -79,7 +91,8 @@ export default {
   .container {
     width: 100%;
     min-height: 100%;
-    background: #f0f2f5 url(~@/assets/background.svg) no-repeat 50%;
+    // background: #f0f2f5 url(~@/assets/background.svg) no-repeat 50%;
+    background: url('~@/assets/background.png') no-repeat center center;
     background-size: 100%;
     padding: 110px 0 144px;
     position: relative;
@@ -160,6 +173,17 @@ export default {
         color: rgba(0, 0, 0, 0.45);
         font-size: 14px;
       }
+    }
+
+    .middle {
+      position: absolute;
+      width: 80%;
+      // bottom: 0;
+      padding: 0 16px;
+      margin: 48px 0 24px;
+      text-align: center;
+      left: 50%; 
+      transform: translateX(-50.5%);
     }
   }
 }
