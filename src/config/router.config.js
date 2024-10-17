@@ -295,11 +295,11 @@ export const asyncRouterMap = [
  * @type { *[] }
  */
 export const constantRouterMap = [
-  // {
-  //   path: '/',
-  //   redirect: '/user/entry-select',  // 确保根路径重定向到入口选择页面
-  //   hidden: true
-  // },
+  {
+    path: '/',
+    redirect: '/user/entry-select',  // 确保根路径重定向到入口选择页面
+    hidden: true
+  },
   {
     path: '/user',
     component: UserLayout,
