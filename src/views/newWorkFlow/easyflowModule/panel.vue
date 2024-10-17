@@ -200,7 +200,7 @@ export default {
     },
   },
   mounted() {
-   // window.addEventListener('mousewheel', this.handleScroll, false)
+    // window.addEventListener('mousewheel', this.handleScroll, false)
   },
   methods: {
     // 返回唯一标识
@@ -288,7 +288,7 @@ export default {
       this.data.nodeList.forEach((item) => {
         let node = item
         // 设置源点，可以拖出线连接其他节点
-        console.log(node.id, lodash.merge(this.jsplumbSourceOptions, {}));
+        console.log(node.id, lodash.merge(this.jsplumbSourceOptions, {}))
         this.jsPlumb.makeSource(node.id, lodash.merge(this.jsplumbSourceOptions, {}))
         // // 设置目标点，其他源点拖出的线可以连接该节点
         this.jsPlumb.makeTarget(node.id, this.jsplumbTargetOptions)
@@ -457,7 +457,7 @@ export default {
             name: nodeName,
             left: left + 'px',
             top: top + 'px',
-            state: nodeMenu.state,//状态
+            state: nodeMenu.state, //状态
             label: '', // 可以为空
             event_handler_bean: '', // 可以选取事件
             // hander_bean: '', // 处理bean
@@ -473,9 +473,9 @@ export default {
             top: top + 'px',
             state: nodeMenu.state,
             feature: {},
-            formDesignerId: '',//表单id
-            onlineTableId: '',//online表id
-            onlineDataId: '',//online数据id
+            formDesignerId: '', //表单id
+            onlineTableId: '', //online表id
+            onlineDataId: '', //online数据id
             task_type: 'Normal',
             event_handler_bean: '', //事件bean
             assignment_type: 'ProcessPromoter', // 如果需要制定参与者则需要做如下信息
@@ -499,12 +499,14 @@ export default {
             type: nodeMenu.type,
             name: nodeName,
             event_handler_bean: '', //事件bean
-            if_expression: [{
-              formId:'',
-              symbol:'',
-              textValue:''
-            }],//决策表达式
-            result:{},
+            if_expression: [
+              {
+                formId: '',
+                symbol: '',
+                textValue: '',
+              },
+            ], //决策表达式
+            result: {},
             left: left + 'px',
             top: top + 'px',
             state: nodeMenu.state,
@@ -756,7 +758,20 @@ export default {
         this.$refs.flowHelp.init()
       })
     },
+    //路由决策中加入新的键值对
+    addDecisionType() {
+      // 遍历 nodeList，找到 type 为 decision 的节点，并添加键值对
+      this.data.nodeList.forEach((node) => {
+        if (node.type === 'decision') {
+          node.decision_type = 'Expression'
+        }
+      })
+    },
+    
     saveFlow() {
+      console.log('变化前的data', this.data);
+      this.addDecisionType()
+      console.log('变化后的data', this.data);
       //0:新增流程保存;1:编辑保存
       if (this.saveFlag == '0') {
         this.$refs.saveMessage.openModel()
