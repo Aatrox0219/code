@@ -192,9 +192,9 @@
         this.departResolve().then(()=>{
           this.$store.dispatch('saveTenant', this.tenant_id);
           if(this.isMultiTenant){
-            this.$emit('success')
+            // this.$emit('success')
           }else{
-            this.$emit('success')
+            // this.$emit('success')
           }
         }).catch(()=>{
           console.log('登录选择出问题')
