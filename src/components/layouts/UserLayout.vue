@@ -5,7 +5,7 @@
         <div class="header">
           <!-- <a href="/"> -->
           <!-- <img src="~@/assets/background.png" class="logo" alt="logo" /> -->
-          <span class="title" v-show="!hasToken">案件执法流程系统</span>
+          <span class="title" v-show="!hasToken">黄冈市农民工保证金智慧管理服务平台</span>
           <!-- </a> -->
         </div>
         <!-- <div class="desc">中信科移动</div> -->

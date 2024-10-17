@@ -17,8 +17,8 @@
         :type="collapsed ? 'menu-unfold' : 'menu-fold'"
         @click="toggle"/>
 
-      <span v-if="device === 'desktop'">欢迎进入案件执法流程系统</span>
-      <span v-else>案件执法流程系统</span>
+      <span v-if="device === 'desktop'">欢迎进入黄冈市农民工保证金智慧管理服务平台</span>
+      <span v-else>黄冈市农民工保证金智慧管理服务平台</span>
 
       <user-menu :theme="theme"/>
     </div>

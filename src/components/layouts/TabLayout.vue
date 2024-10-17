@@ -176,7 +176,7 @@ export default {
 
     // update-begin-author:sunjianlei date:20200120 for: 动态更改页面标题
     changeTitle(title) {
-      let projectTitle = '案件执法流程系统'
+      let projectTitle = '黄冈市农民工保证金智慧管理服务平台'
       // 首页特殊处理
       if (this.$route.path === indexKey) {
         document.title = projectTitle
