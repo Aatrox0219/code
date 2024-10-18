@@ -90,7 +90,7 @@ export default {
     },
     //得到所有的流程
     getflowConfig(x) {
-      let url = '/process/processList/{categoryId}?categoryId=' + (x == undefined ? '' : x)
+      let url = '/process/processList/{categoryId}?categoryId=' + (x == undefined ? '' : x) + '&category=1'
       nw_getAction(url)
         .then((res) => {
           if (res.success) {
