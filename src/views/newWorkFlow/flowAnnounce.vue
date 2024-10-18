@@ -406,7 +406,8 @@ export default {
       this.getData()
     },
     getFlowSelect() {
-      nw_getAction(`/process/processList/{categoryId}`).then((res) => {
+       //category为1时，展示在部署流程中没有被删除的流程；为0时，展示所有流程
+      nw_getAction(`/process/processList/{categoryId}?category=1`).then((res) => {
         for (let i = 0; i < res.result.length; i++) {
           this.processInstance.push({
             id: res.result[i].processId,

@@ -90,6 +90,7 @@ export default {
     },
     //得到所有的流程
     getflowConfig(x) {
+      //category为1时，展示在部署流程中没有被删除的流程；为0时，展示所有流程
       let url = '/process/processList/{categoryId}?categoryId=' + (x == undefined ? '' : x) + '&category=1'
       nw_getAction(url)
         .then((res) => {
