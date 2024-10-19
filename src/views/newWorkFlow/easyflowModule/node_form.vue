@@ -205,7 +205,7 @@
             <el-button
               type="primary"
               size="mini"
-              @click="addExpressionfunc(item)"
+              @click="addExpressionfunc()"
               style="margin-left: 20px"
               >添加表达式
             </el-button>
@@ -393,7 +393,7 @@
           referrerpolicy="no-referrer"
           src="https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng096494320fc014d16cfa3fa68c4ac231773f1364bcb1376625d7698d27f657d5"
         />
-        <span class="node-form-header-text">表单属性</span></span>
+        <span class="node-form-header-text">表单属性</span>
         <img
           v-if="attMenu2Open"
           class="node-form-header-icon2"
@@ -613,7 +613,7 @@ export default {
   },
   mounted() {},
   methods: {
-    addExpressionfunc: function (item) {
+    addExpressionfunc: function () {
       this.addExpressionDialogVisible = true
     },
     addExpressionfunction(){

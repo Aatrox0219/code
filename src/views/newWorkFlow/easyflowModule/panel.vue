@@ -72,18 +72,17 @@
             </a-layout-header>
             <a-layout-content>
               <div id="efContainer" ref="efContainer" v-flowDrag>
-                <template v-for="node in data.nodeList">
-                  <flow-node
-                    :id="node.id"
-                    :key="node.id"
-                    :node="node"
-                    type="design"
-                    :activeElement="activeElement"
-                    @changeNodeSite="changeNodeSite"
-                    @clickNode="clickNode"
-                  >
-                  </flow-node>
-                </template>
+                <flow-node
+                  v-for="node in data.nodeList"
+                  :id="node.id"
+                  :key="node.id"
+                  :node="node"
+                  type="design"
+                  :activeElement="activeElement"
+                  @changeNodeSite="changeNodeSite"
+                  @clickNode="clickNode"
+                >
+                </flow-node>
                 <!-- 给画布一个默认的宽度和高度 -->
                 <div style="position: absolute; top: 2000px; left: 2000px">&nbsp;</div>
               </div>
@@ -767,11 +766,11 @@ export default {
         }
       })
     },
-    
+
     saveFlow() {
-      console.log('变化前的data', this.data);
-      this.addDecisionType()
-      console.log('变化后的data', this.data);
+      console.log('变化前的data', this.data)
+      // this.addDecisionType()
+      console.log('变化后的data', this.data)
       //0:新增流程保存;1:编辑保存
       if (this.saveFlag == '0') {
         this.$refs.saveMessage.openModel()
