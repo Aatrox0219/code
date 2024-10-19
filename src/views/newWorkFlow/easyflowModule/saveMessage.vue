@@ -73,6 +73,12 @@ export default {
       })
     },
     onSubmit() {
+      // 校验流程类别是否为空
+      if (!this.formData.category_id) {
+        this.$message.error('请选择流程类别')
+        this.loading = false
+        return // 阻止提交
+      }
       this.loading = true
       this.data.name = this.formData.name
       this.data.event_hander_bean = this.formData.event_hander_bean
@@ -101,7 +107,7 @@ export default {
           this.loading = false
           this.visible = false
         } else {
-          if(res.code == 501) {
+          if (res.code == 501) {
             this.$message.error('流程重复！')
           } else {
             this.$message.error('保存流程失败')
