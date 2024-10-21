@@ -5,7 +5,9 @@
         <div class="header">
           <!-- <a href="/"> -->
           <!-- <img src="~@/assets/background.png" class="logo" alt="logo" /> -->
-          <span class="title" v-show="!hasToken">黄冈市农民工保证金智慧管理服务平台</span>
+          <div class="header-placeholder">
+            <span class="title" v-show="!hasToken">黄冈市农民工保证金智慧管理服务平台</span>
+          </div> <!-- 新增的白色区域 -->
           <!-- </a> -->
         </div>
         <!-- <div class="desc">中信科移动</div> -->
@@ -22,6 +24,12 @@
         <div class="copyright">
           Copyright &copy; 2020 <a>仿真实训平台</a>
         </div> -->
+        <div class="footer-text">
+          主办单位：黄冈市人力资源和社会保障局
+        </div>
+        <div class="footer-text">
+          技术支持：
+        </div>
       </div>
     </div>
   </div>
@@ -92,7 +100,7 @@ export default {
     width: 100%;
     min-height: 100%;
     // background: #f0f2f5 url(~@/assets/background.svg) no-repeat 50%;
-    background: url('~@/assets/background.png') no-repeat center center;
+    background: url('~@/assets/bg.jpg') no-repeat center center;
     background-size: 100%;
     padding: 110px 0 144px;
     position: relative;
@@ -125,17 +133,30 @@ export default {
           border-style: none;
         }
 
-        .title {
-          font-size: 33px;
-          color: rgba(0, 0, 0, 0.85);
-          font-family: 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
-            'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-            'Segoe UI Symbol';
-          font-weight: 600;
-          position: relative;
-          top: 2px;
+        .header-placeholder {
+          height: 72px; // 设置高度
+          background-color: white; // 白色背景
+          display: flex; // 使用 flexbox
+          align-items: center; // 垂直居中
+          justify-content: center; // 水平居中
+          position: absolute; // 绝对定位
+          top: 0; // 在顶部
+          left: 0;
+          right: 0; // 填满宽度
+          z-index: 1; // 确保在其他元素上面
+
+          .title {
+            font-size: 35px;
+            color: #1890FF;
+            font-family: 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+              'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+              'Segoe UI Symbol';
+            font-weight: 600;
+            z-index: 2; // 确保标题在白色区域上方
+          }
         }
       }
+
       .desc {
         font-size: 14px;
         color: rgba(0, 0, 0, 0.45);
@@ -161,14 +182,17 @@ export default {
       .links {
         margin-bottom: 8px;
         font-size: 14px;
+
         a {
           color: rgba(0, 0, 0, 0.45);
           transition: all 0.3s;
+
           &:not(:last-child) {
             margin-right: 40px;
           }
         }
       }
+
       .copyright {
         color: rgba(0, 0, 0, 0.45);
         font-size: 14px;
@@ -182,8 +206,28 @@ export default {
       padding: 0 16px;
       margin: 48px 0 24px;
       text-align: center;
-      left: 50%; 
+      left: 50%;
       transform: translateX(-50.5%);
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 50px;
+      width: 100%;
+      text-align: center;
+      color: #478FCA;
+      font-size: 30px;
+      font-family: 'Arial', sans-serif;
+      text-shadow:
+        -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px 1px 0 #fff,
+        1px 1px 0 #fff;
+
+      .footer-text {
+        margin-top: 10px;
+        font-weight: 500;
+      }
     }
   }
 }

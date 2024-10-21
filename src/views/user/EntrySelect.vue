@@ -61,17 +61,20 @@ export default {
     /* 使用Flexbox进行布局 */
     justify-content: space-between;
     /* 在行内均匀分布 */
+    align-items: center; 
+    /* 垂直居中 */
     width: 100%;
     /* 设置容器宽度 */
     padding: 20px;
     /* 添加一些内边距 */
+    margin-top: 100px;
     background-color: transparent;
 }
 
 .card1 {
-    width: 300px;
+    width: 350px;
     /* 宽度 */
-    height: 400px;
+    height: 450px;
     /* 高度 */
     background: linear-gradient(135deg, #ff9a9e, #fecfef);
     /* 渐变背景颜色 */
@@ -88,9 +91,9 @@ export default {
 }
 
 .card2 {
-    width: 300px;
+    width: 350px;
     /* 宽度 */
-    height: 400px;
+    height: 450px;
     /* 高度 */
     background: linear-gradient(135deg, #a8e6cf, #dcedc1);
     /* 渐变背景颜色 */
@@ -107,9 +110,9 @@ export default {
 }
 
 .card3 {
-    width: 300px;
+    width: 350px;
     /* 宽度 */
-    height: 400px;
+    height: 450px;
     /* 高度 */
     background: linear-gradient(135deg, #6a9bd0, #85e3ff);
     /* 渐变背景颜色 */
@@ -126,9 +129,9 @@ export default {
 }
 
 .card4 {
-    width: 300px;
+    width: 350px;
     /* 宽度 */
-    height: 400px;
+    height: 450px;
     /* 高度 */
     background: linear-gradient(135deg, #f9d256, #f9f586);
     /* 渐变背景颜色 */
@@ -145,9 +148,9 @@ export default {
 }
 
 .icon {
-    width: 80px;
+    width: 100px;
     /* 图标大小 */
-    height: 80px;
+    height: 100px;
     background-color: white;
     /* 图标背景为白色 */
     border-radius: 50%;
@@ -165,8 +168,8 @@ export default {
 }
 
 .text {
-    margin-top: 15px;
-    font-size: 20px;
+    margin-top: 25px;
+    font-size: 35px;
     color: white;
     /* 字体颜色 */
 }
