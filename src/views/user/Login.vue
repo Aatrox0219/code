@@ -217,7 +217,7 @@ export default {
         //   this.$router.push('/llm-kg/subject-one/stj-front#/langchain')
         // }
 
-      } 
+      }
     },
     validToken() {
       // 验证token是否有效
@@ -479,6 +479,12 @@ export default {
 
 <style lang="less" scoped>
 .user-layout-login {
+  background-color: white;
+  margin-top: 80px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
   label {
     font-size: 14px;
   }
