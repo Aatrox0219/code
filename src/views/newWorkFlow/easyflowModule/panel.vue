@@ -769,7 +769,7 @@ export default {
 
     saveFlow() {
       console.log('变化前的data', this.data)
-      // this.addDecisionType()
+      this.addDecisionType()
       console.log('变化后的data', this.data)
       //0:新增流程保存;1:编辑保存
       if (this.saveFlag == '0') {
