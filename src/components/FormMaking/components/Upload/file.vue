@@ -2,8 +2,8 @@
   <div class="fm-upload-file">
     <el-upload
       class="upload-demo"
-      :action="`/plm/common/upload/`"   
-      name="multipartFile"
+      action="http://111.229.140.21:37192/file/upload"
+      name="file"
       :file-list="fileList"
       :on-preview="handlePreview"
       :on-remove="handleRemove"
@@ -12,21 +12,29 @@
       multiple
       :on-exceed="handleExceed"
     >
-      <el-button size="small" type="primary">点击上传</el-button>
+      <el-button v-if="showUploadButton" size="small" type="primary">点击上传</el-button>
     </el-upload>
     <template>
-      <template v-for="item in fileList">
-        <el-tooltip effect="dark" :content="item.name" placement="top-start">
-          <el-link type="info" class="file-download" :href="`${serverUrl}/plm/common/download${item.url}`">
-            {{ item.name }}</el-link
-          >
-        </el-tooltip>
-      </template>
+  <!-- <div>
+    <template v-for="item in fileList">
+      <el-tooltip effect="dark" :content="item.name" placement="top-start">
+        <el-link
+          type="info"
+          class="file-download"
+          @click.prevent="handleDownload(item)"
+        >
+          {{ item.name }}
+        </el-link>
+      </el-tooltip>
     </template>
+  </div> -->
+</template>
+
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 import Draggable from 'vuedraggable'
 import api from '@/api/index'
 require('viewerjs/dist/viewer.css')
@@ -35,7 +43,7 @@ export default {
   components: {
     Draggable,
   },
-  
+
   props: {
     value: {
       // type: Array,
@@ -88,6 +96,7 @@ export default {
   },
   data() {
     return {
+      showUploadButton: true,
       serverUrl: api.server_url,
       fileList: [],
       tooltipflag: false,
@@ -96,6 +105,7 @@ export default {
     }
   },
   created() {
+    console.log('this.value123123333333', this.value);
     if (this.value) {
       this.getFileList(this.value)
     }
@@ -112,28 +122,35 @@ export default {
   methods: {
     //:action="`/apiUpload/sonline/common/upload/`"
     getFileList(value) {
+      console.log('value12312312', value)
       //将每一个文件信息fileName+dbpath处理成文件上传组件支持的fileList格式即name+url
       if (value.length != 0) {
         //将之前已有的文件格式由fileName+dbpath转换为name+url 并给转换之后的文件排序
-        this.fileList = this.sortFileOfName(this.fileNameToName(JSON.parse(value)))
+        // this.fileList = this.sortFileOfName(this.fileNameToName(JSON.parse(value)))
+        this.fileList = this.fileNameToName(value)
+        this.showUploadButton = false;
       } else {
         this.fileList = []
       }
     },
     handleSuccess(response, file, fileList) {
+      console.log('response', response)
+      console.log('file', file)
+      console.log('fileList', fileList)
       let list = []
       if (this.value && JSON.stringify(this.value) != '[]') {
         //当点击编辑本身数据有文件的时候，会将文件数据value传过来的，value值是json字符串，要去掉value里面key值得双引号转换为对象数值
         list = JSON.parse(this.value)
       }
       var newresult = {}
-      newresult.fileName = response.result.fileName
-      newresult.dbpath = response.result.dbpath
+      newresult.fileName = file.name
+      newresult.dbpath = response.result.uplodadFile
       list.push(newresult) //将上传文件后返回回调结果添加到list里面再更新文件上传父组件的model值，不然提交的时候获取不到最新的文件上传列表值
-      
+      console.log('list', list)
       //将上传成功之后的文件和之前已有文件整合后的文件格式由fileName+dbpath转换为name+url 并给转换之后的文件排序
-      this.fileList = this.sortFileOfName(this.fileNameToName(list))
-
+      // this.fileList = this.sortFileOfName(this.fileNameToName(list))
+      this.fileList = this.fileNameToName(list)
+      console.log('this.fileList', this.fileList)
       this.$emit('change', JSON.stringify(list))
     },
     handleRemove(file, fileList) {
@@ -142,7 +159,7 @@ export default {
         //handleRemove的参数fileList是删除文件后的文件列表数据
         let fileListItem = {}
         //删除的时候如果是点击编辑按钮之后的删除会导致数据格式不一样，一种直接是一个对象，另一种是一个file对象。两种数据的url位置不一样需要判断处理一下
-        fileListItem.fileName = fileList[i].name 
+        fileListItem.fileName = fileList[i].name
         if (fileList[i].url) {
           fileListItem.dbpath = fileList[i].url
         } else {
@@ -159,7 +176,9 @@ export default {
       this.$emit('change', JSON.stringify(this.deleteSort(fileList2)))
     },
     handlePreview(file) {
-      alert(file.name)
+      this.handleDownload(file)
+      console.log('file', file)
+      // alert(file.name)
     },
     handleExceed(files, fileList) {
       this.$message.warning(
@@ -196,7 +215,8 @@ export default {
     //   }
     //   return newFileList
     // },
-    sortFileOfName(fileList){//给文件列表的名称排序，此时名称为name 文件列表显示所用
+    sortFileOfName(fileList) {
+      //给文件列表的名称排序，此时名称为name 文件列表显示所用
       var index = 0
       var newFileList = []
       for (let i = 0; i < fileList.length; i++) {
@@ -208,7 +228,8 @@ export default {
       }
       return newFileList
     },
-    fileNameToName(fileList){//将文件列表fileName->name dbpath->url
+    fileNameToName(fileList) {
+      //将文件列表fileName->name dbpath->url
       var newFileList = []
       for (let i = 0; i < fileList.length; i++) {
         let fileListItem = {}
@@ -216,6 +237,7 @@ export default {
         fileListItem.url = fileList[i].dbpath
         newFileList.push(fileListItem)
       }
+      console.log('newFileList', newFileList)
       return newFileList
     },
     // nameToFileName(fileList){//将文件列表name->fileName url->dbpath
@@ -228,7 +250,8 @@ export default {
     //   }
     //   return newFileList
     // },
-    deleteSort(fileList) {//去掉文件列表前序号
+    deleteSort(fileList) {
+      //去掉文件列表前序号
       //去掉文件名称前的序号，由于根据“.”来分割，不能保证一个文件名字里面没有其他的“.”，所以只能删除掉第一个“.”及以前的序号
       let dealFileList = []
       for (let i = 0; i < fileList.length; i++) {
@@ -241,6 +264,34 @@ export default {
         dealFileList.push(dealFileListItem)
       }
       return dealFileList
+    },
+    //下载文件
+    handleDownload(file) {
+      axios({
+        method: 'post',
+        url: `http://111.229.140.21:37192/file/download?filePath=${file.url}`, // 后端文件下载的接口
+        responseType: 'blob', // 返回文件的二进制数据
+        data: {
+          filePath: file.url, // 将文件的路径作为请求体传递
+        },
+      })
+        .then((response) => {
+          // 创建一个 Blob 对象
+          const blob = new Blob([response.data])
+
+          // 创建下载链接
+          const downloadLink = document.createElement('a')
+          const url = window.URL.createObjectURL(blob) // 创建一个 URL 对象
+          downloadLink.href = url
+          downloadLink.download = file.name // 设置文件名为下载的文件名
+          downloadLink.click() // 自动触发下载动作
+
+          // 释放对象 URL，避免内存泄漏
+          window.URL.revokeObjectURL(url)
+        })
+        .catch((error) => {
+          console.error('文件下载失败:', error)
+        })
     },
   },
 }
@@ -256,10 +307,10 @@ export default {
     display: none !important;
   }
 
-  .el-upload__input{
+  .el-upload__input {
     display: none !important;
   }
-  
+
   .file-download {
     width: 100%;
     .el-link--inner {
