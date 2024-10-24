@@ -43,14 +43,12 @@
             :key="index"
             :value="item.dbFieldName"
             :label="item.dbFieldTxt + '(' + item.dbFieldName + ')'"
-            :disabled="noSelect(item.dbType, item.dbFieldName)"
           >
             <span v-show="bindingDisplay(item.dbFieldName)" style="color: red">(已绑定)</span>
             <span>{{ item.dbFieldTxt + '(' + item.dbFieldName + ')' + '(' + item.dbType + ')' }}</span>
           </el-option>
         </el-select>
       </el-form-item>
-
       <!-- <el-form-item :label="$t('fm.config.widget.isIdentified')"> -->
       <el-form-item label="是否标识">
         <el-switch v-model="data.isIdentified" active-text="是" inactive-text="否"> </el-switch>

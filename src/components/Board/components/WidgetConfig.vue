@@ -21,7 +21,7 @@
       <!-- <el-form-item :label="$t('fm.config.widget.tableCol')" v-if="data.type != 'table'"> -->
       <el-form-item label="字段绑定" v-if="data.type != 'table'">
         <el-select v-model="data.tableCol" @change="tableColChange" filterable :popper-append-to-body="false" style="width: 100%">
-          <el-option v-for="(item, index) in tableColsFilter" :key="index" :value="item.dbFieldName" :label="item.dbFieldTxt + '(' + item.dbFieldName + ')'" :disabled="noSelect(item.dbType, item.dbFieldName)">
+          <el-option v-for="(item, index) in tableColsFilter" :key="index" :value="item.dbFieldName" :label="item.dbFieldTxt + '(' + item.dbFieldName + ')'" >
             <span v-show="bindingDisplay(item.dbFieldName)" style="color: red">(已绑定)</span>
             <!-- 档案id(archive_id)(String) -->
             <span>{{ item.dbFieldTxt + '(' + item.dbFieldName + ')' + '(' + item.dbType + ')' }}</span>

@@ -77,15 +77,15 @@ export const basicComponents = [
       showLabel: false,
       options: [
         {
-          value: 'Option 1',
+          value: 0,
           label: 'Option 1'
         },
         {
-          value: 'Option 2',
+          value: 1,
           label: 'Option 2'
         },
         {
-          value: 'Option 3',
+          value: 2,
           label: 'Option 3'
         }
       ],
