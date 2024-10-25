@@ -131,22 +131,8 @@ export default {
     openModal(record) {
       nw_getAction(`/diagram/getByProcInstId?procInstId=` + record.processInstanceId)
         .then((res) => {
-          console.log("diagram/getByProcInstId  response",res)
+          console.log('diagram/getByProcInstId  response', res)
           this.visible = true
-
-          // var oldIdsList =res.result.startProcessVO.slice(1,-1)
-          // var arrayForm = new Array()
-          // for (var i = oldIdsList.length-1; i >=0; i--) {
-          //   var formObj={}
-          //   formObj.taskName = oldIdsList[i].nodeName
-          //   formObj.createDateStr = oldIdsList[i].createDate
-          //   formObj['prevForm_designer_id']= oldIdsList[i].formDesignerId
-          //   formObj['prevOnline_table_id']= oldIdsList[i].onlineTableId
-          //   formObj['prevOnline_data_id']= oldIdsList[i].onlineDataId
-          //   arrayForm.push(formObj)
-          // }
-          // console.log(arrayForm)
-          // this.formArr = arrayForm
           // 猜测是流程详情，后端接口没给这个数据
           this.dataSource = res.result.historyInfo
           var formArr = new Array()

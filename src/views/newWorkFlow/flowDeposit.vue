@@ -2,225 +2,206 @@
   <div>
     <div>
       <a-card :bordered="false">
-
-        <a-button
-          type="primary"
-          @click="startFixedProcess(true)"
-          style="margin-right: 10px; position: relative; z-index: 1000"
-        >
-          开启流程
+        <a-button type="primary" @click="startFixedProcess(true)" style="margin-right: 10px">
+          开启保证金存缴流程
         </a-button>
 
-        <div id="formContent" style="margin-top: -40px">
+        <div id="formContent" style="margin-top: -10px">
           <div id="taskList">
-            <a-tabs :tabBarStyle="{ textAlign: 'center' }" @change="changeTab1()" v-model="taskTab.tabKey">
-              <a-tab-pane key="1" tab="未认领">
-                <div class="card-table">
-                  <div class="claimSearchList">
-                    <a class="selectText">选择流程: </a>
-                    <a-select
-                      v-model="instance"
-                      style="width: 200px; margin-left: 10px; margin-top: 10px"
-                      :defaultActiveFirstOption="true"
-                    >
-                      <a-select-option v-for="item in processInstance" :key="item.id" :value="item.id">
-                        {{ item.name }}
-                      </a-select-option>
-                    </a-select>
-                    <a class="selectText">任务名称: </a>
-                    <a-input v-model="taskName" class="selectFrame"> </a-input>
-                    <a class="selectText">选择时间: </a>
-                    <a-range-picker
-                      style="width: 250x"
-                      :show-time="{ format: 'HH:mm' }"
-                      format="YYYY-MM-DD HH:mm"
-                      :placeholder="['开始时间', '结束时间']"
-                      :value="dateStrings"
-                      @change="onChange"
-                    />
-                    <a-button-group style="margin-left: 20px">
-                      <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px"
-                        >查询</a-button
-                      >
-                      <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
-                    </a-button-group>
-                  </div>
-                  <a-card :bordered="false">
-                    <div class="flowAnnounce">
-                      <a-table bordered :columns="loadClaimcolumns" :dataSource="loadClaimData" rowKey="id">
-                        <span slot="flowClaimName">待领取 </span>
-                        <span slot="loadClaimaction" slot-scope="text, record, index">
-                          <a @click="claimTask(record)">认领</a>
-                        </span>
-                      </a-table>
-                    </div>
-                  </a-card>
-                </div>
-              </a-tab-pane>
-              <a-tab-pane key="2" tab="待处理">
-                <div class="card-table" style="padding: 10px">
-                  <div class="announceSearchList">
-                    <div>
-                      <a class="selectText">选择流程: </a>
-                      <a-select v-model="instance" class="selectFrame" :defaultActiveFirstOption="true">
-                        <a-select-option v-for="item in processInstance" :key="item.id" :value="item.id">
-                          {{ item.name }}
-                        </a-select-option>
-                      </a-select>
-                      <a class="selectText">任务名称: </a>
-                      <a-input v-model="taskName" class="selectFrame"> </a-input>
-                      <a class="selectText">选择时间: </a>
-                      <a-range-picker
-                        style="width: 250x"
-                        :show-time="{ format: 'HH:mm' }"
-                        format="YYYY-MM-DD HH:mm"
-                        :placeholder="['开始时间', '结束时间']"
-                        @change="onChange"
-                        :value="dateStrings"
-                      >
-                      </a-range-picker>
+            <div>
+              <a-tabs :tabBarStyle="{ textAlign: 'center' }" @change="changeTab1()" v-model="taskTab.tabKey">
+                <a-tab-pane key="1" tab="待办事项">
+                  <div>
+                    <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="subTaskTab.tabKey">
+                      <a-tab-pane key="1" tab="未认领">
+                        <div class="card-table">
+                          <div class="claimSearchList">
+                            <a class="selectText">选择流程: </a>
+                            <a-select v-model="instanceClaim" style="width: 200px; margin-left: 10px; margin-top: 10px"
+                              :defaultActiveFirstOption="true">
+                              <a-select-option v-for="item in processInstance" :key="item.id" :value="item.id">
+                                {{ item.name }}
+                              </a-select-option>
+                            </a-select>
+                            <a class="selectText">任务名称: </a>
+                            <a-input v-model="taskName" class="selectFrame"> </a-input>
+                            <a class="selectText">选择时间: </a>
+                            <a-range-picker style="width: 250x" :show-time="{ format: 'HH:mm' }"
+                              format="YYYY-MM-DD HH:mm" :placeholder="['开始时间', '结束时间']" :value="dateStrings"
+                              @change="onChange" />
+                            <a-button-group style="margin-left: 20px">
+                              <a-button type="primary" icon="search" @click="getData()"
+                                style="margin-left: 20px">查询</a-button>
+                              <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
+                            </a-button-group>
+                          </div>
+                          <a-card :bordered="false">
+                            <div class="flowAnnounce">
+                              <a-table bordered :columns="loadClaimcolumns" :dataSource="loadClaimData" rowKey="id">
+                                <span slot="flowClaimName">待领取 </span>
+                                <span slot="loadClaimaction" slot-scope="text, record, index">
+                                  <a @click="claimTask(record)">认领</a>
+                                </span>
+                              </a-table>
+                            </div>
+                          </a-card>
+                        </div>
+                      </a-tab-pane>
+                      <a-tab-pane key="2" tab="待处理">
+                        <div class="card-table" style="padding: 10px">
+                          <div class="announceSearchList">
+                            <div>
+                              <a class="selectText">选择流程: </a>
+                              <a-select v-model="instanceProcessing" class="selectFrame"
+                                :defaultActiveFirstOption="true">
+                                <a-select-option v-for="item in processInstance" :key="item.id" :value="item.id">
+                                  {{ item.name }}
+                                </a-select-option>
+                              </a-select>
+                              <a class="selectText">任务名称: </a>
+                              <a-input v-model="taskName" class="selectFrame"> </a-input>
+                              <a class="selectText">选择时间: </a>
+                              <a-range-picker style="width: 250x" :show-time="{ format: 'HH:mm' }"
+                                format="YYYY-MM-DD HH:mm" :placeholder="['开始时间', '结束时间']" @change="onChange"
+                                :value="dateStrings">
+                              </a-range-picker>
 
-                      <a-button-group style="margin-left: 20px">
-                        <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px"
-                          >查询</a-button
-                        >
-                        <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
-                      </a-button-group>
-                    </div>
+                              <a-button-group style="margin-left: 20px">
+                                <a-button type="primary" icon="search" @click="getData()"
+                                  style="margin-left: 20px">查询</a-button>
+                                <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
+                              </a-button-group>
+                            </div>
+                          </div>
+                          <a-card :bordered="false">
+                            <div class="flowAnnounce">
+                              <a-table bordered :columns="flowWillAnnouncecolumns" :dataSource="flowWillAnnounceData"
+                                rowKey="id">
+                                <span slot="flowWillAnnounceaction" slot-scope="text, record, index">
+                                  <a @click="announceTask(record)">处理该任务</a>
+                                  <a-divider type="vertical" />
+                                  <a @click="seeHistory(record)">历史</a>
+                                </span>
+                              </a-table>
+                            </div>
+                          </a-card>
+                        </div>
+                      </a-tab-pane>
+                    </a-tabs>
                   </div>
-                  <a-card :bordered="false">
-                    <div class="flowAnnounce">
-                      <a-table
-                        bordered
-                        :columns="flowWillAnnouncecolumns"
-                        :dataSource="flowWillAnnounceData"
-                        rowKey="id"
-                      >
-                        <span slot="flowWillAnnounceaction" slot-scope="text, record, index">
-                          <a @click="announceTask(record)">处理该任务</a>
-                          <a-divider type="vertical" />
-                          <a @click="seeHistory(record)">历史</a>
-                        </span>
-                      </a-table>
-                    </div>
-                  </a-card>
-                </div>
-              </a-tab-pane>
-              <a-tab-pane key="3" tab="已完成">
-                <div class="card-table">
-                  <div class="finishSearchList">
-                    <a class="selectText">选择流程: </a>
-                    <a-select
-                      v-model="instance"
-                      style="width: 200px; margin-left: 10px; margin-top: 10px"
-                      :defaultActiveFirstOption="true"
-                    >
-                      <a-select-option v-for="item in processInstance" :key="item.id" :value="item.id">
-                        {{ item.name }}
-                      </a-select-option>
-                    </a-select>
-                    <a-button-group style="margin-left: 20px">
-                      <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px"
-                        >查询</a-button
-                      >
-                      <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
-                    </a-button-group>
+                </a-tab-pane>
+                <a-tab-pane key="2" tab="历史">
+                  <div>
+                    <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="subHistoryTab.tabKey">
+                      <a-tab-pane key="5" tab="进行中">
+                        <div class="card-table">
+                          <div class="doingSearchList">
+                            <a class="selectText">选择流程: </a>
+                            <a-select v-model="instanceInProgress"
+                              style="width: 200px; margin-left: 10px; margin-top: 10px"
+                              :defaultActiveFirstOption="true">
+                              <a-select-option v-for="item in processInstance" :key="item.id" :value="item.id">
+                                {{ item.name }}
+                              </a-select-option>
+                            </a-select>
+                            <a-button-group style="margin-left: 20px">
+                              <a-button type="primary" icon="search" @click="getData()"
+                                style="margin-left: 20px">查询</a-button>
+                              <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
+                            </a-button-group>
+                          </div>
+                          <a-card :bordered="false">
+                            <div class="">
+                              <a-table bordered :columns="flowDoingcolumns" :dataSource="flowDoingData" rowKey="id">
+                                <span slot="flowDoingaction" slot-scope="text, record, index">
+                                  <a @click="seeHistory(record)">历史</a>
+                                </span>
+                              </a-table>
+                            </div>
+                          </a-card>
+                        </div>
+                      </a-tab-pane>
+                      <a-tab-pane key="3" tab="已完成">
+                        <div class="card-table">
+                          <div class="finishSearchList">
+                            <a class="selectText">选择流程: </a>
+                            <a-select v-model="instanceCompleted"
+                              style="width: 200px; margin-left: 10px; margin-top: 10px"
+                              :defaultActiveFirstOption="true">
+                              <a-select-option v-for="item in processInstance" :key="item.id" :value="item.id">
+                                {{ item.name }}
+                              </a-select-option>
+                            </a-select>
+                            <a-button-group style="margin-left: 20px">
+                              <a-button type="primary" icon="search" @click="getData()"
+                                style="margin-left: 20px">查询</a-button>
+                              <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
+                            </a-button-group>
+                          </div>
+                          <a-card :bordered="false">
+                            <div class="">
+                              <a-table bordered :columns="flowFinishcolumns" :dataSource="flowFinishData" rowKey="id">
+                                <span slot="flowFinishName">已完成 </span>
+                                <span slot="flowFinishaction" slot-scope="text, record, index">
+                                  <a @click="seeHistory(record)">历史</a>
+                                </span>
+                              </a-table>
+                            </div>
+                          </a-card>
+                        </div>
+                      </a-tab-pane>
+                      <a-tab-pane key="4" tab="已拒绝">
+                        <div class="card-table">
+                          <div class="rejectSearchList">
+                            <a class="selectText">选择流程: </a>
+                            <a-select v-model="instanceRejected"
+                              style="width: 200px; margin-left: 10px; margin-top: 10px"
+                              :defaultActiveFirstOption="true">
+                              <a-select-option v-for="item in processInstance" :key="item.id" :value="item.id">
+                                {{ item.name }}
+                              </a-select-option>
+                            </a-select>
+                            <a-button-group style="margin-left: 20px">
+                              <a-button type="primary" icon="search" @click="getData()"
+                                style="margin-left: 20px">查询</a-button>
+                              <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
+                            </a-button-group>
+                          </div>
+                          <a-card :bordered="false">
+                            <div class="">
+                              <a-table bordered :columns="flowRejectcolumns" :dataSource="flowRejectData" rowKey="id">
+                                <span slot="flowRejectName">已拒绝 </span>
+                                <span slot="flowRejectaction" slot-scope="text, record, index">
+                                  <a @click="seeHistory(record)">历史</a>
+                                </span>
+                              </a-table>
+                            </div>
+                          </a-card>
+                        </div>
+                      </a-tab-pane>
+
+                    </a-tabs>
                   </div>
-                  <a-card :bordered="false">
-                    <div class="">
-                      <a-table bordered :columns="flowFinishcolumns" :dataSource="flowFinishData" rowKey="id">
-                        <span slot="flowFinishName">已完成 </span>
-                        <span slot="flowFinishaction" slot-scope="text, record, index">
-                          <a @click="seeHistory(record)">历史</a>
-                        </span>
-                      </a-table>
-                    </div>
-                  </a-card>
-                </div>
-              </a-tab-pane>
-              <a-tab-pane key="4" tab="已拒绝">
-                <div class="card-table">
-                  <div class="rejectSearchList">
-                    <a class="selectText">选择流程: </a>
-                    <a-select
-                      v-model="instance"
-                      style="width: 200px; margin-left: 10px; margin-top: 10px"
-                      :defaultActiveFirstOption="true"
-                    >
-                      <a-select-option v-for="item in processInstance" :key="item.id" :value="item.id">
-                        {{ item.name }}
-                      </a-select-option>
-                    </a-select>
-                    <a-button-group style="margin-left: 20px">
-                      <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px"
-                        >查询</a-button
-                      >
-                      <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
-                    </a-button-group>
-                  </div>
-                  <a-card :bordered="false">
-                    <div class="">
-                      <a-table bordered :columns="flowRejectcolumns" :dataSource="flowRejectData" rowKey="id">
-                        <span slot="flowRejectName">已拒绝 </span>
-                        <span slot="flowRejectaction" slot-scope="text, record, index">
-                          <a @click="seeHistory(record)">历史</a>
-                        </span>
-                      </a-table>
-                    </div>
-                  </a-card>
-                </div>
-              </a-tab-pane>
-              <a-tab-pane key="5" tab="进行中">
-                <div class="card-table">
-                  <div class="doingSearchList">
-                    <a class="selectText">选择流程: </a>
-                    <a-select
-                      v-model="instance"
-                      style="width: 200px; margin-left: 10px; margin-top: 10px"
-                      :defaultActiveFirstOption="true"
-                    >
-                      <a-select-option v-for="item in processInstance" :key="item.id" :value="item.id">
-                        {{ item.name }}
-                      </a-select-option>
-                    </a-select>
-                    <a-button-group style="margin-left: 20px">
-                      <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px"
-                        >查询</a-button
-                      >
-                      <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
-                    </a-button-group>
-                  </div>
-                  <a-card :bordered="false">
-                    <div class="">
-                      <a-table bordered :columns="flowDoingcolumns" :dataSource="flowDoingData" rowKey="id">
-                        <span slot="flowDoingaction" slot-scope="text, record, index">
-                          <a @click="seeHistory(record)">历史</a>
-                        </span>
-                      </a-table>
-                    </div>
-                  </a-card>
-                </div>
-              </a-tab-pane>
-            </a-tabs>
+                </a-tab-pane>
+              </a-tabs>
+            </div>
           </div>
         </div>
       </a-card>
     </div>
-    <a-modal title="流程列表" :visible="isModalVisible" @ok="handleOk" @cancel="handleCancel" width="800px">
+    <a-modal title="保证金存缴流程" :visible="isModalVisible" @ok="startProcess" @cancel="handleCancel" width="800px">
       <div class="flowConfig">
         <div style="padding-top: 20px">
-          <a-table :columns="columns" bordered :dataSource="flowConfigData" rowKey="processId">
-            <span class="flowNameSpan" slot="name" slot-scope="text, record">
-              <a-icon type="cluster" />
-              {{ record.name }}
-            </span>
-            <span slot="action" slot-scope="text, record">
-              <a @click="startProcess(record)">发起流程</a>
-            </span>
-          </a-table>
+          <span>请选择存缴流程：</span>
+          <a-select v-model="selectedProcessId" placeholder="请选择一个流程" style="width: 300px">
+            <a-select-option v-for="item in flowConfigData" :key="item.processId" :value="item.processId">
+              {{ item.name }}
+            </a-select-option>
+          </a-select>
         </div>
       </div>
     </a-modal>
+
     <div>
       <annTask ref="modalform"> </annTask>
     </div>
@@ -229,7 +210,7 @@
     <flow-history ref="flowHistory"></flow-history>
   </div>
 </template>
-  <script>
+<script>
 import axios from 'axios'
 import annTask from './modules/annTask'
 import { o_postAction, o_getAction } from '@/api/onApi.js'
@@ -246,11 +227,26 @@ export default {
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory },
   data() {
     return {
+      taskTab: {
+        tabKey: '1', // 主 Tab 页的状态
+      },
+      subTaskTab: {
+        tabKey: '1', // 待办事项下的子 Tab 页状态
+      },
+      subHistoryTab: {
+        tabKey: '1', // 历史下的子 Tab 页状态
+      },
+      instanceClaim: '', // 未认领的选择流程
+      instanceProcessing: '', // 待处理的选择流程
+      instanceCompleted: '', // 已完成的选择流程
+      instanceRejected: '', // 已拒绝的选择流程
+      instanceInProgress: '', // 进行中的选择流程
       form: '',
       name: '',
       id: '',
       flowConfigData: [],
       isModalVisible: false,
+      selectedProcessId: null,
       columns: [
         {
           title: '流程名称',
@@ -315,11 +311,6 @@ export default {
       ],
       flowWillAnnouncecolumns: [
         {
-          title: '状态',
-          align: 'center',
-          dataIndex: 'state',
-        },
-        {
           title: '任务名称',
           align: 'center',
           dataIndex: 'nodeName',
@@ -330,15 +321,30 @@ export default {
           dataIndex: 'processName',
         },
         {
-          title: '流程唯一标识',
+          title: '企业名称',
           align: 'center',
-          dataIndex: 'processInstanceId',
+          dataIndex: 'companyName',
         },
         {
-          title: '类型',
+          title: '项目名称',
           align: 'center',
-          dataIndex: 'type',
+          dataIndex: 'projectName',
         },
+        {
+          title: '保证金金额',
+          align: 'center',
+          dataIndex: 'Money',
+        },
+        // {
+        //   title: '流程唯一标识',
+        //   align: 'center',
+        //   dataIndex: 'processInstanceId',
+        // },
+        // {
+        //   title: '类型',
+        //   align: 'center',
+        //   dataIndex: 'type',
+        // },
         {
           title: '创建时间',
           align: 'center',
@@ -449,6 +455,7 @@ export default {
           console.log('保证金存缴流程数据', res)
           if (res.success) {
             let flowConfigData = res.result
+            console.log('flowConfigData', flowConfigData)
             //是否显示弹窗
             if (showModal) {
               this.isModalVisible = true
@@ -486,23 +493,26 @@ export default {
       this.isModalVisible = false // 点击取消后隐藏弹窗
     },
     //开启流程
-    startProcess(record) {
+    startProcess() {
+      if (!this.selectedProcessId) {
+        this.$message.warning('请选择一个流程')
+        return
+      }
       this.isModalVisible = false
       let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
       axios.defaults.headers.common['userName'] = userData.value.username
-      nw_getAction(`/process/startProcess/{processId}?processId=` + record.processId)
+      console.log('userData.value.username', userData.value.username)
+      nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
         .then((res) => {
-          console.log(res)
           if (res.success) {
             this.$message.success('开启流程成功')
-            var formDesignerId = res.result.startProcessVO.formDesignerId
-            var onlineDataId = res.result.startProcessVO.onlineDataId
-            var onlineTableId = res.result.startProcessVO.onlineTableId
-            var taskId = res.result.fistTaskId
+            const { formDesignerId, onlineDataId, onlineTableId } = res.result.startProcessVO
+            const taskId = res.result.fistTaskId
             this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId)
           } else {
             this.$message.error('开启流程失败')
           }
+          this.selectedProcessId = null
         })
         .catch((error) => {
           console.log(error)
@@ -528,7 +538,13 @@ export default {
       this.endTime = dateStrings[1]
     },
     changeTab1() {
-      this.getData()
+      // this.getData()
+      // 根据 taskTab.tabKey 的变化处理子标签的状态
+      if (this.taskTab.tabKey === '1') {
+        this.subTaskTab.tabKey = '1'; // 切换到待办事项下的默认状态
+      } else if (this.taskTab.tabKey === '2') {
+        this.subHistoryTab.tabKey = '5'; // 切换到历史下的进行中
+      }
     },
     // 更新表格数据
     getData() {
@@ -536,31 +552,34 @@ export default {
       this.flowFinishData = []
       this.flowRejectData = []
       this.loadClaimData = []
-      var tabKey = this.taskTab.tabKey
-      switch (tabKey) {
-        case '1':
-          this.getLoadClaim()
-          break
-        case '2':
-          this.getflowAnnounce()
-          break
-        case '3':
-          this.getCompleteProcessInstance()
-          break
-        case '4':
-          this.getCancelProcesses()
-          break
-        case '5':
-          this.getDoingFlow()
-          break
-        default:
-          break
-      }
+      // const tabKey = this.taskTab.tabKey
+      // if (tabKey === '1') {
+      //   // 待办事项
+      //   if (this.subTaskTab.tabKey === '1') {
+      //     this.getLoadClaim(); // 未认领
+      //   } else if (this.subTaskTab.tabKey === '2') {
+      //     this.getflowAnnounce(); // 待处理
+      //   }
+      // } else if (tabKey === '2') {
+      //   // 历史
+      //   if (this.subHistoryTab.tabKey === '5') {
+      //     this.getDoingFlow(); // 进行中
+      //   } else if (this.subHistoryTab.tabKey === '3') {
+      //     this.getCompleteProcessInstance(); // 已完成
+      //   } else if (this.subHistoryTab.tabKey === '4') {
+      //     this.getCancelProcesses(); // 已拒绝
+      //   }
+      // }
+      this.getLoadClaim(); // 获取未认领流程
+      this.getflowAnnounce(); // 获取待处理流程
+      this.getCompleteProcessInstance(); // 获取已完成流程
+      this.getCancelProcesses(); // 获取已拒绝流程
+      this.getDoingFlow(); // 获取进行中流程
     },
     //得到所有未认领的流程
     getLoadClaim() {
       let params = {
-        processId: this.instance,
+        processId: this.instanceClaim,
         taskName: this.taskName,
         startTime: this.startTime,
         endTime: this.endTime,
@@ -603,59 +622,99 @@ export default {
           console.log(error)
         })
     },
+
     //获得待处理任务
     getflowAnnounce() {
       let params = {
-        processId: this.instance,
+        processId: this.instanceProcessing,
         taskName: this.taskName,
         startTime: this.startTime,
         endTime: this.endTime,
+        categoryId: '1847453055727501313',
       }
+
       nw_postAction1('/task/getPendingTakes', params)
         .then((res) => {
+          console.log('res321', res)
           this.flowWillAnnounceData = res.result
-          for (var i = 0; i < this.flowWillAnnounceData.length; i++) {
-            var state = this.flowWillAnnounceData[i].state
-            switch (state) {
-              case 'WaitReviewWorkload':
-                this.flowWillAnnounceData[i].state = '工作量待审核'
-                break
-              case 'Ready':
-                this.flowWillAnnounceData[i].state = '已开始'
-                break
-              case 'Completed':
-                this.flowWillAnnounceData[i].state = '已完成'
-                break
-              case 'Reserved':
-                this.flowWillAnnounceData[i].state = '已领取'
-                break
-              case 'Created':
-                this.flowWillAnnounceData[i].state = '已创建'
-                break
-              default:
-                break
+
+          // 使用Promise.all和限制并发
+          const requests = []
+          const maxConcurrentRequests = 5 // 限制并发数量
+          const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+          const processItems = async () => {
+            for (let i = 0; i < this.flowWillAnnounceData.length; i++) {
+              // 处理状态和类型
+              this.processStateAndType(this.flowWillAnnounceData[i])
+
+              // 生成请求
+              const request = nw_getAction(
+                `/diagram/getByProcInstId?procInstId=${this.flowWillAnnounceData[i].processInstanceId}`
+              )
+                .then((res) => {
+                  let url = res.result.historyInfo[1].url
+                  let tableId = url.substring(33, 65)
+                  let dataId = url.substring(66, 87)
+
+                  return o_getAction('/cgform/api/form/' + tableId + '/' + dataId)
+                })
+                .then((res) => {
+                  if (res.result.company_name) {
+                    this.flowWillAnnounceData[i].companyName = res.result.company_name
+                    this.flowWillAnnounceData[i].projectName = res.result.project_name
+                    this.flowWillAnnounceData[i].Money = res.result.money
+                  }
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
+
+              requests.push(request)
+
+              // 限制并发
+              if (requests.length >= maxConcurrentRequests) {
+                await Promise.all(requests)
+                requests.length = 0 // 清空已完成的请求
+                await delay(100) // 适当延迟
+              }
             }
-            var type = this.flowWillAnnounceData[i].type
-            switch (type) {
-              case 'Participative':
-                this.flowWillAnnounceData[i].type = '竞争任务'
-                break
-              case 'Normal':
-                this.flowWillAnnounceData[i].type = '正常任务'
-                break
-              default:
-                break
-            }
+
+            // 处理剩余的请求
+            await Promise.all(requests)
+
+            // 在所有请求完成后打印flowWillAnnounceData
+            console.log('flowWillAnnounceData', this.flowWillAnnounceData)
           }
+
+          processItems()
         })
         .catch((error) => {
-          // console.log(error)
+          console.error(error)
         })
+    },
+
+    // 处理状态和类型
+    processStateAndType(item) {
+      const stateMapping = {
+        WaitReviewWorkload: '工作量待审核',
+        Ready: '已开始',
+        Completed: '已完成',
+        Reserved: '已领取',
+        Created: '已创建',
+      }
+      item.state = stateMapping[item.state] || item.state
+
+      const typeMapping = {
+        Participative: '竞争任务',
+        Normal: '正常任务',
+      }
+      item.type = typeMapping[item.type] || item.type
     },
     //获得已完成流程实例
     getCompleteProcessInstance() {
       const _this = this
-      var id = this.instance
+      var id = this.instanceCompleted
       this.dialogVisibleFinish = false
       let params = {
         processId: this.instance,
@@ -678,7 +737,7 @@ export default {
     //获得已拒绝的流程
     getCancelProcesses() {
       let params = {
-        processId: this.instance,
+        processId: this.instanceRejected,
         // startTime: this.startTime,
         // endTime: this.endTime,
       }
@@ -699,7 +758,7 @@ export default {
     //得到所有的正在进行的流程
     getDoingFlow() {
       let params = {
-        processId: this.instance,
+        processId: this.instanceInProgress,
         // taskName: this.taskName,
         // startTime: this.startTime,
         // endTime: this.endTime,
@@ -727,14 +786,16 @@ export default {
   },
 }
 </script>
-  <style scoped>
+<style scoped>
 .flowNameSpan {
   display: inline-block;
   width: 100%;
 }
+
 .iconfont {
   font-size: 20px;
 }
+
 .iconfont .icon-liucheng {
   float: left;
 }
@@ -742,6 +803,7 @@ export default {
 .ididididi {
   margin-top: 20px;
 }
+
 .buttonstyle {
   position: absolute;
   right: 0;
@@ -750,6 +812,7 @@ export default {
   height: 50px;
   zoom: 1;
 }
+
 .buttonstyle .xbutton {
   float: right;
   height: 30px;
@@ -757,11 +820,13 @@ export default {
   margin-top: 10px;
   margin-right: 10px;
 }
+
 .buttonstyle::after {
   content: '';
   height: 0;
   clear: both;
 }
+
 .addQA1 {
   z-index: 10;
   border: 1px solid #aaa;
@@ -774,12 +839,14 @@ export default {
   top: 27%;
   left: 18%;
 }
+
 .addQA1 .closeButton {
   font-size: 20px;
   float: right;
   margin: 14px;
   cursor: pointer;
 }
+
 .showHead {
   border-radius: 5px 5px 0px 0px;
   height: 40px;
@@ -788,10 +855,12 @@ export default {
   position: relative;
   background-color: #1890ff;
 }
+
 .showHead .showHeadContent {
   margin-left: 20px;
   line-height: 40px;
 }
+
 .overflow {
   transition: all 0.3s ease;
   position: fixed;
@@ -801,14 +870,17 @@ export default {
   background-color: rgba(70, 60, 60, 0.49);
   top: 0px;
 }
+
 .card-table {
   background-color: white;
 }
+
 .selectText {
   color: black;
   font-size: 20px;
   margin-left: 22px;
 }
+
 .seeInformation {
   z-index: 300;
   width: 95%;
@@ -817,12 +889,14 @@ export default {
   margin: 20px;
   background-color: white;
 }
+
 .seeContent {
   margin-top: 7%;
   margin-bottom: 7%;
   margin-left: 7%;
   margin-right: 7%;
 }
+
 .selectFrame {
   width: 200px;
 }
