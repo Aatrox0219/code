@@ -2,11 +2,7 @@
   <div>
     <div>
       <a-card :bordered="false">
-        <a-button
-          type="primary"
-          @click="startFixedProcess(true)"
-          style="margin-right: 10px;"
-        >
+        <a-button type="primary" @click="startFixedProcess(true)" style="margin-right: 10px">
           开启保证金存缴流程
         </a-button>
 
@@ -605,6 +601,7 @@ export default {
           console.log(error)
         })
     },
+
     //获得待处理任务
     getflowAnnounce() {
       let params = {
@@ -612,47 +609,84 @@ export default {
         taskName: this.taskName,
         startTime: this.startTime,
         endTime: this.endTime,
+        categoryId: '1847453055727501313',
       }
+
       nw_postAction1('/task/getPendingTakes', params)
         .then((res) => {
+          console.log('res321', res)
           this.flowWillAnnounceData = res.result
-          for (var i = 0; i < this.flowWillAnnounceData.length; i++) {
-            var state = this.flowWillAnnounceData[i].state
-            switch (state) {
-              case 'WaitReviewWorkload':
-                this.flowWillAnnounceData[i].state = '工作量待审核'
-                break
-              case 'Ready':
-                this.flowWillAnnounceData[i].state = '已开始'
-                break
-              case 'Completed':
-                this.flowWillAnnounceData[i].state = '已完成'
-                break
-              case 'Reserved':
-                this.flowWillAnnounceData[i].state = '已领取'
-                break
-              case 'Created':
-                this.flowWillAnnounceData[i].state = '已创建'
-                break
-              default:
-                break
+
+          // 使用Promise.all和限制并发
+          const requests = []
+          const maxConcurrentRequests = 5 // 限制并发数量
+          const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+          const processItems = async () => {
+            for (let i = 0; i < this.flowWillAnnounceData.length; i++) {
+              // 处理状态和类型
+              this.processStateAndType(this.flowWillAnnounceData[i])
+
+              // 生成请求
+              const request = nw_getAction(
+                `/diagram/getByProcInstId?procInstId=${this.flowWillAnnounceData[i].processInstanceId}`
+              )
+                .then((res) => {
+                  let url = res.result.historyInfo[1].url
+                  let tableId = url.substring(33, 65)
+                  let dataId = url.substring(66, 87)
+
+                  return o_getAction('/cgform/api/form/' + tableId + '/' + dataId)
+                })
+                .then((res) => {
+                  if (res.result.company_name) {
+                    this.flowWillAnnounceData[i].companyName = res.result.company_name
+                  }
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
+
+              requests.push(request)
+
+              // 限制并发
+              if (requests.length >= maxConcurrentRequests) {
+                await Promise.all(requests)
+                requests.length = 0 // 清空已完成的请求
+                await delay(100) // 适当延迟
+              }
             }
-            var type = this.flowWillAnnounceData[i].type
-            switch (type) {
-              case 'Participative':
-                this.flowWillAnnounceData[i].type = '竞争任务'
-                break
-              case 'Normal':
-                this.flowWillAnnounceData[i].type = '正常任务'
-                break
-              default:
-                break
-            }
+
+            // 处理剩余的请求
+            await Promise.all(requests)
+
+            // 在所有请求完成后打印flowWillAnnounceData
+            console.log('flowWillAnnounceData', this.flowWillAnnounceData)
           }
+
+          processItems()
         })
         .catch((error) => {
-          // console.log(error)
+          console.error(error)
         })
+    },
+
+    // 处理状态和类型
+    processStateAndType(item) {
+      const stateMapping = {
+        WaitReviewWorkload: '工作量待审核',
+        Ready: '已开始',
+        Completed: '已完成',
+        Reserved: '已领取',
+        Created: '已创建',
+      }
+      item.state = stateMapping[item.state] || item.state
+
+      const typeMapping = {
+        Participative: '竞争任务',
+        Normal: '正常任务',
+      }
+      item.type = typeMapping[item.type] || item.type
     },
     //获得已完成流程实例
     getCompleteProcessInstance() {
