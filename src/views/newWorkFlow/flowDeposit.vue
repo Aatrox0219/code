@@ -197,16 +197,9 @@
               {{ item.name }}
             </a-select-option>
           </a-select>
-          <span>请选择存缴流程：</span>
-          <a-select v-model="selectedProcessId" placeholder="请选择一个流程" style="width: 300px">
-            <a-select-option v-for="item in flowConfigData" :key="item.processId" :value="item.processId">
-              {{ item.name }}
-            </a-select-option>
-          </a-select>
         </div>
       </div>
     </a-modal>
-
 
     <div>
       <annTask ref="modalform"> </annTask>
@@ -252,7 +245,6 @@ export default {
       id: '',
       flowConfigData: [],
       isModalVisible: false,
-      selectedProcessId: null,
       selectedProcessId: null,
       columns: [
         {
@@ -463,7 +455,6 @@ export default {
           if (res.success) {
             let flowConfigData = res.result
             console.log('flowConfigData', flowConfigData)
-            console.log('flowConfigData', flowConfigData)
             //是否显示弹窗
             if (showModal) {
               this.isModalVisible = true
@@ -509,8 +500,6 @@ export default {
       this.isModalVisible = false
       let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
       axios.defaults.headers.common['userName'] = userData.value.username
-      console.log('userData.value.username', userData.value.username)
-      nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
       console.log('userData.value.username', userData.value.username)
       nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
         .then((res) => {
@@ -634,7 +623,6 @@ export default {
         })
     },
 
-
     //获得待处理任务
     getflowAnnounce() {
       let params = {
@@ -643,13 +631,10 @@ export default {
         startTime: this.startTime,
         endTime: this.endTime,
         categoryId: '1847453055727501313',
-        categoryId: '1847453055727501313',
       }
-
 
       nw_postAction1('/task/getPendingTakes', params)
         .then((res) => {
-          console.log('res321', res)
           console.log('res321', res)
           this.flowWillAnnounceData = res.result
 
@@ -706,26 +691,7 @@ export default {
         })
         .catch((error) => {
           console.error(error)
-          console.error(error)
         })
-    },
-
-    // 处理状态和类型
-    processStateAndType(item) {
-      const stateMapping = {
-        WaitReviewWorkload: '工作量待审核',
-        Ready: '已开始',
-        Completed: '已完成',
-        Reserved: '已领取',
-        Created: '已创建',
-      }
-      item.state = stateMapping[item.state] || item.state
-
-      const typeMapping = {
-        Participative: '竞争任务',
-        Normal: '正常任务',
-      }
-      item.type = typeMapping[item.type] || item.type
     },
 
     // 处理状态和类型
