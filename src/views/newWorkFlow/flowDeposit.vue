@@ -2,16 +2,15 @@
   <div>
     <div>
       <a-card :bordered="false">
-
         <a-button
           type="primary"
           @click="startFixedProcess(true)"
-          style="margin-right: 10px; position: relative; z-index: 1000"
+          style="margin-right: 10px;"
         >
-          开启流程
+          开启保证金存缴流程
         </a-button>
 
-        <div id="formContent" style="margin-top: -40px">
+        <div id="formContent" style="margin-top: -10px">
           <div id="taskList">
             <a-tabs :tabBarStyle="{ textAlign: 'center' }" @change="changeTab1()" v-model="taskTab.tabKey">
               <a-tab-pane key="1" tab="未认领">
@@ -206,21 +205,19 @@
         </div>
       </a-card>
     </div>
-    <a-modal title="流程列表" :visible="isModalVisible" @ok="handleOk" @cancel="handleCancel" width="800px">
+    <a-modal title="保证金存缴流程" :visible="isModalVisible" @ok="startProcess" @cancel="handleCancel" width="800px">
       <div class="flowConfig">
         <div style="padding-top: 20px">
-          <a-table :columns="columns" bordered :dataSource="flowConfigData" rowKey="processId">
-            <span class="flowNameSpan" slot="name" slot-scope="text, record">
-              <a-icon type="cluster" />
-              {{ record.name }}
-            </span>
-            <span slot="action" slot-scope="text, record">
-              <a @click="startProcess(record)">发起流程</a>
-            </span>
-          </a-table>
+          <span>请选择存缴流程：</span>
+          <a-select v-model="selectedProcessId" placeholder="请选择一个流程" style="width: 300px">
+            <a-select-option v-for="item in flowConfigData" :key="item.processId" :value="item.processId">
+              {{ item.name }}
+            </a-select-option>
+          </a-select>
         </div>
       </div>
     </a-modal>
+
     <div>
       <annTask ref="modalform"> </annTask>
     </div>
@@ -251,6 +248,7 @@ export default {
       id: '',
       flowConfigData: [],
       isModalVisible: false,
+      selectedProcessId: null,
       columns: [
         {
           title: '流程名称',
@@ -449,6 +447,7 @@ export default {
           console.log('保证金存缴流程数据', res)
           if (res.success) {
             let flowConfigData = res.result
+            console.log('flowConfigData', flowConfigData)
             //是否显示弹窗
             if (showModal) {
               this.isModalVisible = true
@@ -486,23 +485,26 @@ export default {
       this.isModalVisible = false // 点击取消后隐藏弹窗
     },
     //开启流程
-    startProcess(record) {
+    startProcess() {
+      if (!this.selectedProcessId) {
+        this.$message.warning('请选择一个流程')
+        return
+      }
       this.isModalVisible = false
       let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
       axios.defaults.headers.common['userName'] = userData.value.username
-      nw_getAction(`/process/startProcess/{processId}?processId=` + record.processId)
+      console.log('userData.value.username', userData.value.username)
+      nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
         .then((res) => {
-          console.log(res)
           if (res.success) {
             this.$message.success('开启流程成功')
-            var formDesignerId = res.result.startProcessVO.formDesignerId
-            var onlineDataId = res.result.startProcessVO.onlineDataId
-            var onlineTableId = res.result.startProcessVO.onlineTableId
-            var taskId = res.result.fistTaskId
+            const { formDesignerId, onlineDataId, onlineTableId } = res.result.startProcessVO
+            const taskId = res.result.fistTaskId
             this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId)
           } else {
             this.$message.error('开启流程失败')
           }
+          this.selectedProcessId = null
         })
         .catch((error) => {
           console.log(error)
