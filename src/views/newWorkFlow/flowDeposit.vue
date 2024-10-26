@@ -197,12 +197,6 @@
               {{ item.name }}
             </a-select-option>
           </a-select>
-          <span>请选择存缴流程：</span>
-          <a-select v-model="selectedProcessId" placeholder="请选择一个流程" style="width: 300px">
-            <a-select-option v-for="item in flowConfigData" :key="item.processId" :value="item.processId">
-              {{ item.name }}
-            </a-select-option>
-          </a-select>
         </div>
       </div>
     </a-modal>
@@ -643,16 +637,14 @@ export default {
         startTime: this.startTime,
         endTime: this.endTime,
         categoryId: '1847453055727501313',
-        categoryId: '1847453055727501313',
       }
 
 
       nw_postAction1('/task/getPendingTakes', params)
         .then((res) => {
           console.log('res321', res)
-          console.log('res321', res)
           this.flowWillAnnounceData = res.result
-
+          console.log('flowWillAnnounceData查询', this.flowWillAnnounceData)
           // 使用Promise.all和限制并发
           const requests = []
           const maxConcurrentRequests = 5 // 限制并发数量
@@ -676,9 +668,13 @@ export default {
                 })
                 .then((res) => {
                   if (res.result.company_name) {
-                    this.flowWillAnnounceData[i].companyName = res.result.company_name
-                    this.flowWillAnnounceData[i].projectName = res.result.project_name
-                    this.flowWillAnnounceData[i].Money = res.result.money
+                    // this.flowWillAnnounceData[i].companyName = res.result.company_name
+                    // this.flowWillAnnounceData[i].projectName = res.result.project_name
+                    // this.flowWillAnnounceData[i].Money = res.result.money
+                    // 使用 Vue.set 来更新对象属性
+                    this.$set(this.flowWillAnnounceData[i], 'companyName', res.result.company_name);
+                    this.$set(this.flowWillAnnounceData[i], 'projectName', res.result.project_name);
+                    this.$set(this.flowWillAnnounceData[i], 'Money', res.result.money);
                   }
                 })
                 .catch((err) => {
@@ -699,13 +695,12 @@ export default {
             await Promise.all(requests)
 
             // 在所有请求完成后打印flowWillAnnounceData
-            console.log('flowWillAnnounceData', this.flowWillAnnounceData)
+            console.log('最终数据', this.flowWillAnnounceData)
           }
 
           processItems()
         })
         .catch((error) => {
-          console.error(error)
           console.error(error)
         })
     },
