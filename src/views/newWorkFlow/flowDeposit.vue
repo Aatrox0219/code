@@ -2,14 +2,18 @@
   <div>
     <div>
       <a-card :bordered="false">
-        <a-button type="primary" @click="startFixedProcess(true)" style="margin-right: 10px">
+        <a-button
+          v-if="userInfo.username === 'corporation001' || userInfo.username === 'corporation002' || userInfo.username === 'admin'"
+          type="primary" @click="startFixedProcess(true)" style="margin-right: 10px">
           开启保证金存缴流程
         </a-button>
         <div id="formContent" style="margin-top: -10px">
           <div id="taskList">
             <div>
               <a-tabs :tabBarStyle="{ textAlign: 'center' }" @change="changeTab1()" v-model="taskTab.tabKey">
-                <a-tab-pane key="1" tab="待办事项">
+                <a-tab-pane
+                  v-if="userInfo.username === 'kezhang' || userInfo.username === 'zhuguan' || userInfo.username === 'admin' || userInfo.username === 'Brokerage001' || userInfo.username === 'Brokerage002'"
+                  key="1" tab="待办事项">
                   <div>
                     <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="subTaskTab.tabKey">
                       <a-tab-pane key="1" tab="未认领">
@@ -89,7 +93,9 @@
                     </a-tabs>
                   </div>
                 </a-tab-pane>
-                <a-tab-pane key="2" tab="历史">
+                <a-tab-pane
+                  v-if="userInfo.username === 'kezhang' || userInfo.username === 'zhuguan' || userInfo.username === 'admin' || userInfo.username === 'corporation001' || userInfo.username === 'corporation002'"
+                  key="2" tab="历史">
                   <div>
                     <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="subHistoryTab.tabKey">
                       <a-tab-pane key="5" tab="进行中">
@@ -222,6 +228,7 @@ import approveModel from './modules/approveModel'
 import { w_postAction, w_postAction1, w_getAction } from '@/api/workapi'
 import Template from '../identification/template.vue'
 import FlowHistory from './modules/flowHistory'
+import { mapState } from 'vuex'
 export default {
   name: 'flowDeposit',
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory },
@@ -263,9 +270,6 @@ export default {
         },
       ],
       processCategories: [{ category_name: '所有流程', functional_department: '', id: '' }],
-      taskTab: {
-        tabKey: '1',
-      }, //标签页
       instance: '',
       processInstance: [{ id: '', name: '所有流程' }],
       taskName: '',
@@ -443,9 +447,21 @@ export default {
       dateStrings: [],
     }
   },
+  computed: {
+    ...mapState({
+      userInfo: state => state.user.info // 假设用户信息存储在user模块中的info
+    })
+  },
+
   mounted() {
     this.startFixedProcess(false)
     this.getData()
+    // 在获取到用户信息后，设置默认tab
+    if (this.userInfo.username === 'corporation001' || this.userInfo.username === 'corporation002') {
+      this.taskTab.tabKey = '2'; // 默认显示历史tab
+      this.subHistoryTab.tabKey = '5'; // 默认显示进行中
+    }
+    console.log('当前用户信息', this.userInfo)
   },
   methods: {
     //获取保证金存缴的流程数据,1847453055727501313是保证金存缴的流程分类id
