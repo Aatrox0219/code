@@ -234,7 +234,7 @@ export default {
           dataIndex: 'projectName',
         },
         {
-          title: '保证金金额',
+          title: '合同金额（万元）',
           align: 'center',
           dataIndex: 'Money',
         },
@@ -288,7 +288,7 @@ export default {
           dataIndex: 'projectName',
         },
         {
-          title: '保证金金额',
+          title: '合同金额（万元）',
           align: 'center',
           dataIndex: 'Money',
         },
