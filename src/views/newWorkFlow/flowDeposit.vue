@@ -3,7 +3,7 @@
     <div>
       <a-card :bordered="false">
         <a-button
-          v-if="userInfo.username === 'corporation001' || userInfo.username === 'corporation002' || userInfo.username === 'admin'"
+          v-if="userInfo.username === 'corporation001' || userInfo.username === 'corporation002' || userInfo.username === 'admin' || userInfo.username === 'ceshi001'"
           type="primary" @click="startFixedProcess(true)" style="margin-right: 10px">
           开启保证金存缴流程
         </a-button>
@@ -159,7 +159,6 @@ export default {
       flowConfigData: [],
       isModalVisible: false,
       selectedProcessId: null,
-      selectedProcessId: null,
       columns: [
         {
           title: '流程名称',
@@ -223,15 +222,20 @@ export default {
       ],
       flowWillAnnouncecolumns: [
         {
-          title: '任务名称',
+          title: '状态',
           align: 'center',
           dataIndex: 'nodeName',
         },
-        {
-          title: '流程名称',
-          align: 'center',
-          dataIndex: 'processName',
-        },
+        // {
+        //   title: '任务名称',
+        //   align: 'center',
+        //   dataIndex: 'currentTask',
+        // },
+        // {
+        //   title: '流程名称',
+        //   align: 'center',
+        //   dataIndex: 'processName',
+        // },
         {
           title: '企业名称',
           align: 'center',
@@ -243,20 +247,25 @@ export default {
           dataIndex: 'projectName',
         },
         {
+          title: '项目地址',
+          align: 'center',
+          dataIndex: 'projectAddress',
+        },
+        {
           title: '合同金额（万元）',
           align: 'center',
           dataIndex: 'Money',
         },
-        // {
-        //   title: '流程唯一标识',
-        //   align: 'center',
-        //   dataIndex: 'processInstanceId',
-        // },
-        // {
-        //   title: '类型',
-        //   align: 'center',
-        //   dataIndex: 'type',
-        // },
+        {
+          title: '负责人',
+          align: 'center',
+          dataIndex: 'responsiblePerson',
+        },
+        {
+          title: '联系方式',
+          align: 'center',
+          dataIndex: 'mobile',
+        },
         {
           title: '创建时间',
           align: 'center',
@@ -274,18 +283,18 @@ export default {
         {
           title: '状态',
           align: 'center',
-          dataIndex: 'taskState',
-        },
-        {
-          title: '任务名称',
-          align: 'center',
           dataIndex: 'currentTask',
         },
-        {
-          title: '流程名称',
-          align: 'center',
-          dataIndex: 'processName',
-        },
+        // {
+        //   title: '任务名称',
+        //   align: 'center',
+        //   dataIndex: 'currentTask',
+        // },
+        // {
+        //   title: '流程名称',
+        //   align: 'center',
+        //   dataIndex: 'processName',
+        // },
         {
           title: '企业名称',
           align: 'center',
@@ -297,9 +306,24 @@ export default {
           dataIndex: 'projectName',
         },
         {
+          title: '项目地址',
+          align: 'center',
+          dataIndex: 'projectAddress',
+        },
+        {
           title: '合同金额（万元）',
           align: 'center',
           dataIndex: 'Money',
+        },
+        {
+          title: '负责人',
+          align: 'center',
+          dataIndex: 'responsiblePerson',
+        },
+        {
+          title: '联系方式',
+          align: 'center',
+          dataIndex: 'mobile',
         },
         {
           title: '创建时间',
@@ -407,10 +431,10 @@ export default {
     this.startFixedProcess(false)
     this.getData()
     // 在获取到用户信息后，设置默认tab
-    if (this.userInfo.username === 'corporation001' || this.userInfo.username === 'corporation002') {
-      this.taskTab.tabKey = '2'; // 默认显示历史tab
-      // this.subHistoryTab.tabKey = '5'; // 默认显示进行中
-    }
+    // if (this.userInfo.username === 'corporation001' || this.userInfo.username === 'corporation002') {
+    //   this.taskTab.tabKey = '2'; // 默认显示历史tab
+    //   // this.subHistoryTab.tabKey = '5'; // 默认显示进行中
+    // }
     console.log('当前用户信息', this.userInfo)
   },
   methods: {
@@ -423,7 +447,7 @@ export default {
           if (res.success) {
             let flowConfigData = res.result
             console.log('flowConfigData', flowConfigData)
-            console.log('flowConfigData', flowConfigData)
+
             //是否显示弹窗
             if (showModal) {
               this.isModalVisible = true
@@ -469,8 +493,6 @@ export default {
       this.isModalVisible = false
       let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
       axios.defaults.headers.common['userName'] = userData.value.username
-      console.log('userData.value.username', userData.value.username)
-      nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
       console.log('userData.value.username', userData.value.username)
       nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
         .then((res) => {
@@ -608,20 +630,29 @@ export default {
       nw_postAction1('/process/getProcessAllState', params)
         .then((res) => {
           console.log('res321', res)
+          // 状态映射
+          const taskStateMapping = {
+            '总包施工单位提交保证金存缴申请': '待提交申请',
+            '科长审核保证金金额以及相关信息': '科长待审核',
+            '主管审核保证金金额以及相关信息': '主管待审核',
+            '总包施工单位上传银行存单电子版文件': '待上传文件',
+            '经纪公司审核银行存单': '经济公司待审核',
+            '承办人审核保证金金额以及相关信息': '承办人员待审核',
+            '业务主管领导审核保证金金额以及相关信息': '业务主管领导待审核',
+            '人社主管领导审核保证金金额以及相关信息': '人社主管领导待审核'
+          };
           this.flowHistoryData = [
             ...res.result.instance.map(item => ({
               ...item,
-              taskState: '进行中', // 根据状态设置进行中
+              currentTask: taskStateMapping[item.currentTask]
             })),
             ...res.result.cancel.map(item => ({
               ...item,
-              taskState: '已拒绝', // 设置取消状态
-              currentTask: item.currentTask || '无', // 如果没有currentTask，则显示'无'
+              currentTask: '已拒绝', // 如果没有currentTask，则显示'无'
             })),
             ...res.result.complete.map(item => ({
               ...item,
-              taskState: '已完成', // 设置完成状态
-              currentTask: item.currentTask || '无', // 如果没有currentTask，则显示'无'
+              currentTask: '已完成', // 如果没有currentTask，则显示'无'
             }))
           ];
           // 使用Promise.all和限制并发
@@ -649,6 +680,9 @@ export default {
                     this.$set(this.flowHistoryData[i], 'companyName', res.result.company_name);
                     this.$set(this.flowHistoryData[i], 'projectName', res.result.project_name);
                     this.$set(this.flowHistoryData[i], 'Money', res.result.money);
+                    this.$set(this.flowHistoryData[i], 'projectAddress', res.result.project_adress);
+                    this.$set(this.flowHistoryData[i], 'responsiblePerson', res.result.responsible_person);
+                    this.$set(this.flowHistoryData[i], 'mobile', res.result.mobile);
                   }
                 })
                 .catch((err) => {
@@ -686,7 +720,36 @@ export default {
       nw_postAction1('/task/getPendingTakes', params)
         .then((res) => {
           console.log('res321', res)
-          this.flowWillAnnounceData = res.result
+          // this.flowWillAnnounceData = res.result
+          this.flowWillAnnounceData = res.result.map(item => {
+            console.log('item.nodeName为:', item.nodeName)
+            // 根据nodeName映射状态
+            if (item.nodeName === '总包施工单位提交保证金存缴申请') {
+              item.nodeName = '待提交申请';
+            }
+            if (item.nodeName === '科长审核保证金金额以及相关信息') {
+              item.nodeName = '科长待审核';
+            }
+            if (item.nodeName === '主管审核保证金金额以及相关信息') {
+              item.nodeName = '主管待审核';
+            }
+            if (item.nodeName === '总包施工单位上传银行存单电子版文件') {
+              item.nodeName = '待上传文件';
+            }
+            if (item.nodeName === '经纪公司审核银行存单') {
+              item.nodeName = '经济公司待审核';
+            }
+            if (item.nodeName === '承办人审核保证金金额以及相关信息') {
+              item.nodeName = '承办人员待审核';
+            }
+            if (item.nodeName === '业务主管领导审核保证金金额以及相关信息') {
+              item.nodeName = '业务主管领导待审核';
+            }
+            if (item.nodeName === '人社主管领导审核保证金金额以及相关信息') {
+              item.nodeName = '人社主管领导待审核';
+            }
+            return item;
+          });
           console.log('flowWillAnnounceData查询', this.flowWillAnnounceData)
           // 使用Promise.all和限制并发
           const requests = []
@@ -718,6 +781,9 @@ export default {
                     this.$set(this.flowWillAnnounceData[i], 'companyName', res.result.company_name);
                     this.$set(this.flowWillAnnounceData[i], 'projectName', res.result.project_name);
                     this.$set(this.flowWillAnnounceData[i], 'Money', res.result.money);
+                    this.$set(this.flowWillAnnounceData[i], 'projectAddress', res.result.project_adress);
+                    this.$set(this.flowWillAnnounceData[i], 'responsiblePerson', res.result.responsible_person);
+                    this.$set(this.flowWillAnnounceData[i], 'mobile', res.result.mobile);
                   }
                 })
                 .catch((err) => {
