@@ -11,9 +11,7 @@
           <div id="taskList">
             <div>
               <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="taskTab.tabKey">
-                <a-tab-pane
-                  v-if="userInfo.username === 'kezhang' || userInfo.username === 'zhuguan' || userInfo.username === 'admin' || userInfo.username === 'Brokerage001' || userInfo.username === 'Brokerage002'"
-                  key="1" tab="待办事项">
+                <a-tab-pane key="1" tab="待办事项">
                   <div>
                     <div class="card-table" style="padding: 10px">
                       <div class="announceSearchList">
@@ -52,9 +50,7 @@
                     </div>
                   </div>
                 </a-tab-pane>
-                <a-tab-pane
-                  v-if="userInfo.username === 'kezhang' || userInfo.username === 'zhuguan' || userInfo.username === 'admin' || userInfo.username === 'corporation001' || userInfo.username === 'corporation002'"
-                  key="2" tab="历史">
+                <a-tab-pane key="2" tab="历史">
                   <div>
                     <div class="card-table">
                       <div class="doingSearchList">
@@ -65,6 +61,18 @@
                             {{ item.name }}
                           </a-select-option>
                         </a-select>
+                        <a class="selectText">选择状态: </a>
+                        <a-select style="width: 200px; margin-left: 10px; margin-top: 10px"
+                          :defaultActiveFirstOption="true">
+                          <a-select-option value="all">全部</a-select-option>
+                          <a-select-option value="completed">已完成</a-select-option>
+                          <a-select-option value="rejected">已拒绝</a-select-option>
+                          <a-select-option value="in-progress">进行中</a-select-option>
+                        </a-select>
+                        <a class="selectText">选择时间: </a>
+                        <a-range-picker style="width: 250x" :show-time="{ format: 'HH:mm' }" format="YYYY-MM-DD HH:mm"
+                          :placeholder="['开始时间', '结束时间']" @change="onChange" :value="dateStrings">
+                        </a-range-picker>
                         <a-button-group style="margin-left: 20px">
                           <a-button type="primary" icon="search" @click="getData()"
                             style="margin-left: 20px">查询</a-button>
@@ -129,6 +137,7 @@ export default {
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory },
   data() {
     return {
+      selectedStatus: 'all', // 状态默认选择 "全部"
       taskTab: {
         tabKey: '1', // 主 Tab 页的状态
       },
