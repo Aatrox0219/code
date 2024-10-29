@@ -12,11 +12,22 @@
       </div>
     </div>
     <div
+      v-if="node.type != 'rectangle' && node.type != 'rhombus' && node.type != 'swinlane' && node.state === 'Ready'"
+      style="width: 100%"
+    >
+      <div class="menu-node flex-col">
+        <div class="menu-node-content flex-row">
+          <img class="menu-node-icon flex-col" referrerpolicy="no-referrer" :src="iconWaitingClass" />
+          <span class="menu-node-text">{{ node.name }} - 未认领</span>
+        </div>
+      </div>
+    </div>
+    <div
       v-if="
         node.type != 'rectangle' &&
         node.type != 'rhombus' &&
         node.type != 'swinlane' &&
-        (node.state === 'running' || node.state === 'Withdraw' || node.state === 'Created' || node.state === 'Canceled')
+        (node.state === 'running' || node.state === 'Withdraw' || node.state === 'Created' || node.state === 'Canceled' || node.state === 'Reserved')
       "
       style="width: 100%"
     >
@@ -24,7 +35,7 @@
         <div class="menu-node-content flex-row">
           <img class="menu-node-icon flex-col" referrerpolicy="no-referrer" :src="iconRunningClass" />
           <span class="menu-node-text menu-node-text-running"
-            >{{ node.name }} - <span v-if="node.state == 'Created'">已创建</span>
+            >{{ node.name }} - <span v-if="node.state == 'Created' || node.state == 'Reserved'">已创建</span>
             <span v-if="node.state == 'Withdraw'">已退回</span><span v-if="node.state == 'Canceled'">已拒绝</span></span
           >
         </div>
