@@ -28,7 +28,7 @@
           主办单位：黄冈市人力资源和社会保障局
         </div>
         <div class="footer-text">
-          技术支持：
+          技术支持：金诚国际保险经纪有限公司黄冈分公司
         </div>
       </div>
     </div>
@@ -97,6 +97,14 @@ export default {
   }
 
   .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 110px 0 144px;
+    width: 100%;
+    position: relative;
     width: 100%;
     min-height: 100%;
     // background: #f0f2f5 url(~@/assets/background.svg) no-repeat 50%;

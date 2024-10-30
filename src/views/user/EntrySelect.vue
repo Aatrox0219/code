@@ -58,14 +58,16 @@ export default {
 
 .card-container {
     display: flex;
-    justify-content: space-around; /* 在卡片之间均匀分布空隙 */
+    justify-content: space-around;
+    /* 在卡片之间均匀分布空隙 */
     align-items: center;
     width: 100%;
-    margin-top: 80px;
+    margin-top: 100px;
     margin-left: auto;
     margin-right: auto;
     background-color: transparent;
-    gap: 20px; /* 减少卡片之间的间距 */
+    gap: 20px;
+    /* 减少卡片之间的间距 */
 }
 
 @media (min-width: 1200px) {
@@ -75,7 +77,10 @@ export default {
 }
 
 /* 设置每个卡片的样式 */
-.card1, .card2, .card3, .card4 {
+.card1,
+.card2,
+.card3,
+.card4 {
     flex: 1;
     min-width: 200px;
     max-width: 280px;
@@ -90,10 +95,21 @@ export default {
     cursor: pointer;
 }
 
-.card1 { background: linear-gradient(135deg, #ff9a9e, #fecfef); }
-.card2 { background: linear-gradient(135deg, #a8e6cf, #dcedc1); }
-.card3 { background: linear-gradient(135deg, #6a9bd0, #85e3ff); }
-.card4 { background: linear-gradient(135deg, #f9d256, #f9f586); }
+.card1 {
+    background: linear-gradient(135deg, #ff9a9e, #fecfef);
+}
+
+.card2 {
+    background: linear-gradient(135deg, #a8e6cf, #dcedc1);
+}
+
+.card3 {
+    background: linear-gradient(135deg, #6a9bd0, #85e3ff);
+}
+
+.card4 {
+    background: linear-gradient(135deg, #d6a2e8, #e5b0e4);
+}
 
 
 .icon {
@@ -113,7 +129,7 @@ export default {
 
 .text {
     margin-top: 20px;
-    font-size: 2em; 
+    font-size: 2em;
     color: white;
 }
 
@@ -124,5 +140,4 @@ export default {
     bottom: 20px;
     width: 100%;
 }
-
 </style>

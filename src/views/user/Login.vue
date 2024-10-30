@@ -37,7 +37,7 @@
             </a-col>
           </a-row>
         </a-tab-pane>
-        <a-tab-pane key="tab2" tab="手机号登录">
+        <!-- <a-tab-pane key="tab2" tab="手机号登录">
           <a-form-item>
             <a-input v-decorator="['mobile', validatorRules.mobile]" size="large" type="text" placeholder="手机号">
               <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }" />
@@ -58,7 +58,7 @@
                 v-text="(!state.smsSendBtn && '获取验证码') || state.time + ' s'"></a-button>
             </a-col>
           </a-row>
-        </a-tab-pane>
+        </a-tab-pane> -->
       </a-tabs>
 
       <!-- <a-form-item>
@@ -480,7 +480,7 @@ export default {
 <style lang="less" scoped>
 .user-layout-login {
   background-color: white;
-  margin-top: 80px;
+  // margin-top: 100px;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
