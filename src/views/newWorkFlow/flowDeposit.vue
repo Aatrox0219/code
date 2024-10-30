@@ -5,16 +5,75 @@
         <a-button
           v-if="userInfo.username === 'corporation001' || userInfo.username === 'corporation002' || userInfo.username === 'admin' || userInfo.username === 'ceshi001'"
           type="primary" @click="startFixedProcess(true)" style="margin-right: 10px">
-          开启保证金存缴流程
+          保证金存缴申请
         </a-button>
         <div id="formContent" style="margin-top: -10px">
           <div id="taskList">
             <div>
               <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="taskTab.tabKey">
+                <a-tab-pane key="2" tab="存缴历史">
+                  <div>
+                    <div class="card-table">
+                      <div class="doingSearchList">
+                        <a class="selectText">所属区县: </a>
+                        <a-select style="width: 200px; margin-left: 10px; margin-top: 10px"
+                          :defaultActiveFirstOption="true">
+                          <a-select-option value="all">全部</a-select-option>
+                          <a-select-option value="zhuangzhou">黄州区</a-select-option>
+                          <a-select-option value="tuanfeng">团风县</a-select-option>
+                          <a-select-option value="hongan">红安县</a-select-option>
+                          <a-select-option value="luotian">罗田县</a-select-option>
+                          <a-select-option value="yingshan">英山县</a-select-option>
+                          <a-select-option value="xishui">浠水县</a-select-option>
+                          <a-select-option value="qichun">蕲春县</a-select-option>
+                          <a-select-option value="huangmei">黄梅县</a-select-option>
+                          <a-select-option value="longganhu">龙感湖管理区</a-select-option>
+                          <a-select-option value="macheng">麻城市</a-select-option>
+                          <a-select-option value="wuxue">武穴市</a-select-option>
+                        </a-select>
+
+                        <a class="selectText">选择状态: </a>
+                        <a-select style="width: 200px; margin-left: 10px; margin-top: 10px"
+                          :defaultActiveFirstOption="true">
+                          <a-select-option value="all">全部</a-select-option>
+                          <a-select-option value="completed">已完成</a-select-option>
+                          <a-select-option value="rejected">已拒绝</a-select-option>
+                          <a-select-option value="in-progress">进行中</a-select-option>
+                        </a-select>
+
+                        <a class="selectText">选择时间: </a>
+                        <a-range-picker style="width: 250px" :show-time="{ format: 'HH:mm' }" format="YYYY-MM-DD HH:mm"
+                          :placeholder="['开始时间', '结束时间']" @change="onChange" :value="dateStrings">
+                        </a-range-picker>
+                      </div>
+
+                      <div style="margin-top: 10px;">
+                        <a class="selectText">项目名称: </a>
+                        <a-input v-model="projectName" style="width: 200px; margin-left: 10px;"></a-input>
+
+                        <a-button-group style="margin-left: 20px">
+                          <a-button type="primary" icon="search" @click="getData()"
+                            style="margin-left: 20px">查询</a-button>
+                          <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
+                        </a-button-group>
+                      </div>
+                      <a-card :bordered="false">
+                        <div class="">
+                          <a-table bordered :columns="displayedHistoryColumns" :dataSource="flowHistoryData"
+                            rowKey="id">
+                            <span slot="flowHistoryaction" slot-scope="text, record, index">
+                              <a @click="seeHistory(record)">历史</a>
+                            </span>
+                          </a-table>
+                        </div>
+                      </a-card>
+                    </div>
+                  </div>
+                </a-tab-pane>
                 <a-tab-pane key="1" tab="待办事项">
                   <div>
                     <div class="card-table" style="padding: 10px">
-                      <div class="announceSearchList">
+                      <!-- <div class="announceSearchList">
                         <div>
                           <a class="selectText">选择流程: </a>
                           <a-select v-model="instanceProcessing" class="selectFrame" :defaultActiveFirstOption="true">
@@ -34,55 +93,14 @@
                             <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
                           </a-button-group>
                         </div>
-                      </div>
+                      </div> -->
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <a-table bordered :columns="flowWillAnnouncecolumns" :dataSource="flowWillAnnounceData"
+                          <a-table bordered :columns="displayedAnnounceColumns" :dataSource="flowWillAnnounceData"
                             rowKey="id">
                             <span slot="flowWillAnnounceaction" slot-scope="text, record, index">
                               <a @click="announceTask(record)">处理该任务</a>
                               <a-divider type="vertical" />
-                              <a @click="seeHistory(record)">历史</a>
-                            </span>
-                          </a-table>
-                        </div>
-                      </a-card>
-                    </div>
-                  </div>
-                </a-tab-pane>
-                <a-tab-pane key="2" tab="历史">
-                  <div>
-                    <div class="card-table">
-                      <div class="doingSearchList">
-                        <a class="selectText">选择流程: </a>
-                        <a-select v-model="instanceHistory" style="width: 200px; margin-left: 10px; margin-top: 10px"
-                          :defaultActiveFirstOption="true">
-                          <a-select-option v-for="item in processInstance" :key="item.id" :value="item.id">
-                            {{ item.name }}
-                          </a-select-option>
-                        </a-select>
-                        <a class="selectText">选择状态: </a>
-                        <a-select style="width: 200px; margin-left: 10px; margin-top: 10px"
-                          :defaultActiveFirstOption="true">
-                          <a-select-option value="all">全部</a-select-option>
-                          <a-select-option value="completed">已完成</a-select-option>
-                          <a-select-option value="rejected">已拒绝</a-select-option>
-                          <a-select-option value="in-progress">进行中</a-select-option>
-                        </a-select>
-                        <a class="selectText">选择时间: </a>
-                        <a-range-picker style="width: 250x" :show-time="{ format: 'HH:mm' }" format="YYYY-MM-DD HH:mm"
-                          :placeholder="['开始时间', '结束时间']" @change="onChange" :value="dateStrings">
-                        </a-range-picker>
-                        <a-button-group style="margin-left: 20px">
-                          <a-button type="primary" icon="search" @click="getData()"
-                            style="margin-left: 20px">查询</a-button>
-                          <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
-                        </a-button-group>
-                      </div>
-                      <a-card :bordered="false">
-                        <div class="">
-                          <a-table bordered :columns="flowHistorycolumns" :dataSource="flowHistoryData" rowKey="id">
-                            <span slot="flowHistoryaction" slot-scope="text, record, index">
                               <a @click="seeHistory(record)">历史</a>
                             </span>
                           </a-table>
@@ -97,10 +115,10 @@
         </div>
       </a-card>
     </div>
-    <a-modal title="保证金存缴流程" :visible="isModalVisible" @ok="startProcess" @cancel="handleCancel" width="800px">
+    <a-modal title="保证金存缴方式" :visible="isModalVisible" @ok="startProcess" @cancel="handleCancel" width="800px">
       <div class="flowConfig">
         <div style="padding-top: 20px">
-          <span>请选择存缴流程：</span>
+          <span>请选择存缴方式：</span>
           <a-select v-model="selectedProcessId" placeholder="请选择一个流程" style="width: 300px">
             <a-select-option v-for="item in flowConfigData" :key="item.processId" :value="item.processId">
               {{ item.name }}
@@ -139,14 +157,8 @@ export default {
     return {
       selectedStatus: 'all', // 状态默认选择 "全部"
       taskTab: {
-        tabKey: '1', // 主 Tab 页的状态
+        tabKey: '2', // 主 Tab 页的状态
       },
-      // subTaskTab: {
-      //   tabKey: '2', // 待办事项下的子 Tab 页状态
-      // },
-      // subHistoryTab: {
-      //   tabKey: '1', // 历史下的子 Tab 页状态
-      // },
       instanceClaim: '', // 未认领的选择流程
       instanceProcessing: '', // 待处理的选择流程
       // instanceCompleted: '', // 已完成的选择流程
@@ -247,7 +259,7 @@ export default {
           dataIndex: 'projectName',
         },
         {
-          title: '项目地址',
+          title: '所属区县',
           align: 'center',
           dataIndex: 'projectAddress',
         },
@@ -255,6 +267,70 @@ export default {
           title: '合同金额（万元）',
           align: 'center',
           dataIndex: 'Money',
+        },
+        {
+          title: '负责人',
+          align: 'center',
+          dataIndex: 'responsiblePerson',
+        },
+        {
+          title: '联系方式',
+          align: 'center',
+          dataIndex: 'mobile',
+        },
+        {
+          title: '创建时间',
+          align: 'center',
+          dataIndex: 'createDate',
+        },
+        {
+          title: '操作',
+          align: 'center',
+          width: '20%',
+          dataIndex: 'flowWillAnnounceaction',
+          scopedSlots: { customRender: 'flowWillAnnounceaction' },
+        },
+      ],
+      chengbanflowWillAnnouncecolumns: [
+        {
+          title: '状态',
+          align: 'center',
+          dataIndex: 'nodeName',
+        },
+        // {
+        //   title: '任务名称',
+        //   align: 'center',
+        //   dataIndex: 'currentTask',
+        // },
+        // {
+        //   title: '流程名称',
+        //   align: 'center',
+        //   dataIndex: 'processName',
+        // },
+        {
+          title: '企业名称',
+          align: 'center',
+          dataIndex: 'companyName',
+        },
+        {
+          title: '项目名称',
+          align: 'center',
+          dataIndex: 'projectName',
+        },
+        {
+          title: '所属区县',
+          align: 'center',
+          dataIndex: 'projectAddress',
+        },
+        {
+          title: '合同金额（万元）',
+          align: 'center',
+          dataIndex: 'Money',
+        },
+        {
+          title: '存缴比例',
+          align: 'center',
+          dataIndex: 'Proportions',
         },
         {
           title: '负责人',
@@ -306,7 +382,7 @@ export default {
           dataIndex: 'projectName',
         },
         {
-          title: '项目地址',
+          title: '所属区县',
           align: 'center',
           dataIndex: 'projectAddress',
         },
@@ -314,6 +390,69 @@ export default {
           title: '合同金额（万元）',
           align: 'center',
           dataIndex: 'Money',
+        },
+        {
+          title: '负责人',
+          align: 'center',
+          dataIndex: 'responsiblePerson',
+        },
+        {
+          title: '联系方式',
+          align: 'center',
+          dataIndex: 'mobile',
+        },
+        {
+          title: '创建时间',
+          align: 'center',
+          dataIndex: 'createDate',
+        },
+        {
+          title: '详情',
+          align: 'center',
+          dataIndex: 'flowHistoryaction',
+          scopedSlots: { customRender: 'flowHistoryaction' },
+        },
+      ],
+      chengbanflowHistorycolumns: [
+        {
+          title: '状态',
+          align: 'center',
+          dataIndex: 'currentTask',
+        },
+        // {
+        //   title: '任务名称',
+        //   align: 'center',
+        //   dataIndex: 'currentTask',
+        // },
+        // {
+        //   title: '流程名称',
+        //   align: 'center',
+        //   dataIndex: 'processName',
+        // },
+        {
+          title: '企业名称',
+          align: 'center',
+          dataIndex: 'companyName',
+        },
+        {
+          title: '项目名称',
+          align: 'center',
+          dataIndex: 'projectName',
+        },
+        {
+          title: '所属区县',
+          align: 'center',
+          dataIndex: 'projectAddress',
+        },
+        {
+          title: '合同金额（万元）',
+          align: 'center',
+          dataIndex: 'Money',
+        },
+        {
+          title: '存缴比例',
+          align: 'center',
+          dataIndex: 'Proportions',
         },
         {
           title: '负责人',
@@ -424,7 +563,15 @@ export default {
   computed: {
     ...mapState({
       userInfo: state => state.user.info // 假设用户信息存储在user模块中的info
-    })
+    }),
+    displayedAnnounceColumns() {
+      console.log('userInfo.username', this.userInfo.username)
+      return this.userInfo.username === 'chengban' ? this.chengbanflowWillAnnouncecolumns : this.flowWillAnnouncecolumns;
+    },
+    displayedHistoryColumns() {
+      console.log('userInfo.username', this.userInfo.username)
+      return this.userInfo.username === 'chengban' ? this.chengbanflowHistorycolumns : this.flowHistorycolumns;
+    },
   },
 
   mounted() {
@@ -468,7 +615,7 @@ export default {
               }
             }
             this.flowConfigData = flowConfigData
-            this.$message.success('流程数据加载成功')
+            this.$message.success('加载成功')
           } else {
             this.$message.error('查询可开启的流程失败')
           }
@@ -640,7 +787,12 @@ export default {
             '经纪公司审核银行存单': '经济公司待审核银行存单',
             '承办人审核银行存单': '承办人员待审核银行存单',
             '业务主管领导审核银行存单': '业务主管领导待审核银行存单',
-            '人社主管领导审核银行存单': '人社主管领导待审核银行存单'
+            '人社主管领导审核银行存单': '人社主管领导待审核银行存单',
+
+            '经纪公司上传保函电子版文件': '待上传文件',
+            '承办人审核保函': '承办人员待审核保函',
+            '业务主管领导审核保函': '业务主管领导待审核保函',
+            '人社主管领导审核保函': '人社主管领导待审核保函',
           };
           this.flowHistoryData = [
             ...res.result.instance.map(item => ({
@@ -681,6 +833,7 @@ export default {
                     this.$set(this.flowHistoryData[i], 'companyName', res.result.company_name);
                     this.$set(this.flowHistoryData[i], 'projectName', res.result.project_name);
                     this.$set(this.flowHistoryData[i], 'Money', res.result.money);
+                    this.$set(this.flowHistoryData[i], 'Proportions', res.result.proportions);
                     this.$set(this.flowHistoryData[i], 'projectAddress', res.result.project_adress);
                     this.$set(this.flowHistoryData[i], 'responsiblePerson', res.result.responsible_person);
                     this.$set(this.flowHistoryData[i], 'mobile', res.result.mobile);
@@ -782,6 +935,7 @@ export default {
                     this.$set(this.flowWillAnnounceData[i], 'companyName', res.result.company_name);
                     this.$set(this.flowWillAnnounceData[i], 'projectName', res.result.project_name);
                     this.$set(this.flowWillAnnounceData[i], 'Money', res.result.money);
+                    this.$set(this.flowWillAnnounceData[i], 'Proportions', res.result.proportions);
                     this.$set(this.flowWillAnnounceData[i], 'projectAddress', res.result.project_adress);
                     this.$set(this.flowWillAnnounceData[i], 'responsiblePerson', res.result.responsible_person);
                     this.$set(this.flowWillAnnounceData[i], 'mobile', res.result.mobile);
