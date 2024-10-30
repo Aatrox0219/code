@@ -53,9 +53,10 @@ export default {
       if (window.ace) {
         this.loadEditor()
       } else {
-        loadJs('https://unpkg.com/form-making/public/lib/ace/ace.js').then(() => {
-          this.loadEditor()
-        })
+        // loadJs('https://unpkg.com/form-making/public/lib/ace/ace.js').then(() => {
+        //   this.loadEditor()
+        // })
+        this.loadEditor()
       }
     }, 0)
   },

@@ -442,7 +442,7 @@
         ></el-input-number>
 
         <template v-if="data.type == 'html'">
-          <code-editor :key="data.key" v-model="data.options.defaultValue" height="200px"></code-editor>
+          <html-editor :key="data.key" v-model="data.options.defaultValue" height="200px"></html-editor>
         </template>
       </el-form-item>
 
@@ -889,6 +889,7 @@
         </el-form-item>
       </template>
 
+      
       <!-- :label="$t('fm.config.widget.customClass')" -->
       <el-form-item
         label="自定义Class"
@@ -1047,6 +1048,7 @@
 <script>
 import Draggable from 'vuedraggable'
 import CodeEditor from '../components/CodeEditor'
+import HtmlEditor from '../components/HtmlEditor'
 import CodeDialog from './CodeDialog'
 import { o_getAction } from '@/api/onApi'
 import compro from './componentProperties'
@@ -1056,6 +1058,7 @@ export default {
     Draggable,
     CodeEditor,
     CodeDialog,
+    HtmlEditor,
   },
   props: ['widgetForm', 'data'],
   data() {
