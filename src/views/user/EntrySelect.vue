@@ -58,30 +58,30 @@ export default {
 
 .card-container {
     display: flex;
-    /* 使用Flexbox进行布局 */
-    justify-content: space-between;
-    /* 在行内均匀分布 */
-    align-items: center; 
-    /* 垂直居中 */
+    justify-content: space-around; /* 在卡片之间均匀分布空隙 */
+    align-items: center;
     width: 100%;
-    /* 设置容器宽度 */
-    padding: 20px;
-    /* 添加一些内边距 */
-    margin-top: 100px;
+    margin-top: 80px;
+    margin-left: auto;
+    margin-right: auto;
     background-color: transparent;
+    gap: 20px; /* 减少卡片之间的间距 */
 }
 
-.card1 {
-    width: 350px;
-    /* 宽度 */
-    height: 450px;
-    /* 高度 */
-    background: linear-gradient(135deg, #ff9a9e, #fecfef);
-    /* 渐变背景颜色 */
+@media (min-width: 1200px) {
+    .card-container {
+        width: 90%;
+    }
+}
+
+/* 设置每个卡片的样式 */
+.card1, .card2, .card3, .card4 {
+    flex: 1;
+    min-width: 200px;
+    max-width: 280px;
+    height: 400px;
     border-radius: 15px;
-    /* 圆角 */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    /* 阴影效果 */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -90,71 +90,17 @@ export default {
     cursor: pointer;
 }
 
-.card2 {
-    width: 350px;
-    /* 宽度 */
-    height: 450px;
-    /* 高度 */
-    background: linear-gradient(135deg, #a8e6cf, #dcedc1);
-    /* 渐变背景颜色 */
-    border-radius: 15px;
-    /* 圆角 */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    /* 阴影效果 */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    cursor: pointer;
-}
+.card1 { background: linear-gradient(135deg, #ff9a9e, #fecfef); }
+.card2 { background: linear-gradient(135deg, #a8e6cf, #dcedc1); }
+.card3 { background: linear-gradient(135deg, #6a9bd0, #85e3ff); }
+.card4 { background: linear-gradient(135deg, #f9d256, #f9f586); }
 
-.card3 {
-    width: 350px;
-    /* 宽度 */
-    height: 450px;
-    /* 高度 */
-    background: linear-gradient(135deg, #6a9bd0, #85e3ff);
-    /* 渐变背景颜色 */
-    border-radius: 15px;
-    /* 圆角 */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    /* 阴影效果 */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    cursor: pointer;
-}
-
-.card4 {
-    width: 350px;
-    /* 宽度 */
-    height: 450px;
-    /* 高度 */
-    background: linear-gradient(135deg, #f9d256, #f9f586);
-    /* 渐变背景颜色 */
-    border-radius: 15px;
-    /* 圆角 */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    /* 阴影效果 */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    cursor: pointer;
-}
 
 .icon {
     width: 100px;
-    /* 图标大小 */
     height: 100px;
     background-color: white;
-    /* 图标背景为白色 */
     border-radius: 50%;
-    /* 圆形图标背景 */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -162,16 +108,13 @@ export default {
 
 .icon-img {
     width: 40px;
-    /* 图片的宽度 */
     height: 40px;
-    /* 图片的高度 */
 }
 
 .text {
-    margin-top: 25px;
-    font-size: 35px;
+    margin-top: 20px;
+    font-size: 2em; 
     color: white;
-    /* 字体颜色 */
 }
 
 .footer {
@@ -181,4 +124,5 @@ export default {
     bottom: 20px;
     width: 100%;
 }
+
 </style>
