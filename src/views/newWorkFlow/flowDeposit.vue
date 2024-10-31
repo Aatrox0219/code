@@ -15,8 +15,8 @@
                   <div>
                     <div class="card-table">
                       <div class="doingSearchList">
-                        <a class="selectText">所属区县: </a>
-                        <a-select style="width: 200px; margin-left: 10px; margin-top: 10px"
+                        <a class="selectText">项目所在地: </a>
+                        <a-select style="width: 100px; margin-left: 10px; margin-top: 10px"
                           :defaultActiveFirstOption="true">
                           <a-select-option value="all">全部</a-select-option>
                           <a-select-option value="zhuangzhou">黄州区</a-select-option>
@@ -32,8 +32,8 @@
                           <a-select-option value="wuxue">武穴市</a-select-option>
                         </a-select>
 
-                        <a class="selectText">选择状态: </a>
-                        <a-select style="width: 200px; margin-left: 10px; margin-top: 10px"
+                        <a class="selectText">存缴申请进度: </a>
+                        <a-select style="width: 100px; margin-left: 10px; margin-top: 10px"
                           :defaultActiveFirstOption="true">
                           <a-select-option value="all">全部</a-select-option>
                           <a-select-option value="completed">已完成</a-select-option>
@@ -45,9 +45,6 @@
                         <a-range-picker style="width: 250px" :show-time="{ format: 'HH:mm' }" format="YYYY-MM-DD HH:mm"
                           :placeholder="['开始时间', '结束时间']" @change="onChange" :value="dateStrings">
                         </a-range-picker>
-                      </div>
-
-                      <div style="margin-top: 10px;">
                         <a class="selectText">项目名称: </a>
                         <a-input v-model="projectName" style="width: 200px; margin-left: 10px;"></a-input>
 
@@ -56,6 +53,8 @@
                             style="margin-left: 20px">查询</a-button>
                           <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
                         </a-button-group>
+
+
                       </div>
                       <a-card :bordered="false">
                         <div class="">
@@ -789,6 +788,8 @@ export default {
             '业务主管领导审核银行存单': '业务主管领导待审核银行存单',
             '人社主管领导审核银行存单': '人社主管领导待审核银行存单',
 
+            '选择办理方式':'办理方式待选择',
+            '总包施工单位上传保函电子版文件': '待上传文件',
             '经纪公司上传保函电子版文件': '待上传文件',
             '承办人审核保函': '承办人员待审核保函',
             '业务主管领导审核保函': '业务主管领导待审核保函',
@@ -881,12 +882,6 @@ export default {
             if (item.nodeName === '总包施工单位提交保证金存缴申请') {
               item.nodeName = '待提交申请';
             }
-            if (item.nodeName === '科长审核保证金金额以及相关信息') {
-              item.nodeName = '科长待审核';
-            }
-            if (item.nodeName === '主管审核保证金金额以及相关信息') {
-              item.nodeName = '主管待审核';
-            }
             if (item.nodeName === '总包施工单位上传银行存单电子版文件') {
               item.nodeName = '待上传文件';
             }
@@ -894,13 +889,32 @@ export default {
               item.nodeName = '经济公司待审核';
             }
             if (item.nodeName === '承办人审核保证金金额以及相关信息') {
-              item.nodeName = '承办人员待审核';
+              item.nodeName = '承办人员待审核申请信息';
             }
             if (item.nodeName === '业务主管领导审核保证金金额以及相关信息') {
-              item.nodeName = '业务主管领导待审核';
+              item.nodeName = '业务主管领导待审核申请信息';
             }
             if (item.nodeName === '人社主管领导审核保证金金额以及相关信息') {
-              item.nodeName = '人社主管领导待审核';
+              item.nodeName = '人社主管领导待审核申请信息';
+            }
+
+            if (item.nodeName === '经纪公司上传保函电子版文件') {
+              item.nodeName = '待上传文件';
+            }
+            if (item.nodeName === '承办人审核保函') {
+              item.nodeName = '人社主管领导待审核保函';
+            }
+            if (item.nodeName === '业务主管领导审核保函') {
+              item.nodeName = '人社主管领导待审核保函';
+            }
+            if (item.nodeName === '人社主管领导审核保函') {
+              item.nodeName = '人社主管领导待审核保函';
+            }
+            if (item.nodeName === '总包施工单位上传保函电子版文件') {
+              item.nodeName = '待上传文件';
+            }
+            if (item.nodeName === '选择办理方式') {
+              item.nodeName = '办理方式待选择';
             }
             return item;
           });
@@ -1170,7 +1184,7 @@ export default {
 
 .selectText {
   color: black;
-  font-size: 20px;
+  font-size: 13px;
   margin-left: 22px;
 }
 
