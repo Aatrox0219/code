@@ -269,7 +269,7 @@
         >
           <!-- <el-alert type="info" :title="$t('fm.description.uploadJsonInfo')" /> -->
           <el-alert type="info" title="JSON格式如下，直接复制生成的json覆盖此处代码点击确定即可" />
-          <code-editor height="400px" mode="json" v-model="jsonEg" />
+          <html-editor style="height: 400px;" height="400px" mode="json" v-model="jsonEg" />
         </cus-dialog>
 
         <!-- 预览点击获取数据按钮弹框开始 -->
@@ -337,6 +337,7 @@ import GenerateForm from './GenerateForm'
 import AntdGenerateForm from './AntdvGenerator/GenerateForm'
 import Clipboard from 'clipboard'
 import CodeEditor from '../components/CodeEditor'
+import HtmlEditor from '../components/HtmlEditor'
 import { basicComponents, layoutComponents, advanceComponents } from './componentsConfig.js'
 import { EventBus } from '../util/event-bus.js'
 import generateCode from './generateCode.js'
@@ -360,6 +361,7 @@ export default {
     GenerateForm,
     CodeEditor,
     AntdGenerateForm,
+    HtmlEditor,
   },
   props: {
     preview: {
