@@ -477,7 +477,7 @@ export default {
         })
     },
     claimTask(reocrd) {
-      nw_getAction(`/task/claimTask/` + reocrd.id)
+      nw_getAction(`/task/claimTask/` + reocrd.taskId)
         .then((res) => {
           if (res.result) {
             this.$message.success('认领成功')

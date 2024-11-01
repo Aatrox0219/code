@@ -2,9 +2,12 @@
   <div>
     <div>
       <a-card :bordered="false">
-        <a-button
-          v-if="userInfo.username === 'corporation001' || userInfo.username === 'corporation002' || userInfo.username === 'admin' || userInfo.username === 'ceshi001'"
-          type="primary" @click="startFixedProcess(true)" style="margin-right: 10px">
+        <a-button v-if="
+          userInfo.username === 'corporation001' ||
+          userInfo.username === 'corporation002' ||
+          userInfo.username === 'admin' ||
+          userInfo.username === 'ceshi001'
+        " type="primary" @click="startFixedProcess(true)" style="margin-right: 10px">
           保证金存缴申请
         </a-button>
         <div id="formContent" style="margin-top: -10px">
@@ -46,15 +49,13 @@
                           :placeholder="['开始时间', '结束时间']" @change="onChange" :value="dateStrings">
                         </a-range-picker>
                         <a class="selectText">项目名称: </a>
-                        <a-input v-model="projectName" style="width: 200px; margin-left: 10px;"></a-input>
+                        <a-input v-model="projectName" style="width: 200px; margin-left: 10px"></a-input>
 
                         <a-button-group style="margin-left: 20px">
                           <a-button type="primary" icon="search" @click="getData()"
                             style="margin-left: 20px">查询</a-button>
                           <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
                         </a-button-group>
-
-
                       </div>
                       <a-card :bordered="false">
                         <div class="">
@@ -126,7 +127,6 @@
         </div>
       </div>
     </a-modal>
-
 
     <div>
       <annTask ref="modalform"> </annTask>
@@ -561,26 +561,21 @@ export default {
   },
   computed: {
     ...mapState({
-      userInfo: state => state.user.info // 假设用户信息存储在user模块中的info
+      userInfo: (state) => state.user.info, // 假设用户信息存储在user模块中的info
     }),
     displayedAnnounceColumns() {
       console.log('userInfo.username', this.userInfo.username)
-      return this.userInfo.username === 'chengban' ? this.chengbanflowWillAnnouncecolumns : this.flowWillAnnouncecolumns;
+      return this.userInfo.username === 'chengban' ? this.chengbanflowWillAnnouncecolumns : this.flowWillAnnouncecolumns
     },
     displayedHistoryColumns() {
       console.log('userInfo.username', this.userInfo.username)
-      return this.userInfo.username === 'chengban' ? this.chengbanflowHistorycolumns : this.flowHistorycolumns;
+      return this.userInfo.username === 'chengban' ? this.chengbanflowHistorycolumns : this.flowHistorycolumns
     },
   },
 
   mounted() {
     this.startFixedProcess(false)
     this.getData()
-    // 在获取到用户信息后，设置默认tab
-    // if (this.userInfo.username === 'corporation001' || this.userInfo.username === 'corporation002') {
-    //   this.taskTab.tabKey = '2'; // 默认显示历史tab
-    //   // this.subHistoryTab.tabKey = '5'; // 默认显示进行中
-    // }
     console.log('当前用户信息', this.userInfo)
   },
   methods: {
@@ -651,7 +646,6 @@ export default {
             this.$message.error('开启流程失败')
           }
           this.selectedProcessId = null
-
         })
         .catch((error) => {
           console.log(error)
@@ -680,9 +674,9 @@ export default {
       // this.getData()
       // 根据 taskTab.tabKey 的变化处理子标签的状态
       if (this.taskTab.tabKey === '1') {
-        this.subTaskTab.tabKey = '1'; // 切换到待办事项下的默认状态
+        this.subTaskTab.tabKey = '1' // 切换到待办事项下的默认状态
       } else if (this.taskTab.tabKey === '2') {
-        this.subHistoryTab.tabKey = '5'; // 切换到历史下的进行中
+        this.subHistoryTab.tabKey = '5' // 切换到历史下的进行中
       }
     },
     // 更新表格数据
@@ -690,79 +684,86 @@ export default {
       this.flowWillAnnounceData = []
       // this.flowFinishData = []
       // this.flowRejectData = []
-      // this.loadClaimData = []
+      this.loadClaimData = []
       this.flowHistoryData = []
-      // const tabKey = this.taskTab.tabKey
-      // if (tabKey === '1') {
-      //   // 待办事项
-      //   if (this.subTaskTab.tabKey === '1') {
-      //     this.getLoadClaim(); // 未认领
-      //   } else if (this.subTaskTab.tabKey === '2') {
-      //     this.getflowAnnounce(); // 待处理
-      //   }
-      // } else if (tabKey === '2') {
-      //   // 历史
-      //   if (this.subHistoryTab.tabKey === '5') {
-      //     this.getDoingFlow(); // 进行中
-      //   } else if (this.subHistoryTab.tabKey === '3') {
-      //     this.getCompleteProcessInstance(); // 已完成
-      //   } else if (this.subHistoryTab.tabKey === '4') {
-      //     this.getCancelProcesses(); // 已拒绝
-      //   }
-      // }
-      // this.getLoadClaim(); // 获取未认领流程
-      this.getflowAnnounce(); // 获取待处理流程
+      this.getflowAnnounce() // 获取待处理流程
       // this.getCompleteProcessInstance(); // 获取已完成流程
       // this.getCancelProcesses(); // 获取已拒绝流程
-      this.getHistoryFlow();
+      this.getHistoryFlow()
       // this.getDoingFlow(); // 获取进行中流程
+      this.getLoadClaim() // 获取未认领流程
     },
     //得到所有未认领的流程
-    // getLoadClaim() {
-    //   let params = {
-    //     processId: this.instanceClaim,
-    //     taskName: this.taskName,
-    //     startTime: this.startTime,
-    //     endTime: this.endTime,
-    //   }
-    //   nw_postAction1(`/task/getClaim`, params)
-    //     .then((res) => {
-    //       this.loadClaimData = res.result
-    //       if (this.loadClaimData.length > 0) {
-    //         for (var i = 0; i < this.loadClaimData.length; i++) {
-    //           this.loadClaimData[i].state = '待领取'
-    //           var type = this.loadClaimData[i].type
-    //           switch (type) {
-    //             case 'Participative':
-    //               this.loadClaimData[i].type = '竞争任务'
-    //               break
-    //             case 'Normal':
-    //               this.loadClaimData[i].type = '正常任务'
-    //               break
-    //             default:
-    //               break
-    //           }
-    //         }
-    //       }
-    //     })
-    //     .catch((res) => {
-    //       console.log(res)
-    //     })
-    // },
-    // claimTask(reocrd) {
-    //   nw_getAction(`/task/claimTask/` + reocrd.id)
-    //     .then((res) => {
-    //       if (res.result) {
-    //         this.$message.success('认领成功')
-    //         this.getLoadClaim()
-    //       } else {
-    //         this.$message.error('认领失败')
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       console.log(error)
-    //     })
-    // },
+    getLoadClaim() {
+      let params = {
+        processId: this.instanceClaim,
+        taskName: this.taskName,
+        startTime: this.startTime,
+        endTime: this.endTime,
+      };
+      nw_postAction1(`/task/getClaim`, params)
+        .then((res) => {
+          console.log('获取未认领的返回数据:', res);
+          this.loadClaimData = res.result;
+          if (this.loadClaimData.length > 0) {
+            const claimPromises = []; // 用于存储所有认领任务的 Promise
+
+            for (var i = 0; i < this.loadClaimData.length; i++) {
+              this.loadClaimData[i].state = '待领取';
+              console.log(`项目 ${i} 的地址:`, this.loadClaimData[i].projectAddress);
+
+              // 自动认领逻辑
+              const projectAddressMap = {
+                '黄州区': 'huangzhou',
+                '团风县': 'tuanfeng',
+                '红安县': 'hongan',
+                '罗田县': 'luotian',
+                '英山县': 'yingshan',
+                '浠水县': 'xishui',
+                '蕲春县': 'qichun',
+                '黄梅县': 'huangmei',
+                '龙感湖管理区': 'longganhu',
+                '麻城市': 'macheng',
+                '武穴市': 'wuxue',
+              };
+
+              const projectAddress = this.loadClaimData[i].projectAddress;
+              const usernamePrefix = projectAddressMap[projectAddress];
+
+              if (usernamePrefix && this.userInfo.username.startsWith(usernamePrefix)) {
+                const promise = this.claimTask(this.loadClaimData[i]);
+                claimPromises.push(promise);
+              }
+            }
+
+            // 等待所有认领任务完成后更新界面
+            Promise.all(claimPromises).then(() => {
+              this.getHistoryFlow(); // 更新历史数据
+              this.getflowAnnounce(); // 更新待办事项
+
+            });
+          }
+        })
+        .catch((res) => {
+          console.log(res);
+        });
+    },
+    claimTask(reocrd) {
+      return nw_getAction(`/task/claimTask/` + reocrd.taskId)
+        .then((res) => {
+          if (res.result) {
+            console.log('认领成功', reocrd);
+            return true; // 认领成功返回 true
+          } else {
+            console.error('认领失败');
+            return false; // 认领失败返回 false
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          return false; // 出现错误时返回 false
+        });
+    },
 
     //获取历史
     getHistoryFlow() {
@@ -778,83 +779,109 @@ export default {
           console.log('res321', res)
           // 状态映射
           const taskStateMapping = {
-            '总包施工单位提交保证金存缴申请': '待提交申请',
-            '承办人审核保证金金额以及相关信息': '承办人员待审核申请信息',
-            '业务主管领导审核保证金金额以及相关信息': '业务主管领导待审核申请信息',
-            '人社主管领导审核保证金金额以及相关信息': '人社主管领导待审核申请信息',
-            '总包施工单位上传银行存单电子版文件': '待上传文件',
-            '经纪公司审核银行存单': '经济公司待审核银行存单',
-            '承办人审核银行存单': '承办人员待审核银行存单',
-            '业务主管领导审核银行存单': '业务主管领导待审核银行存单',
-            '人社主管领导审核银行存单': '人社主管领导待审核银行存单',
+            总包施工单位提交保证金存缴申请: '待提交申请',
+            承办人审核保证金金额以及相关信息: '承办人员待审核申请信息',
+            业务主管领导审核保证金金额以及相关信息: '业务主管领导待审核申请信息',
+            人社主管领导审核保证金金额以及相关信息: '人社主管领导待审核申请信息',
+            总包施工单位上传银行存单电子版文件: '待上传文件',
+            经纪公司审核银行存单: '经济公司待审核银行存单',
+            承办人审核银行存单: '承办人员待审核银行存单',
+            业务主管领导审核银行存单: '业务主管领导待审核银行存单',
+            人社主管领导审核银行存单: '人社主管领导待审核银行存单',
 
-            '选择办理方式':'办理方式待选择',
-            '总包施工单位上传保函电子版文件': '待上传文件',
-            '经纪公司上传保函电子版文件': '待上传文件',
-            '承办人审核保函': '承办人员待审核保函',
-            '业务主管领导审核保函': '业务主管领导待审核保函',
-            '人社主管领导审核保函': '人社主管领导待审核保函',
-          };
-          this.flowHistoryData = [
-            ...res.result.instance.map(item => ({
-              ...item,
-              currentTask: taskStateMapping[item.currentTask]
-            })),
-            ...res.result.cancel.map(item => ({
-              ...item,
-              currentTask: '已拒绝', // 如果没有currentTask，则显示'无'
-            })),
-            ...res.result.complete.map(item => ({
-              ...item,
-              currentTask: '已完成', // 如果没有currentTask，则显示'无'
-            }))
-          ];
-          // 使用Promise.all和限制并发
-          const requests = []
-          const maxConcurrentRequests = 5 // 限制并发数量
-          const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-          const processItems = async () => {
-            for (let i = 0; i < this.flowHistoryData.length; i++) {
-              // 处理状态和类型
-              this.processStateAndType(this.flowHistoryData[i])
-              // 生成请求
-              const request = nw_getAction(
-                `/diagram/getByProcInstId?procInstId=${this.flowHistoryData[i].processInstanceId}`
-              )
-                .then((res) => {
-                  let url = res.result.historyInfo[1].url
-                  let tableId = url.substring(33, 65)
-                  let dataId = url.substring(66, 87)
-                  return o_getAction('/cgform/api/form/' + tableId + '/' + dataId)
-                })
-                .then((res) => {
-                  if (res.result.company_name) {
-                    // 使用 Vue.set 来更新对象属性
-                    this.$set(this.flowHistoryData[i], 'companyName', res.result.company_name);
-                    this.$set(this.flowHistoryData[i], 'projectName', res.result.project_name);
-                    this.$set(this.flowHistoryData[i], 'Money', res.result.money);
-                    this.$set(this.flowHistoryData[i], 'Proportions', res.result.proportions);
-                    this.$set(this.flowHistoryData[i], 'projectAddress', res.result.project_adress);
-                    this.$set(this.flowHistoryData[i], 'responsiblePerson', res.result.responsible_person);
-                    this.$set(this.flowHistoryData[i], 'mobile', res.result.mobile);
-                  }
-                })
-                .catch((err) => {
-                  console.log(err)
-                })
-              requests.push(request)
-              // 限制并发
-              if (requests.length >= maxConcurrentRequests) {
-                await Promise.all(requests)
-                requests.length = 0 // 清空已完成的请求
-                await delay(100) // 适当延迟
-              }
-            }
-            // 处理剩余的请求
-            await Promise.all(requests)
+            选择办理方式: '办理方式待选择',
+            总包施工单位上传保函电子版文件: '待上传文件',
+            经纪公司上传保函电子版文件: '待上传文件',
+            承办人审核保函: '承办人员待审核保函',
+            业务主管领导审核保函: '业务主管领导待审核保函',
+            人社主管领导审核保函: '人社主管领导待审核保函',
           }
-          processItems()
+          // 使用后端返回的 data 属性
+          const flowHistoryData = res.result.data.map((item) => ({
+            ...item,
+            currentTask: taskStateMapping[item.currentTask],
+            companyName: item.enterpriseName, // 添加企业名称
+            projectName: item.projectName, // 添加项目名称
+            Money: item.contractAmount, // 添加合同金额
+            projectAddress: item.projectAddress, // 添加项目地址
+          }))
+
+          this.flowHistoryData = [
+            ...flowHistoryData,
+            // ...res.result.instance.map(item => ({
+            //   ...item,
+            //   currentTask: taskStateMapping[item.currentTask]
+            // })),
+            // ...res.result.cancel.map(item => ({
+            //   ...item,
+            //   currentTask: '已拒绝', // 如果没有currentTask，则显示'无'
+            // })),
+            // ...res.result.complete.map(item => ({
+            //   ...item,
+            //   currentTask: '已完成', // 如果没有currentTask，则显示'无'
+            // }))
+          ]
+
+          // this.flowHistoryData = [
+          //   ...res.result.instance.map(item => ({
+          //     ...item,
+          //     currentTask: taskStateMapping[item.currentTask]
+          //   })),
+          //   ...res.result.cancel.map(item => ({
+          //     ...item,
+          //     currentTask: '已拒绝', // 如果没有currentTask，则显示'无'
+          //   })),
+          //   ...res.result.complete.map(item => ({
+          //     ...item,
+          //     currentTask: '已完成', // 如果没有currentTask，则显示'无'
+          //   }))
+          // ];
+          // 使用Promise.all和限制并发
+          // const requests = []
+          // const maxConcurrentRequests = 5 // 限制并发数量
+          // const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+          // const processItems = async () => {
+          //   for (let i = 0; i < this.flowHistoryData.length; i++) {
+          //     // 处理状态和类型
+          //     this.processStateAndType(this.flowHistoryData[i])
+          //     // 生成请求
+          //     const request = nw_getAction(
+          //       `/diagram/getByProcInstId?procInstId=${this.flowHistoryData[i].processInstanceId}`
+          //     )
+          //       .then((res) => {
+          //         let url = res.result.historyInfo[1].url
+          //         let tableId = url.substring(33, 65)
+          //         let dataId = url.substring(66, 87)
+          //         return o_getAction('/cgform/api/form/' + tableId + '/' + dataId)
+          //       })
+          //       .then((res) => {
+          //         if (res.result.company_name) {
+          //           // 使用 Vue.set 来更新对象属性
+          //           this.$set(this.flowHistoryData[i], 'companyName', res.result.company_name);
+          //           this.$set(this.flowHistoryData[i], 'projectName', res.result.project_name);
+          //           this.$set(this.flowHistoryData[i], 'Money', res.result.money);
+          //           this.$set(this.flowHistoryData[i], 'Proportions', res.result.proportions);
+          //           this.$set(this.flowHistoryData[i], 'projectAddress', res.result.project_adress);
+          //           this.$set(this.flowHistoryData[i], 'responsiblePerson', res.result.responsible_person);
+          //           this.$set(this.flowHistoryData[i], 'mobile', res.result.mobile);
+          //         }
+          //       })
+          //       .catch((err) => {
+          //         console.log(err)
+          //       })
+          //     requests.push(request)
+          //     // 限制并发
+          //     if (requests.length >= maxConcurrentRequests) {
+          //       await Promise.all(requests)
+          //       requests.length = 0 // 清空已完成的请求
+          //       await delay(100) // 适当延迟
+          //     }
+          //   }
+          //   // 处理剩余的请求
+          //   await Promise.all(requests)
+          // }
+          // processItems()
         })
         .catch((error) => {
           console.error(error)
@@ -870,113 +897,39 @@ export default {
         categoryId: '1847453055727501313',
       }
 
-      console.log('this.projectName为:', this.projectName)
-
       nw_postAction1('/task/getPendingTakes', params)
         .then((res) => {
           console.log('res321', res)
           // this.flowWillAnnounceData = res.result
-          this.flowWillAnnounceData = res.result.map(item => {
-            console.log('item.nodeName为:', item.nodeName)
-            // 根据nodeName映射状态
-            if (item.nodeName === '总包施工单位提交保证金存缴申请') {
-              item.nodeName = '待提交申请';
-            }
-            if (item.nodeName === '总包施工单位上传银行存单电子版文件') {
-              item.nodeName = '待上传文件';
-            }
-            if (item.nodeName === '经纪公司审核银行存单') {
-              item.nodeName = '经济公司待审核';
-            }
-            if (item.nodeName === '承办人审核保证金金额以及相关信息') {
-              item.nodeName = '承办人员待审核申请信息';
-            }
-            if (item.nodeName === '业务主管领导审核保证金金额以及相关信息') {
-              item.nodeName = '业务主管领导待审核申请信息';
-            }
-            if (item.nodeName === '人社主管领导审核保证金金额以及相关信息') {
-              item.nodeName = '人社主管领导待审核申请信息';
-            }
+          const taskStateMapping = {
+            总包施工单位提交保证金存缴申请: '待提交申请',
+            承办人审核保证金金额以及相关信息: '承办人员待审核申请信息',
+            业务主管领导审核保证金金额以及相关信息: '业务主管领导待审核申请信息',
+            人社主管领导审核保证金金额以及相关信息: '人社主管领导待审核申请信息',
+            总包施工单位上传银行存单电子版文件: '待上传文件',
+            经纪公司审核银行存单: '经济公司待审核银行存单',
+            承办人审核银行存单: '承办人员待审核银行存单',
+            业务主管领导审核银行存单: '业务主管领导待审核银行存单',
+            人社主管领导审核银行存单: '人社主管领导待审核银行存单',
 
-            if (item.nodeName === '经纪公司上传保函电子版文件') {
-              item.nodeName = '待上传文件';
-            }
-            if (item.nodeName === '承办人审核保函') {
-              item.nodeName = '人社主管领导待审核保函';
-            }
-            if (item.nodeName === '业务主管领导审核保函') {
-              item.nodeName = '人社主管领导待审核保函';
-            }
-            if (item.nodeName === '人社主管领导审核保函') {
-              item.nodeName = '人社主管领导待审核保函';
-            }
-            if (item.nodeName === '总包施工单位上传保函电子版文件') {
-              item.nodeName = '待上传文件';
-            }
-            if (item.nodeName === '选择办理方式') {
-              item.nodeName = '办理方式待选择';
-            }
-            return item;
-          });
-          console.log('flowWillAnnounceData查询', this.flowWillAnnounceData)
-          // 使用Promise.all和限制并发
-          const requests = []
-          const maxConcurrentRequests = 5 // 限制并发数量
-          const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-          const processItems = async () => {
-            for (let i = 0; i < this.flowWillAnnounceData.length; i++) {
-              // 处理状态和类型
-              this.processStateAndType(this.flowWillAnnounceData[i])
-
-              // 生成请求
-              const request = nw_getAction(
-                `/diagram/getByProcInstId?procInstId=${this.flowWillAnnounceData[i].processInstanceId}`
-              )
-                .then((res) => {
-                  let url = res.result.historyInfo[1].url
-                  let tableId = url.substring(33, 65)
-                  let dataId = url.substring(66, 87)
-
-                  return o_getAction('/cgform/api/form/' + tableId + '/' + dataId)
-                })
-                .then((res) => {
-                  if (res.result.company_name) {
-                    // this.flowWillAnnounceData[i].companyName = res.result.company_name
-                    // this.flowWillAnnounceData[i].projectName = res.result.project_name
-                    // this.flowWillAnnounceData[i].Money = res.result.money
-                    // 使用 Vue.set 来更新对象属性
-                    this.$set(this.flowWillAnnounceData[i], 'companyName', res.result.company_name);
-                    this.$set(this.flowWillAnnounceData[i], 'projectName', res.result.project_name);
-                    this.$set(this.flowWillAnnounceData[i], 'Money', res.result.money);
-                    this.$set(this.flowWillAnnounceData[i], 'Proportions', res.result.proportions);
-                    this.$set(this.flowWillAnnounceData[i], 'projectAddress', res.result.project_adress);
-                    this.$set(this.flowWillAnnounceData[i], 'responsiblePerson', res.result.responsible_person);
-                    this.$set(this.flowWillAnnounceData[i], 'mobile', res.result.mobile);
-                  }
-                })
-                .catch((err) => {
-                  console.log(err)
-                })
-
-              requests.push(request)
-
-              // 限制并发
-              if (requests.length >= maxConcurrentRequests) {
-                await Promise.all(requests)
-                requests.length = 0 // 清空已完成的请求
-                await delay(100) // 适当延迟
-              }
-            }
-
-            // 处理剩余的请求
-            await Promise.all(requests)
-
-            // 在所有请求完成后打印flowWillAnnounceData
-            console.log('最终数据', this.flowWillAnnounceData)
+            选择办理方式: '办理方式待选择',
+            总包施工单位上传保函电子版文件: '待上传文件',
+            经纪公司上传保函电子版文件: '待上传文件',
+            承办人审核保函: '承办人员待审核保函',
+            业务主管领导审核保函: '业务主管领导待审核保函',
+            人社主管领导审核保函: '人社主管领导待审核保函',
           }
-
-          processItems()
+          // 使用后端返回的 data 属性
+          const flowWillAnnounceData = res.result.map((item) => ({
+            ...item,
+            nodeName: taskStateMapping[item.nodeName],
+            companyName: item.enterpriseName,
+            projectName: item.projectName,
+            Money: item.contractAmount,
+            projectAddress: item.projectAddress,
+          }))
+          this.flowWillAnnounceData = flowWillAnnounceData
+          console.log('flowWillAnnounceData查询', this.flowWillAnnounceData)
         })
         .catch((error) => {
           console.error(error)

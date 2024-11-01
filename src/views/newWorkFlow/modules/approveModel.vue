@@ -85,8 +85,8 @@ export default {
     },
     //处理非退回任务
     announceTask(record) {
-      this.taskId = record.id
-      nw_postAction1(`/task/handleTask`, { taskId: record.id, processInstanceId: record.processInstanceId })
+      this.taskId = record.taskId
+      nw_postAction1(`/task/handleTask`, { taskId: record.taskId, processInstanceId: record.processInstanceId })
         .then((res) => {
           console.log(res.result.nowIds) //a036af9c58f04101b57c5b66893e47b0--
           this.nowformId = res.result.nowIds.substring(0, 32)
@@ -113,8 +113,8 @@ export default {
     //处理退回任务
     announceRollTask(record) {
       console.log('退回')
-      this.taskId = record.id
-      nw_postAction1(`/task/handleTask`, { taskId: record.id, processInstanceId: record.processInstanceId })
+      this.taskId = record.taskId
+      nw_postAction1(`/task/handleTask`, { taskId: record.taskId, processInstanceId: record.processInstanceId })
         .then((res) => {
           var oldIdsList = res.result.oldIdsList
           var arrayForm = new Array() //展示的

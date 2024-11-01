@@ -1,14 +1,7 @@
 <template>
   <div>
-    <a-modal
-      :visible="visible"
-      :footer="null"
-      width="95%"
-      :zIndex="100"
-      :closable="false"
-      :destroyOnClose="true"
-      :centered="true"
-    >
+    <a-modal :visible="visible" :footer="null" width="95%" :zIndex="100" :closable="false" :destroyOnClose="true"
+      :centered="true">
       <div>
         <div id="formContent">
           <div class="formbody">
@@ -24,6 +17,7 @@
             <a-button type="primary" @click="handleTest()" style="margin-right: 20px">提交</a-button>
             <a-button type="primary" @click="close()">返回</a-button>
           </div>
+          <flow-deposit ref="flowDeposit" />
         </div>
       </div>
     </a-modal>
@@ -35,10 +29,11 @@ import AntdGenerateForm from '@/components/FormMaking/components/AntdvGenerator/
 import { t_postAction, t_getAction } from '@/api/tempApi.js'
 import { o_postAction, o_getAction } from '@/api/onApi.js'
 import { nw_postAction1 } from '@api/newWorkApi'
+import FlowDeposit from '@/views/newWorkFlow/flowDeposit.vue';
 
 export default {
   name: 'AnnTask',
-  components: { GenerateForm, AntdGenerateForm },
+  components: { GenerateForm, AntdGenerateForm, FlowDeposit },
   data() {
     return {
       formDesignerId: '',
@@ -76,7 +71,7 @@ export default {
       },
     }
   },
-  updated() {},
+  updated() { },
   methods: {
     openModal(formDesignerId, onlineDataId, onlineTableId, taskId) {
       this.formDesignerId = formDesignerId
@@ -96,7 +91,7 @@ export default {
         .then(() => {
           _this.visible = false
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     //得到表单
     getForm() {
@@ -129,8 +124,7 @@ export default {
     },
     //完成该节点的任务，把该节点填写的表单id，online表id，online数据id传入工作流
     completeTask(onlineId, dataId) {
-      var _this = this
-      console.log('completeTask')
+      var _this = this;
       nw_postAction1('/task/complete', {
         taskId: _this.taskId,
         onlineTableId: onlineId,
@@ -138,15 +132,24 @@ export default {
       })
         .then((res) => {
           if (res.result.result) {
-            _this.$message.success('通过成功')
+            _this.$message.success('通过成功');
+            this.$nextTick(() => {
+              console.log(this.$refs); // 打印 $refs 以检查 flowDeposit
+              if (this.$refs.flowDeposit && typeof this.$refs.flowDeposit.getHistoryFlow === 'function') {
+                this.$refs.flowDeposit.getHistoryFlow();
+              } else {
+                console.error('flowDeposit 组件未正确加载或方法不存在');
+              }
+            });
           } else {
-            _this.$message.error('通过失败')
+            _this.$message.error('通过失败');
           }
         })
         .catch((err) => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     },
+
     //得到online的data
     getOnlineJson(onlineTableId, onlineDataId, formJson) {
       //得到online的json
@@ -264,23 +267,28 @@ export default {
   border-radius: 5px;
   margin: 0 auto;
 }
+
 .formTable {
   width: 90%;
   border: 1px solid #000000;
   margin: 0 auto;
 }
+
 .title {
   width: 100%;
   height: 50px;
   text-align: center;
 }
+
 .formbody {
   margin-top: 50px;
   width: 97%;
 }
+
 .submitBtn {
   margin-top: 20px;
 }
+
 .submitBtn button {
   margin: 20px auto;
   left: 45%;
