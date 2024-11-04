@@ -19,29 +19,29 @@
                     <div class="card-table">
                       <div class="doingSearchList">
                         <a class="selectText">项目所在地: </a>
-                        <a-select style="width: 100px; margin-left: 10px; margin-top: 10px"
+                        <a-select v-model="selectedAddress" style="width: 100px; margin-left: 10px; margin-top: 10px"
                           :defaultActiveFirstOption="true">
                           <a-select-option value="all">全部</a-select-option>
-                          <a-select-option value="zhuangzhou">黄州区</a-select-option>
-                          <a-select-option value="tuanfeng">团风县</a-select-option>
-                          <a-select-option value="hongan">红安县</a-select-option>
-                          <a-select-option value="luotian">罗田县</a-select-option>
-                          <a-select-option value="yingshan">英山县</a-select-option>
-                          <a-select-option value="xishui">浠水县</a-select-option>
-                          <a-select-option value="qichun">蕲春县</a-select-option>
-                          <a-select-option value="huangmei">黄梅县</a-select-option>
-                          <a-select-option value="longganhu">龙感湖管理区</a-select-option>
-                          <a-select-option value="macheng">麻城市</a-select-option>
-                          <a-select-option value="wuxue">武穴市</a-select-option>
+                          <a-select-option value="黄州区">黄州区</a-select-option>
+                          <a-select-option value="团风县">团风县</a-select-option>
+                          <a-select-option value="红安县">红安县</a-select-option>
+                          <a-select-option value="罗田县">罗田县</a-select-option>
+                          <a-select-option value="英山县">英山县</a-select-option>
+                          <a-select-option value="浠水县">浠水县</a-select-option>
+                          <a-select-option value="蕲春县">蕲春县</a-select-option>
+                          <a-select-option value="黄梅县">黄梅县</a-select-option>
+                          <a-select-option value="龙感湖管理区">龙感湖管理区</a-select-option>
+                          <a-select-option value="麻城市">麻城市</a-select-option>
+                          <a-select-option value="武穴市">武穴市</a-select-option>
                         </a-select>
 
                         <a class="selectText">存缴申请进度: </a>
-                        <a-select style="width: 100px; margin-left: 10px; margin-top: 10px"
+                        <a-select v-model="selectedState" style="width: 100px; margin-left: 10px; margin-top: 10px"
                           :defaultActiveFirstOption="true">
                           <a-select-option value="all">全部</a-select-option>
-                          <a-select-option value="completed">已完成</a-select-option>
-                          <a-select-option value="rejected">已拒绝</a-select-option>
-                          <a-select-option value="in-progress">进行中</a-select-option>
+                          <a-select-option value="complete">已完成</a-select-option>
+                          <a-select-option value="cancel">已拒绝</a-select-option>
+                          <a-select-option value="instance">进行中</a-select-option>
                         </a-select>
 
                         <a class="selectText">选择时间: </a>
@@ -49,7 +49,7 @@
                           :placeholder="['开始时间', '结束时间']" @change="onChange" :value="dateStrings">
                         </a-range-picker>
                         <a class="selectText">项目名称: </a>
-                        <a-input v-model="projectName" style="width: 200px; margin-left: 10px"></a-input>
+                        <a-input v-model="taskName" style="width: 200px; margin-left: 10px"></a-input>
 
                         <a-button-group style="margin-left: 20px">
                           <a-button type="primary" icon="search" @click="getData()"
@@ -58,7 +58,7 @@
                         </a-button-group>
                       </div>
                       <a-card :bordered="false">
-                        <div class="">
+                        <div class="table-container">
                           <a-table bordered :columns="displayedHistoryColumns" :dataSource="flowHistoryData"
                             rowKey="id">
                             <span slot="flowHistoryaction" slot-scope="text, record, index">
@@ -189,6 +189,8 @@ export default {
       processInstance: [{ id: '', name: '所有流程' }],
       taskName: '',
       projectName: '',
+      selectedAddress: 'all',
+      selectedState: 'all',
       startTime: '',
       endTime: '',
       flowWillAnnounceData: [],
@@ -203,6 +205,7 @@ export default {
           align: 'center',
           dataIndex: 'flowClaimName',
           scopedSlots: { customRender: 'flowClaimName' },
+          width: '120px'
         },
         {
           title: '任务名称',
@@ -358,7 +361,7 @@ export default {
         {
           title: '状态',
           align: 'center',
-          dataIndex: 'currentTask',
+          dataIndex: 'nodeName',
         },
         // {
         //   title: '任务名称',
@@ -416,7 +419,7 @@ export default {
         {
           title: '状态',
           align: 'center',
-          dataIndex: 'currentTask',
+          dataIndex: 'nodeName',
         },
         // {
         //   title: '任务名称',
@@ -565,11 +568,11 @@ export default {
     }),
     displayedAnnounceColumns() {
       console.log('userInfo.username', this.userInfo.username)
-      return this.userInfo.username === 'chengban' ? this.chengbanflowWillAnnouncecolumns : this.flowWillAnnouncecolumns
+      return this.userInfo.username.endsWith('cb') ? this.chengbanflowWillAnnouncecolumns : this.flowWillAnnouncecolumns
     },
     displayedHistoryColumns() {
       console.log('userInfo.username', this.userInfo.username)
-      return this.userInfo.username === 'chengban' ? this.chengbanflowHistorycolumns : this.flowHistorycolumns
+      return this.userInfo.username.endsWith('cb') ? this.chengbanflowHistorycolumns : this.flowHistorycolumns
     },
   },
 
@@ -659,6 +662,8 @@ export default {
     selectCondition() {
       this.dateStrings = []
       this.instance = ''
+      this.selectAddress = ''
+      this.applyState = ''
       this.startTime = ''
       this.endTime = ''
       this.taskName = ''
@@ -773,6 +778,8 @@ export default {
         startTime: this.startTime,
         endTime: this.endTime,
         categoryId: '1847453055727501313',
+        address: this.selectedAddress === 'all' ? '' : this.selectedAddress, // 如果选择了全部，则发送空字符串
+        applyState: this.selectedState === 'all' ? '' : this.selectedState // 如果选择了全部，则发送空字符串
       }
       nw_postAction1('/process/getProcessAllState', params)
         .then((res) => {
@@ -797,14 +804,28 @@ export default {
             人社主管领导审核保函: '人社主管领导待审核保函',
           }
           // 使用后端返回的 data 属性
-          const flowHistoryData = res.result.data.map((item) => ({
-            ...item,
-            currentTask: taskStateMapping[item.currentTask],
-            companyName: item.enterpriseName, // 添加企业名称
-            projectName: item.projectName, // 添加项目名称
-            Money: item.contractAmount, // 添加合同金额
-            projectAddress: item.projectAddress, // 添加项目地址
-          }))
+          const flowHistoryData = res.result.data.map((item) => {
+            let nodeName;
+            if (item.state === 'cancel') {
+              nodeName = '已拒绝';
+            } else if (item.state === 'complete') {
+              nodeName = '已完成';
+            } else {
+              nodeName = taskStateMapping[item.nodeName] || item.nodeName;
+            }
+
+            return {
+              ...item,
+              nodeName,
+              companyName: item.enterpriseName, // 添加企业名称
+              projectName: item.projectName, // 添加项目名称
+              Money: item.contractAmount, // 添加合同金额
+              projectAddress: item.projectAddress, // 添加项目地址
+              responsiblePerson: item.responsiblePerson,
+              mobile: item.mobile,
+              Proportions: item.proportions
+            }
+          });
 
           this.flowHistoryData = [
             ...flowHistoryData,
@@ -927,6 +948,9 @@ export default {
             projectName: item.projectName,
             Money: item.contractAmount,
             projectAddress: item.projectAddress,
+            responsiblePerson: item.responsiblePerson,
+            mobile: item.mobile,
+            Proportions: item.proportions
           }))
           this.flowWillAnnounceData = flowWillAnnounceData
           console.log('flowWillAnnounceData查询', this.flowWillAnnounceData)
@@ -1159,5 +1183,12 @@ export default {
 
 .selectFrame {
   width: 200px;
+}
+
+.table-container {
+  width: 100%;
+  /* 使容器宽度自适应 */
+  overflow-x: auto;
+  /* 在小屏幕上支持水平滚动 */
 }
 </style>
