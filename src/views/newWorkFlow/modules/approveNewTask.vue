@@ -12,13 +12,13 @@
       </div>
       <div class="submitBtn">
         <a-button type="primary" @click="handleTest('1')" style="margin-right: 20px">通过</a-button>
-        <a-button type="primary" @click="handleTest('0')" style="margin-right: 20px">拒绝</a-button>
         <a-popover title="请选择退回到哪一个节点">
           <template slot="content">
             <a-button type="dashed" @click="handleTest('2')" style="margin-left: 10px"> 上一个节点 </a-button>
           </template>
           <a-button type="primary">退回</a-button>
         </a-popover>
+        <a-button type="danger" @click="handleTest('0')" style="margin-left: 200px">拒绝</a-button>
       </div>
     </div>
   </div>

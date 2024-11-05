@@ -17,6 +17,14 @@
         {{ data.tableId }}
       </el-form-item>
 
+      <el-form-item label="按钮权限">
+        <el-checkbox-group v-model="data.button">
+          <el-checkbox label="通过"></el-checkbox>
+          <el-checkbox label="拒绝"></el-checkbox>
+          <el-checkbox label="退回"></el-checkbox>
+        </el-checkbox-group>
+      </el-form-item>
+      
       <el-form-item label="UI">
         <el-radio-group v-model="data.ui">
           <el-radio-button label="element">Element</el-radio-button>
