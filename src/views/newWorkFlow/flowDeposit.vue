@@ -45,8 +45,8 @@
                         </a-select>
 
                         <a class="selectText">选择时间: </a>
-                        <a-range-picker style="width: 250px" :show-time="{ format: 'HH:mm' }" format="YYYY-MM-DD HH:mm"
-                          :placeholder="['开始时间', '结束时间']" @change="onChange" :value="dateStrings">
+                        <a-range-picker style="width: 250px" format="YYYY-MM-DD" :placeholder="['开始时间', '结束时间']"
+                          @change="onChange" :value="dateStrings">
                         </a-range-picker>
                         <a class="selectText">项目名称: </a>
                         <a-input v-model="taskName" style="width: 200px; margin-left: 10px"></a-input>
@@ -662,8 +662,8 @@ export default {
     selectCondition() {
       this.dateStrings = []
       this.instance = ''
-      this.selectAddress = ''
-      this.applyState = ''
+      this.selectAddress = 'all'
+      this.selectedState = 'all'
       this.startTime = ''
       this.endTime = ''
       this.taskName = ''
