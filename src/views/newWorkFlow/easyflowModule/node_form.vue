@@ -153,6 +153,15 @@
             <el-option v-for="item in userAssgineeList" :key="item.id" :label="item.name" :value="item"> </el-option>
           </el-select>
         </el-form-item>
+
+        <el-form-item label="按钮权限:">
+          <el-checkbox-group v-model="button_permission" style="height: 100%;" size="small">
+            <el-checkbox-button label="通过"></el-checkbox-button>
+            <el-checkbox-button label="拒绝"></el-checkbox-button>
+            <el-checkbox-button label="退回"></el-checkbox-button>
+          </el-checkbox-group>
+        </el-form-item>
+
         <el-form-item label="到期时间:" class="el-form-special">
           <el-input v-model="node.due.day" size="small"></el-input>天
           <el-input v-model="node.due.hour" size="small"></el-input>小时
@@ -491,6 +500,7 @@ import { t_postAction, t_getAction } from '@/api/tempApi'
 export default {
   data() {
     return {
+      button_permission: [ "通过","拒绝","退回"],
       formAllId: [],
       formRules:{
         formId: [
@@ -547,6 +557,7 @@ export default {
         name: '',
         left: '',
         top: '',
+        button_permission:[],
         state: '',
         feature: {},
         formDesignerId: '',
@@ -899,10 +910,13 @@ export default {
               // node.g = this.node.g
               break
             case 'task':
+
+
               console.log(node)
               node.name = this.node.name
               node.left = this.node.left
               node.top = this.node.top
+              node.button_permission = this.button_permission
               if (this.node.feature.id != undefined) {
                 node.feature = this.node.feature
                 node.formDesignerId = this.node.feature.id

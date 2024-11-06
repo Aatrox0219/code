@@ -74,6 +74,8 @@ export default {
       t_getAction('/admin/desform/' + nowid + '/getConent')
         .then((res) => {
           this.newForm = JSON.parse(res.result)
+          console.log('尝试能否得到按钮的数据json');
+          console.log('this.newForm', this.newForm);
         })
         .catch((err) => {
           console.log(err)

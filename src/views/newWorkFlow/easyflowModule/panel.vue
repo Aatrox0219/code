@@ -470,6 +470,7 @@ export default {
             name: nodeName,
             left: left + 'px',
             top: top + 'px',
+            button_permission: '', //按钮权限
             state: nodeMenu.state,
             feature: {},
             formDesignerId: '', //表单id
