@@ -31,17 +31,16 @@ import { o_postAction, o_getAction } from '@/api/onApi.js'
 import { w_postAction, w_postAction1 } from '../../../api/workapi'
 import { nw_postAction1, nw_getAction } from '@api/newWorkApi'
 import axios from 'axios'
+import api from '@/api/index'
 export default {
   name: 'approveNewTask',
   components: { GenerateForm, AntdGenerateForm },
   props: {
     formId: {
       type: String,
-      required: true
     },
     taskId: {
-      type: String,
-      required: true
+      type: Number,
     },
     record: {
       type: Object,
@@ -75,15 +74,18 @@ export default {
     async checkNodePower() {
       this.nodePowerResult = []
       try {
-        const response = await axios.post('http://111.229.140.21:37192/task/nodePower', {
+        const response = await axios.post(`${api.server_url}${api.global_course_baseURL}/task/nodePower`, {
           taskId: this.record.taskId,
           processId: this.record.processId,
           processInstanceId: this.record.processInstanceId
         })
-        this.nodePowerResult = response.data.result
-        
-        // 根据返回结果处理UI逻辑
-        // 这里你可以添加根据权限控制按钮显示等逻辑
+        console.log('检查节点权限成功：', response.data.result);
+        // this.nodePowerResult = response.data.result
+        if(response.data.result){
+          this.nodePowerResult = response.data.result
+        }else{
+          this.nodePowerResult = []
+        }
         
       } catch (error) {
         console.error('检查节点权限失败：', error)
@@ -111,6 +113,8 @@ export default {
       t_getAction('/admin/desform/' + nowid + '/getConent')
         .then((res) => {
           this.newForm = JSON.parse(res.result)
+          console.log('尝试能否得到按钮的数据json');
+          console.log('this.newForm', this.newForm);
         })
         .catch((err) => {
           console.log(err)
