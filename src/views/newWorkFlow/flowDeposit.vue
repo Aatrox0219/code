@@ -70,7 +70,13 @@
                     </div>
                   </div>
                 </a-tab-pane>
-                <a-tab-pane key="1" tab="待办事项">
+                <a-tab-pane key="1">
+                  <template #tab>
+                    <!-- <a-badge :count="pendingTasksCount"> -->
+                    <a-badge :count=backlogNumber :offset="[10, 0]">
+                      <span>待办事项</span>
+                    </a-badge>
+                  </template>
                   <div>
                     <div class="card-table" style="padding: 10px">
                       <!-- <div class="announceSearchList">
@@ -154,6 +160,7 @@ export default {
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory },
   data() {
     return {
+      backlogNumber: 0,
       selectedStatus: 'all', // 状态默认选择 "全部"
       taskTab: {
         tabKey: '2', // 主 Tab 页的状态
@@ -943,6 +950,7 @@ export default {
             人社主管领导审核保函: '待人社主管领导审核保函',
           }
           // 使用后端返回的 data 属性
+          this.backlogNumber = res.result.length
           const flowWillAnnounceData = res.result.map((item) => ({
             ...item,
             nodeName: taskStateMapping[item.nodeName],
