@@ -470,7 +470,7 @@ export default {
             name: nodeName,
             left: left + 'px',
             top: top + 'px',
-            button_permission: '', //按钮权限
+            button_permission: ["通过","拒绝","退回"], //按钮权限
             state: nodeMenu.state,
             feature: {},
             formDesignerId: '', //表单id
