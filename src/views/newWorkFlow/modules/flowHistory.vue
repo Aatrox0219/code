@@ -21,7 +21,7 @@
           <div class="flowPicture">
             <div id="efContainer" ref="efContainer">
               <template v-for="node in data.nodeList">
-                <a-tooltip :title="`${node.name} - ${getNodeState(node.state)}`" class="custom-tooltip">
+                <a-tooltip :title="`${node.name} - ${getNodeState(node.state)}`" class="custom-tooltip" >
                   <flow-node :key="node.id" :id="node.id" :node="node" type="design">
                     <span class="node-name">{{ node.name }}</span>
                   </flow-node>

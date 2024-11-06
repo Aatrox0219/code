@@ -834,83 +834,9 @@ export default {
               Proportions: item.proportions
             }
           });
-
-          this.flowHistoryData = [
-            ...flowHistoryData,
-            // ...res.result.instance.map(item => ({
-            //   ...item,
-            //   currentTask: taskStateMapping[item.currentTask]
-            // })),
-            // ...res.result.cancel.map(item => ({
-            //   ...item,
-            //   currentTask: '已拒绝', // 如果没有currentTask，则显示'无'
-            // })),
-            // ...res.result.complete.map(item => ({
-            //   ...item,
-            //   currentTask: '已完成', // 如果没有currentTask，则显示'无'
-            // }))
-          ]
-
-          // this.flowHistoryData = [
-          //   ...res.result.instance.map(item => ({
-          //     ...item,
-          //     currentTask: taskStateMapping[item.currentTask]
-          //   })),
-          //   ...res.result.cancel.map(item => ({
-          //     ...item,
-          //     currentTask: '已拒绝', // 如果没有currentTask，则显示'无'
-          //   })),
-          //   ...res.result.complete.map(item => ({
-          //     ...item,
-          //     currentTask: '已完成', // 如果没有currentTask，则显示'无'
-          //   }))
-          // ];
-          // 使用Promise.all和限制并发
-          // const requests = []
-          // const maxConcurrentRequests = 5 // 限制并发数量
-          // const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-          // const processItems = async () => {
-          //   for (let i = 0; i < this.flowHistoryData.length; i++) {
-          //     // 处理状态和类型
-          //     this.processStateAndType(this.flowHistoryData[i])
-          //     // 生成请求
-          //     const request = nw_getAction(
-          //       `/diagram/getByProcInstId?procInstId=${this.flowHistoryData[i].processInstanceId}`
-          //     )
-          //       .then((res) => {
-          //         let url = res.result.historyInfo[1].url
-          //         let tableId = url.substring(33, 65)
-          //         let dataId = url.substring(66, 87)
-          //         return o_getAction('/cgform/api/form/' + tableId + '/' + dataId)
-          //       })
-          //       .then((res) => {
-          //         if (res.result.company_name) {
-          //           // 使用 Vue.set 来更新对象属性
-          //           this.$set(this.flowHistoryData[i], 'companyName', res.result.company_name);
-          //           this.$set(this.flowHistoryData[i], 'projectName', res.result.project_name);
-          //           this.$set(this.flowHistoryData[i], 'Money', res.result.money);
-          //           this.$set(this.flowHistoryData[i], 'Proportions', res.result.proportions);
-          //           this.$set(this.flowHistoryData[i], 'projectAddress', res.result.project_adress);
-          //           this.$set(this.flowHistoryData[i], 'responsiblePerson', res.result.responsible_person);
-          //           this.$set(this.flowHistoryData[i], 'mobile', res.result.mobile);
-          //         }
-          //       })
-          //       .catch((err) => {
-          //         console.log(err)
-          //       })
-          //     requests.push(request)
-          //     // 限制并发
-          //     if (requests.length >= maxConcurrentRequests) {
-          //       await Promise.all(requests)
-          //       requests.length = 0 // 清空已完成的请求
-          //       await delay(100) // 适当延迟
-          //     }
-          //   }
-          //   // 处理剩余的请求
-          //   await Promise.all(requests)
-          // }
-          // processItems()
+          // 按创建时间排序（从近到远）
+          const sortedHistoryData = flowHistoryData.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+          this.flowHistoryData = sortedHistoryData;
         })
         .catch((error) => {
           console.error(error)
@@ -962,7 +888,11 @@ export default {
             mobile: item.mobile,
             Proportions: item.proportions
           }))
-          this.flowWillAnnounceData = flowWillAnnounceData
+
+          // 按创建时间排序（从近到远）
+          const sortedData = flowWillAnnounceData.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+
+          this.flowWillAnnounceData = sortedData;
           console.log('flowWillAnnounceData查询', this.flowWillAnnounceData)
         })
         .catch((error) => {

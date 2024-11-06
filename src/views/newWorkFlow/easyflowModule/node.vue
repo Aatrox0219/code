@@ -387,10 +387,10 @@ export default {
   line-height: 20px;
   text-align: left;
 }
-.menu-node-text:hover {
+/* .menu-node-text:hover {
   text-overflow: inherit;
   overflow: visible;
-}
+} */
 .menu-node-text-running {
   color: #1791ff;
 }
