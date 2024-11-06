@@ -16,7 +16,7 @@
         </el-select>
         {{ data.tableId }}
       </el-form-item>
-
+      
       <el-form-item label="UI">
         <el-radio-group v-model="data.ui">
           <el-radio-button label="element">Element</el-radio-button>
@@ -233,6 +233,10 @@ export default {
       // console.log('watch监听输出this.data.tableId为：', this.data.tableId)
       // console.log('watch监听输出self.data.tableId为：', self.data.tableId)
       // console.log('watch监听输出this.widgetForm.config.tableId为：', self.widgetForm.config.tableId)
+    },
+    'data.button': function (val) {
+      console.log('data.button监听函数打印传入val值为：', val)
+      console.log('监听到（数据库绑定）发生变化')
     },
   },
 }
