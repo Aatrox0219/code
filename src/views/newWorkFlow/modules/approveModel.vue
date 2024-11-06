@@ -20,7 +20,7 @@
         ></approve-task>
       </div>
       <div style="margin-top: 20px">
-        <approve-new-task @close-approveTask="close" :formId="nowformId" :taskId="taskId"> </approve-new-task>
+        <approve-new-task @close-approveTask="close" :formId="nowformId" :taskId="taskId" :record="currentRecord"> </approve-new-task>
       </div>
     </div>
 
@@ -72,6 +72,7 @@ export default {
       rollFormList: [],
       rollbackForm: {},
       lastForm: {},
+      currentRecord: null,
     }
   },
   mounted() {},
@@ -81,11 +82,14 @@ export default {
       this.visible = false
       this.approve1=false
       this.approve2=false
+      this.currentRecord = null
       this.$emit('close')
     },
     //处理非退回任务
     announceTask(record) {
+      console.log('处理',record);
       this.taskId = record.taskId
+      this.currentRecord = record
       nw_postAction1(`/task/handleTask`, { taskId: record.taskId, processInstanceId: record.processInstanceId })
         .then((res) => {
           console.log(res.result.nowIds) //a036af9c58f04101b57c5b66893e47b0--

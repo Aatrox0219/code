@@ -11,14 +11,14 @@
         </generate-form>
       </div>
       <div class="submitBtn">
-        <a-button type="primary" @click="handleTest('1')" style="margin-right: 20px">通过</a-button>
-        <a-popover title="请选择退回到哪一个节点">
+        <a-button  v-if="nodePowerResult.includes('通过')" type="primary" @click="handleTest('1')" style="margin-right: 20px">通过</a-button>
+        <a-popover  v-if="nodePowerResult.includes('退回')" title="请选择退回到哪一个节点">
           <template slot="content">
             <a-button type="dashed" @click="handleTest('2')" style="margin-left: 10px"> 上一个节点 </a-button>
           </template>
           <a-button type="primary">退回</a-button>
         </a-popover>
-        <a-button type="danger" @click="handleTest('0')" style="margin-left: 200px">拒绝</a-button>
+        <a-button  v-if="nodePowerResult.includes('拒绝')" type="danger" @click="handleTest('0')" style="margin-left: 200px">拒绝</a-button>
       </div>
     </div>
   </div>
@@ -30,13 +30,28 @@ import { t_postAction, t_getAction } from '@/api/tempApi.js'
 import { o_postAction, o_getAction } from '@/api/onApi.js'
 import { w_postAction, w_postAction1 } from '../../../api/workapi'
 import { nw_postAction1, nw_getAction } from '@api/newWorkApi'
+import axios from 'axios'
 export default {
   name: 'approveNewTask',
   components: { GenerateForm, AntdGenerateForm },
-  props: ['formId', 'taskId'],
+  props: {
+    formId: {
+      type: String,
+      required: true
+    },
+    taskId: {
+      type: String,
+      required: true
+    },
+    record: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
       process_id: '',
+      nodePowerResult: [],
       newForm: {},
       func1: {
         func_kyf(resolve) {
@@ -54,8 +69,29 @@ export default {
   updated() {},
   mounted() {
     this.getNowFrom()
+    this.checkNodePower()
   },
   methods: {
+    async checkNodePower() {
+      this.nodePowerResult = []
+      try {
+        const response = await axios.post('http://111.229.140.21:37192/task/nodePower', {
+          taskId: this.record.taskId,
+          processId: this.record.processId,
+          processInstanceId: this.record.processInstanceId
+        })
+        this.nodePowerResult = response.data.result
+        
+        // 根据返回结果处理UI逻辑
+        // 这里你可以添加根据权限控制按钮显示等逻辑
+        
+      } catch (error) {
+        console.error('检查节点权限失败：', error)
+        this.$message.error('获取节点权限失败')
+      }
+    },
+
+
     close() {
       var _this = this
       this.$elementConfirm('是否关闭处理界面 ?', '提示', {
@@ -69,13 +105,12 @@ export default {
         .catch(() => {})
     },
     //得到一个现在节点的表单
+
     getNowFrom() {
       var nowid = this.formId
       t_getAction('/admin/desform/' + nowid + '/getConent')
         .then((res) => {
           this.newForm = JSON.parse(res.result)
-          console.log('尝试能否得到按钮的数据json');
-          console.log('this.newForm', this.newForm);
         })
         .catch((err) => {
           console.log(err)
