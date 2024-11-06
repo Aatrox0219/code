@@ -1,14 +1,6 @@
 <template>
-  <a-modal
-    :centered="true"
-    :footer="null"
-    title="查看历史"
-    :visible="visible"
-    :destroyOnClose="true"
-    @cancel="handleCancel"
-    width="75%"
-    :zIndex="100"
-  >
+  <a-modal :centered="true" :footer="null" title="查看历史" :visible="visible" :destroyOnClose="true" @cancel="handleCancel"
+    width="75%" :zIndex="100">
     <div>
       <a-tabs default-active-key="1" tab-position="left" @change="tabChange">
         <a-tab-pane key="1" tab="历史列表">
@@ -29,24 +21,25 @@
           <div class="flowPicture">
             <div id="efContainer" ref="efContainer">
               <template v-for="node in data.nodeList">
-                <flow-node :id="node.id" :key="node.id" :node="node" type="design"> </flow-node>
+                <a-tooltip :title="`${node.name} - ${getNodeState(node.state)}`" class="custom-tooltip">
+                  <flow-node :key="node.id" :id="node.id" :node="node" type="design">
+                    <span class="node-name">{{ node.name }}</span>
+                  </flow-node>
+                </a-tooltip>
               </template>
               <!-- 给画布一个默认的宽度和高度 -->
               <div style="position: absolute; top: 600px; left: 700px">&nbsp;</div>
             </div>
           </div>
         </a-tab-pane>
+
         <a-tab-pane key="3" tab="流程详情">
           <div v-for="(item, index) in arrayForm" :key="index" style="margin-top: 20px">
             <a-timeline-item>
               <a style="margin-right: 20px">任务名称：{{ item.taskName }}</a>
               <a>创建日期：{{ item.createDateStr }}</a>
-              <approve-task
-                :formId="item.prevForm_designer_id"
-                :tableId="item.prevOnline_table_id"
-                :dataId="item.prevOnline_data_id"
-                v-if="item.prevForm_designer_id != undefined"
-              ></approve-task>
+              <approve-task :formId="item.prevForm_designer_id" :tableId="item.prevOnline_table_id"
+                :dataId="item.prevOnline_data_id" v-if="item.prevForm_designer_id != undefined"></approve-task>
             </a-timeline-item>
           </div>
         </a-tab-pane>
@@ -117,7 +110,7 @@ export default {
   created() {
     this.userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
   },
-  mounted() {},
+  mounted() { },
   computed: {},
   methods: {
     tabChange(activeKey) {
@@ -151,7 +144,7 @@ export default {
           this.formArr = formArr
           this.returnJson = res.result.returnJson
         })
-        .catch((error) => {})
+        .catch((error) => { })
     },
     handleCancel() {
       this.dataSource = []
@@ -226,13 +219,27 @@ export default {
         })
       })
     },
+    getNodeState(state) {
+      switch (state) {
+        case 'Completed':
+          return '已完成';
+        case 'waiting':
+          return '未开始';
+        case 'Reserved':
+          return '已创建';
+        default:
+          return '未知状态'; // 如果状态不是上述之一，显示未知状态
+      }
+    },
   },
 }
 </script>
+
 <style scoped>
 .seeContent {
   margin: 7%;
 }
+
 #formContent {
   /* padding: 5px; */
   background-color: #fff;
@@ -240,11 +247,17 @@ export default {
   border-radius: 5px;
   margin: 0 auto;
 }
+
 #efContainer {
   position: relative;
   flex: 1;
   height: 100%;
+  width: 1500px;
+  /* 可根据实际流程图的宽度进行调整 */
+  overflow-x: auto;
+  /* 开启水平滚动条 */
 }
+
 .flowPicture {
   width: 700px;
   height: 600px;
