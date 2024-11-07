@@ -21,7 +21,7 @@
           <div class="flowPicture">
             <div id="efContainer" ref="efContainer">
               <template v-for="node in data.nodeList">
-                <a-tooltip :title="`${node.name} - ${getNodeState(node.state)}`" class="custom-tooltip" >
+                <a-tooltip :title="`${node.name} - ${getNodeState(node.state)}`" >
                   <flow-node :key="node.id" :id="node.id" :node="node" type="design">
                     <span class="node-name">{{ node.name }}</span>
                   </flow-node>
@@ -263,4 +263,17 @@ export default {
   height: 600px;
   /* pointer-events: none; */
 }
+</style>
+
+<style>
+
+html .ant-tooltip {
+  max-width: 550px !important;
+}
+
+html .ant-tooltip-inner {
+  background-color: #ffffff !important;
+  color: rgba(0, 0, 0, 0.75) !important;
+}
+
 </style>
