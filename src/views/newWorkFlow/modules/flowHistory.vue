@@ -21,7 +21,7 @@
           <div class="flowPicture">
             <div id="efContainer" ref="efContainer">
               <template v-for="node in data.nodeList">
-                <a-tooltip :title="`${node.name} - ${getNodeState(node.state)}`" >
+                <a-tooltip :title="`${node.name} - ${getNodeState(node.state)}`">
                   <flow-node :key="node.id" :id="node.id" :node="node" type="design">
                     <span class="node-name">{{ node.name }}</span>
                   </flow-node>
@@ -226,7 +226,9 @@ export default {
         case 'waiting':
           return '未开始';
         case 'Reserved':
-          return '已创建';
+          return '待处理';
+        case 'Ready':
+          return '待处理';
         default:
           return '未知状态'; // 如果状态不是上述之一，显示未知状态
       }
@@ -266,7 +268,6 @@ export default {
 </style>
 
 <style>
-
 html .ant-tooltip {
   max-width: 550px !important;
 }
@@ -275,5 +276,4 @@ html .ant-tooltip-inner {
   background-color: #ffffff !important;
   color: rgba(0, 0, 0, 0.75) !important;
 }
-
 </style>
