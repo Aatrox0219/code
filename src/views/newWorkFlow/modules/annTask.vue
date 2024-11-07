@@ -34,6 +34,12 @@ import FlowDeposit from '@/views/newWorkFlow/flowDeposit.vue';
 export default {
   name: 'AnnTask',
   components: { GenerateForm, AntdGenerateForm, FlowDeposit },
+  props: {
+    getData: {
+      type: Function,
+      required: true,
+    },
+  },
   data() {
     return {
       formDesignerId: '',
@@ -134,12 +140,7 @@ export default {
           if (res.result.result) {
             _this.$message.success('通过成功');
             this.$nextTick(() => {
-              console.log(this.$refs); // 打印 $refs 以检查 flowDeposit
-              if (this.$refs.flowDeposit && typeof this.$refs.flowDeposit.getHistoryFlow === 'function') {
-                this.$refs.flowDeposit.getHistoryFlow();
-              } else {
-                console.error('flowDeposit 组件未正确加载或方法不存在');
-              }
+              this.getData()
             });
           } else {
             _this.$message.error('通过失败');

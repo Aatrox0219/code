@@ -135,7 +135,8 @@
     </a-modal>
 
     <div>
-      <annTask ref="modalform"> </annTask>
+      <annTask ref="modalform" :getData="getData"> </annTask>
+
     </div>
 
     <approve-model ref="approveModel" @close="getData"></approve-model>
