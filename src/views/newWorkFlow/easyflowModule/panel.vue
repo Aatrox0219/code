@@ -99,7 +99,7 @@
           </a-layout-sider>
         </a-layout>
         <!-- 流程数据详情 -->
-        <flow-info v-if="flowInfoVisible" ref="flowInfo" :data="data"></flow-info>
+        <flow-info v-if="flowInfoVisible" ref="flowInfo" :data="data" :dataReload="dataReload"></flow-info>
         <flow-help v-if="flowHelpVisible" ref="flowHelp"></flow-help>
         <saveMessage ref="saveMessage" :data="data"></saveMessage>
       </div>
@@ -679,6 +679,11 @@ export default {
     },
     // 加载流程图
     dataReload(data) {
+      // 确保 data 是一个对象
+    if (typeof data === 'string') {
+      data = JSON.parse(data);
+    }
+      console.log('data', data);
       this.easyFlowVisible = false
       this.data.nodeList = []
       this.data.lineList = []
@@ -693,6 +698,7 @@ export default {
           })
         })
       })
+      console.log('流程图加载成功');
     },
     // 模拟载入数据dataA
     dataReloadA() {
