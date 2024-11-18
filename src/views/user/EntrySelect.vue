@@ -4,25 +4,25 @@
             <!-- <h1>黄冈市农民工保证金智慧管理服务平台</h1> -->
         </header>
         <div class="card-container">
-            <div class="card1" @click="goToLogin">
+            <div class="card1" @click="goToLogin('renshe')">
                 <div class="icon">
                     <img src="@/assets/renshe.png" alt="icon" class="icon-img" />
                 </div>
                 <div class="text">人社入口</div>
             </div>
-            <div class="card2" @click="goToLogin">
+            <div class="card2" @click="goToLogin('qiye')">
                 <div class="icon">
                     <img src="@/assets/qiye.png" alt="icon" class="icon-img" />
                 </div>
                 <div class="text">企业入口</div>
             </div>
-            <div class="card3" @click="goToLogin">
+            <div class="card3" @click="goToLogin('hangye')">
                 <div class="icon">
                     <img src="@/assets/hangye.png" alt="icon" class="icon-img" />
                 </div>
                 <div class="text">行业主管</div>
             </div>
-            <div class="card4" @click="goToLogin">
+            <div class="card4" @click="goToLogin('yinhang')">
                 <div class="icon">
                     <img src="@/assets/yinhang.png" alt="icon" class="icon-img" />
                 </div>
@@ -36,8 +36,9 @@
 <script>
 export default {
     methods: {
-        goToLogin() {
-            this.$router.push('/user/login');
+        goToLogin(department) {
+            console.log(department);
+            this.$router.push({ path: '/user/login', query: { department } });
         }
     }
 }

@@ -76,8 +76,11 @@
           @click.stop.prevent="handleSubmit" :disabled="loginBtn">确定
         </a-button>
 
+        <a v-if="department === 'qiye'" @click="" style="margin-left: 10px;">
+          注册账户
+        </a>
         <a href="https://m12333.cn/policy/mazrc.html#:~:text=%E7%AC%AC%E4%B8%80%E6%9D%A1%20%E4%B8%BA%E4%BE%9D%E6%B3%95%E4%BF%9D%E6%8A%A4%E5%86%9C"
-          target="_blank" style="margin-left: 10px;">
+          target="_blank" style="float: right;">
           操作指南
         </a>
 
@@ -118,6 +121,7 @@ export default {
   },
   data() {
     return {
+      department: '',
       customActiveKey: 'tab1',
       loginBtn: false,
       // login type: 0 email, 1 username, 2 telephone
@@ -170,6 +174,7 @@ export default {
   },
   mounted() {
     this.getToken()
+    this.department = this.$route.query.department
     // this.$forceUpdate()
   },
   methods: {
