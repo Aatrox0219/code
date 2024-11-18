@@ -97,6 +97,7 @@ export default {
         type: 'warning',
       })
         .then(() => {
+          this.getData()  //直接关闭流程后刷新数据
           _this.visible = false
         })
         .catch(() => { })
