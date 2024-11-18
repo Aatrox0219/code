@@ -17,7 +17,6 @@
             <a-button type="primary" @click="handleTest()" style="margin-right: 20px">提交</a-button>
             <a-button type="primary" @click="close()">返回</a-button>
           </div>
-          <flow-deposit ref="flowDeposit" />
         </div>
       </div>
     </a-modal>
@@ -29,14 +28,17 @@ import AntdGenerateForm from '@/components/FormMaking/components/AntdvGenerator/
 import { t_postAction, t_getAction } from '@/api/tempApi.js'
 import { o_postAction, o_getAction } from '@/api/onApi.js'
 import { nw_postAction1 } from '@api/newWorkApi'
-import FlowDeposit from '@/views/newWorkFlow/flowDeposit.vue';
 
 export default {
   name: 'AnnTask',
-  components: { GenerateForm, AntdGenerateForm, FlowDeposit },
+  components: { GenerateForm, AntdGenerateForm},
   props: {
     getData: {
       type: Function,
+      required: true,
+    },
+    userInfo: {
+      type: Object,
       required: true,
     },
   },
@@ -110,6 +112,12 @@ export default {
           } else {
             this.formJson = formJson
             this.visible = true
+            this.$nextTick(() => {
+              if (this.$refs.generateForm) {
+                //将公司名称默认填写为当前登录用户的公司名称
+                this.$refs.generateForm.setData({company_name: this.userInfo.realname});//这里的company_name是表单中的字段标识
+              }
+            });
           }
         })
         .catch((err) => {

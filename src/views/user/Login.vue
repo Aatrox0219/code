@@ -91,6 +91,10 @@
       @cancel="stepCaptchaCancel" v-show="!hasToken"></two-step-captcha>
     <login-select-tenant v-show="!hasToken" ref="loginSelect" @success="loginSelectOk"></login-select-tenant>
     <!-- <third-login ref="thirdLogin"></third-login> -->
+
+    <a-modal>
+      
+    </a-modal>
   </div>
 </template>
 

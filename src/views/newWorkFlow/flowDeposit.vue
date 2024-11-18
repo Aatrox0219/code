@@ -133,11 +133,7 @@
         </div>
       </div>
     </a-modal>
-
-    <div>
-      <annTask ref="modalform" :getData="getData"> </annTask>
-
-    </div>
+      <annTask ref="modalform" :getData="getData" :userInfo="userInfo"> </annTask>
 
     <approve-model ref="approveModel" @close="getData"></approve-model>
     <flow-history ref="flowHistory"></flow-history>
