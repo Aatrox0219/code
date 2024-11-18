@@ -249,6 +249,9 @@ export default {
     },
     // 拖拽结束时触发
     end(evt, e) {
+      console.log('end', evt);
+      console.log('end', this.nodeMenu);
+      console.log('end', mousePosition);
       this.$emit('addNode', evt, this.nodeMenu, mousePosition)
     },
     // 是否是火狐浏览器

@@ -32,6 +32,7 @@ let dataInitial = {
   name: '流程',
   //event_hander_bean: '',
   start_process_url: '',
+  isNotDeploy: true,
   // key: '',
   category_id: '',
   effect_date: '',
@@ -74,7 +75,7 @@ export default {
   },
   methods: {
     openEasyflow(saveFlag) {
-      this.$refs.panel.openModel(dataInitial,saveFlag)
+      this.$refs.panel.openModel(true,dataInitial,saveFlag)
     },
     //得到所有的流程模板
     getList() {
@@ -119,14 +120,17 @@ export default {
     //编辑流程
     editFlow(record) {
       axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-      nw_postAction1(`/design/modifyFile`, qs.stringify({ id: record.id }))
+      return nw_postAction1(`/design/modifyFile`, qs.stringify({ id: record.id }))
         .then((res) => {
           console.log(res)
-          if(!res.result) {
-            this.$message.warning('该流程已部署，禁止查看！')
+          if(res.success) {
+            this.isNotDeploy = true
+            // this.$message.warning('该流程已部署，禁止查看！')
           } else {
-            this.$refs.panel.openModel(res.result,'1')
+            this.isNotDeploy = false
           }
+          console.log('当前表单是不是没部署',this.isNotDeploy);
+          return this.$refs.panel.openModel(this.isNotDeploy,res.result,'1')
         })
         .catch((err) => {
           console.log(err)
