@@ -155,7 +155,7 @@
         </el-form-item>
 
         <el-form-item label="按钮权限:">
-          <el-checkbox-group v-model="button_permission" style="height: 100%;" size="small">
+          <el-checkbox-group v-model="node.button_permission" style="height: 100%;" size="small">
             <el-checkbox-button label="通过"></el-checkbox-button>
             <el-checkbox-button label="拒绝"></el-checkbox-button>
             <el-checkbox-button label="退回"></el-checkbox-button>
@@ -500,7 +500,6 @@ import { t_postAction, t_getAction } from '@/api/tempApi'
 export default {
   data() {
     return {
-      button_permission: [ "通过","拒绝","退回"],
       formAllId: [],
       formRules:{
         formId: [
@@ -557,7 +556,7 @@ export default {
         name: '',
         left: '',
         top: '',
-        button_permission:[],
+        button_permission:[ "通过","拒绝","退回"],
         state: '',
         feature: {},
         formDesignerId: '',
@@ -916,7 +915,7 @@ export default {
               node.name = this.node.name
               node.left = this.node.left
               node.top = this.node.top
-              node.button_permission = this.button_permission
+              node.button_permission = this.node.button_permission
               if (this.node.feature.id != undefined) {
                 node.feature = this.node.feature
                 node.formDesignerId = this.node.feature.id

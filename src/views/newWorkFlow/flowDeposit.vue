@@ -133,11 +133,7 @@
         </div>
       </div>
     </a-modal>
-
-    <div>
-      <annTask ref="modalform" :getData="getData"> </annTask>
-
-    </div>
+      <annTask ref="modalform" :getData="getData" :userInfo="userInfo"> </annTask>
 
     <approve-model ref="approveModel" @close="getData"></approve-model>
     <flow-history ref="flowHistory"></flow-history>
@@ -155,6 +151,8 @@ import approveModel from './modules/approveModel'
 import { w_postAction, w_postAction1, w_getAction } from '@/api/workapi'
 import Template from '../identification/template.vue'
 import FlowHistory from './modules/flowHistory'
+import { USER_NAME,USER_INFO } from '@/store/mutation-types'
+import Vue from 'vue'
 import { mapState } from 'vuex'
 export default {
   name: 'flowDeposit',
@@ -571,9 +569,13 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      userInfo: (state) => state.user.info, // 假设用户信息存储在user模块中的info
-    }),
+    // ...mapState({
+    //   userInfo: (state) => state.user.info, // 假设用户信息存储在user模块中的info
+    // }),
+    userInfo() {
+      // 从 Vue.ls 中获取 USER_INFO
+      return Vue.ls.get(USER_INFO) || {}; // 如果没有值，默认为空对象
+    },
     displayedAnnounceColumns() {
       console.log('userInfo.username', this.userInfo.username)
       return this.userInfo.username.endsWith('cb') ? this.chengbanflowWillAnnouncecolumns : this.flowWillAnnouncecolumns

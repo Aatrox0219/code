@@ -3,7 +3,8 @@
     <el-form label-position="top" size="small">
       <!-- <el-form-item :label="$t('fm.config.widget.model')"> -->
       <el-form-item label="字段标识">
-        <el-input v-model="data.model" :disabled="true"> </el-input>
+        <!-- <el-input v-model="data.model" :disabled="true"> </el-input> -->
+        <el-input v-model="data.model"> </el-input>
       </el-form-item>
 
       <!-- <el-form-item :label="$t('fm.config.widget.schedule')" v-if="data.type == 'table'"> -->

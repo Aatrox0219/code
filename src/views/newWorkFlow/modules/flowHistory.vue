@@ -226,9 +226,9 @@ export default {
         case 'waiting':
           return '未开始';
         case 'Reserved':
-          return '待处理';
-        case 'Ready':
-          return '待处理';
+          return '已创建';
+        case 'Created':
+          return '已创建';
         default:
           return '未知状态'; // 如果状态不是上述之一，显示未知状态
       }

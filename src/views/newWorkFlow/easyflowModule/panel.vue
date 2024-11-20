@@ -54,7 +54,7 @@
                   <div class="header-content-flow flex-col" @click="dataInfo">
                     <span class="header-content-flow-info">流程信息</span>
                   </div>
-                  <div class="header-content-save flex-col" @click="saveFlow">
+                  <div v-if="isNotDeploy" class="header-content-save flex-col" @click="saveFlow">
                     <span class="header-content-save-info">保存画板</span>
                   </div>
                 </div>
@@ -99,7 +99,7 @@
           </a-layout-sider>
         </a-layout>
         <!-- 流程数据详情 -->
-        <flow-info v-if="flowInfoVisible" ref="flowInfo" :data="data"></flow-info>
+        <flow-info v-if="flowInfoVisible" ref="flowInfo" :data="data" :dataReload="dataReload"></flow-info>
         <flow-help v-if="flowHelpVisible" ref="flowHelp"></flow-help>
         <saveMessage ref="saveMessage" :data="data"></saveMessage>
       </div>
@@ -125,6 +125,7 @@ import { nw_postAction1 } from '@api/newWorkApi'
 export default {
   data() {
     return {
+      isNotDeploy: true,
       saveFlag: '',
       panelVisible: false,
       // jsPlumb 实例
@@ -153,6 +154,12 @@ export default {
   },
   // 一些基础配置移动该文件中
   mixins: [easyFlowMixin],
+  // props: {
+  //   isNotDeploy: {
+  //     type: Boolean,
+  //     default: true,
+  //   },
+  // },
   components: {
     draggable,
     flowNode,
@@ -434,6 +441,7 @@ export default {
       var index = 1
       while (index < 10000) {
         var repeat = false
+        console.log('this.data.nodeList', this.data.nodeList);
         for (var i = 0; i < this.data.nodeList.length; i++) {
           let node = this.data.nodeList[i]
           if (node.name === nodeName) {
@@ -679,6 +687,11 @@ export default {
     },
     // 加载流程图
     dataReload(data) {
+      // 确保 data 是一个对象
+    if (typeof data === 'string') {
+      data = JSON.parse(data);
+    }
+      console.log('data', data);
       this.easyFlowVisible = false
       this.data.nodeList = []
       this.data.lineList = []
@@ -693,6 +706,7 @@ export default {
           })
         })
       })
+      console.log('流程图加载成功');
     },
     // 模拟载入数据dataA
     dataReloadA() {
@@ -795,7 +809,9 @@ export default {
     back() {
       this.$emit('back')
     },
-    openModel(dataInitial, saveFlag) {
+    openModel(isNotDeploy,dataInitial, saveFlag) {
+      this.isNotDeploy = isNotDeploy
+      console.log('当前是不是没部署', this.isNotDeploy);
       console.log('编辑打开的流程', dataInitial)
       //saveFlag:0新增  1编辑
       this.saveFlag = saveFlag
