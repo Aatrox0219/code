@@ -37,7 +37,8 @@
           <div v-for="(item, index) in arrayForm" :key="index" style="margin-top: 20px">
             <a-timeline-item>
               <a style="margin-right: 20px">任务名称：{{ item.taskName }}</a>
-              <a>创建日期：{{ item.createDateStr }}</a>
+              <a style="margin-right: 20px">创建日期：{{ item.createDateStr }}</a>
+              <a>处理人：{{ item.submitter }}</a>
               <approve-task :formId="item.prevForm_designer_id" :tableId="item.prevOnline_table_id"
                 :dataId="item.prevOnline_data_id" v-if="item.prevForm_designer_id != undefined"></approve-task>
             </a-timeline-item>
@@ -49,6 +50,7 @@
 </template>
 <script>
 import flowNode from './node'
+import api from '@api'
 import lodash from 'lodash'
 import '../easyflowModule/jsplumb'
 import Vue from 'vue'
@@ -79,6 +81,11 @@ export default {
           title: '任务名称',
           align: 'center',
           dataIndex: 'nodeName',
+        },
+        {
+          title: '处理人',
+          align: 'center',
+          dataIndex: 'submitter',
         },
         {
           title: '创建时间',
@@ -123,29 +130,65 @@ export default {
     },
     openModal(record) {
       nw_getAction(`/diagram/getByProcInstId?procInstId=` + record.processInstanceId)
-        .then((res) => {
+        .then(async (res) => {
           console.log('diagram/getByProcInstId  response', res)
           this.visible = true
           // 猜测是流程详情，后端接口没给这个数据
           this.dataSource = res.result.historyInfo
-          var formArr = new Array()
-          for (var i = 0; i < this.dataSource.length; i++) {
-            var formObj = {}
-            formObj.taskName = this.dataSource[i].nodeName
-            formObj.createDateStr = this.dataSource[i].createDate
-            if (this.dataSource[i].url != null) {
-              formObj['prevForm_designer_id'] = this.dataSource[i].url.substring(0, 32)
-              formObj['prevOnline_table_id'] = this.dataSource[i].url.substring(33, 65)
-              formObj['prevOnline_data_id'] = this.dataSource[i].url.substring(66, 87)
+
+          //新增获取处理人姓名
+          const promises = this.dataSource.map(async (item) => {
+            if (item.assignee) {
+              try {
+                item.submitter = await this.getUserName(item.assignee);
+              } catch (error) {
+                console.error("获取处理人姓名失败:", error);
+                item.submitter = "未知处理人";
+              }
+            } else {
+              item.submitter = '';
             }
-            formArr.push(formObj)
-          }
-          console.log(formArr)
-          this.formArr = formArr
-          this.returnJson = res.result.returnJson
+            return item;
+          });
+
+          // 等待所有处理完成后更新 dataSource，不然会导致处理人姓名展示不出来
+          Promise.all(promises).then((updatedDataSource) => {
+            this.$set(this, 'dataSource', updatedDataSource);
+            console.log("最终更新后的 dataSource:", this.dataSource);
+
+            const formArr = this.dataSource.map((item) => {
+              const formObj = {
+                taskName: item.nodeName,
+                createDateStr: item.createDate,
+                submitter: item.submitter, // 确保 submitter 已赋值
+              };
+              if (item.url != null) {
+                formObj.prevForm_designer_id = item.url.substring(0, 32);
+                formObj.prevOnline_table_id = item.url.substring(33, 65);
+                formObj.prevOnline_data_id = item.url.substring(66, 87);
+              }
+              return formObj;
+            });
+            console.log('formArr:', formArr);
+            this.formArr = formArr;
+            this.returnJson = res.result.returnJson;
+          });
         })
         .catch((error) => { })
     },
+    //通过用户id(assignee)获取用户姓名
+    async getUserName(assignee) {
+      const code = "2c903614765217d301765217e94f0001";   //这是jeecg中的用户信息表的表单id
+      const url = `${api.global_online_baseURL}/cgform/api/form/${code}/${assignee}`;
+      try {
+        const response = await this.axios.get(url);
+        return response.result.realname;
+      } catch (error) {
+        console.error("请求失败:", error);
+        return null;
+      }
+    },
+
     handleCancel() {
       this.dataSource = []
       this.visible = false
