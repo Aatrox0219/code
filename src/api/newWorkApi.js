@@ -30,6 +30,18 @@ export function nw_postAction1(url,parameter) {
   })
 }
 
+export function nw_delete(url,parameter) {
+  return axios({
+    url: url,
+    method:'post' ,
+    data: parameter,
+    // baseURL:'/newworkflow',
+    baseURL: api.server_url+api.global_course_baseURL,
+    headers: {
+      'userId': Vue.ls.get(USER_ID),
+    },
+  })
+}
 
 //post method= {post | put}
 export function w_httpAction(url,parameter,method) {

@@ -27,7 +27,7 @@ import GenerateForm from '@/components/FormMaking/components/GenerateForm'
 import AntdGenerateForm from '@/components/FormMaking/components/AntdvGenerator/GenerateForm'
 import { t_postAction, t_getAction } from '@/api/tempApi.js'
 import { o_postAction, o_getAction } from '@/api/onApi.js'
-import { nw_postAction1 } from '@api/newWorkApi'
+import { nw_postAction1, nw_delete } from '@api/newWorkApi'
 
 export default {
   name: 'AnnTask',
@@ -48,6 +48,7 @@ export default {
       onlineDataId: '',
       onlineTableId: '',
       taskId: '',
+      processInstanceId: '',
       visible: false,
       formJson: {},
       func1: {
@@ -81,11 +82,12 @@ export default {
   },
   updated() { },
   methods: {
-    openModal(formDesignerId, onlineDataId, onlineTableId, taskId) {
+    openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId) {
       this.formDesignerId = formDesignerId
       this.onlineDataId = onlineDataId
       this.onlineTableId = onlineTableId
       this.taskId = taskId
+      this.processInstanceId = processInstanceId
       this.getForm()
     },
     //点击关闭按钮关闭
@@ -96,12 +98,26 @@ export default {
         cancelButtonText: '取消',
         type: 'warning',
       })
-        .then(() => {
+      .then(async () => {
+          await this.deleteFlow(this.processInstanceId)
           this.getData()  //直接关闭流程后刷新数据
           _this.visible = false
         })
         .catch(() => { })
     },
+
+    //如果点击了返回，则需要将该流程删除
+    async deleteFlow(record) {
+      try {
+        const res = await nw_delete('/process/deleteProcessInstanceFirst', {
+          processInstanceId: record,
+        });
+        console.log('删除成功:', res);
+      } catch (err) {
+        console.error('删除流程时出错:', err);
+      }
+    },
+
     //得到表单
     getForm() {
       var id = this.formDesignerId

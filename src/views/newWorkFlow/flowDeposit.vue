@@ -652,9 +652,9 @@ export default {
         .then((res) => {
           if (res.success) {
             this.$message.success('开启流程成功')
-            const { formDesignerId, onlineDataId, onlineTableId } = res.result.startProcessVO
+            const { formDesignerId, onlineDataId, onlineTableId, processInstanceId } = res.result.startProcessVO
             const taskId = res.result.fistTaskId
-            this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId)
+            this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId)
           } else {
             this.$message.error('开启流程失败')
           }
