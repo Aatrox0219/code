@@ -785,6 +785,13 @@ export default {
     saveFlow() {
       console.log('变化前的data', this.data)
       this.addDecisionType()
+
+      // 去除lineList中的重复项
+      const uniqueLineList = this.data.lineList.filter((item, index, self) =>
+          index === self.findIndex(t => t.from === item.from && t.to === item.to)
+      );
+      // 更新原数据
+      this.data.lineList = uniqueLineList;
       console.log('变化后的data', this.data)
       //0:新增流程保存;1:编辑保存
       if (this.saveFlag == '0') {
