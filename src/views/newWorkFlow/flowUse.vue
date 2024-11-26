@@ -13,7 +13,7 @@
                         <div class="flowAnnounce">
                           <a-table bordered :columns="flowUseMoneycolumns" :dataSource="flowUseMoneyData" rowKey="id">
                             <span slot="flowUseMoneycolumns" slot-scope="text, record, index">
-                              <a @click="startProcess">申请使用</a>
+                              <a @click="startProcess(record)">申请使用</a>
                             </span>
                           </a-table>
                         </div>
@@ -117,6 +117,7 @@ export default {
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory },
   data() {
     return {
+      useProcessId: 0,
       backlogNumber: 0,
       selectedStatus: 'all', // 状态默认选择 "全部"
       taskTab: {
@@ -128,8 +129,6 @@ export default {
       form: '',
       name: '',
       id: '',
-      flowConfigData: [],
-      isModalVisible: false,
       selectedProcessId: null,
       columns: [
         {
@@ -481,42 +480,19 @@ export default {
     }
   },
   mounted() {
-    this.startFixedProcess(false)
+    this.startFixedProcess()
     this.getData()
     console.log('当前用户信息', this.userInfo)
   },
   methods: {
     //获取保证金使用的流程数据,1847453556447707137是保证金使用的流程分类id
-    startFixedProcess(showModal) {
+    startFixedProcess() {
       let url = '/process/processList/{categoryId}?categoryId=1847453556447707137&category=1'
       nw_getAction(url)
         .then((res) => {
           console.log('保证金使用流程数据', res)
           if (res.success) {
-            let flowConfigData = res.result
-            console.log('flowConfigData', flowConfigData)
-
-            //是否显示弹窗
-            if (showModal) {
-              this.isModalVisible = true
-            } else {
-              for (let i = 0; i < res.result.length; i++) {
-                this.processInstance.push({
-                  id: res.result[i].processId,
-                  name: res.result[i].name,
-                })
-              }
-            }
-            let processCategories = this.processCategories
-            for (var i = 0; i < flowConfigData.length; i++) {
-              for (var j = 0; j < processCategories.length; j++) {
-                if (flowConfigData[i].categoryId == processCategories[j].id) {
-                  flowConfigData[i].categoryName = processCategories[j].category_name
-                }
-              }
-            }
-            this.flowConfigData = flowConfigData
-            this.$message.success('加载成功')
+            this.useProcessId = res.result[0].processId
           } else {
             this.$message.error('查询可开启的流程失败')
           }
@@ -526,19 +502,13 @@ export default {
           this.$message.error('请求失败')
         })
     },
-    handleOk() {
-      this.isModalVisible = false // 点击确定后隐藏弹窗
-    },
-    handleCancel() {
-      this.isModalVisible = false // 点击取消后隐藏弹窗
-    },
     //开启流程
-    startProcess() {
-      this.isModalVisible = false
+    startProcess(record) {
       let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
       axios.defaults.headers.common['userName'] = userData.value.username
       console.log('userData.value.username', userData.value.username)
-      nw_getAction(`/process/startProcess/{processId}?processId=30009`)
+      //新增一个frontId，这个是后端用来和前面的保证金存缴的流程关联用的
+      nw_getAction(`/process/startProcess/{processId}?processId=${this.useProcessId}&frontId=${record.projectId}`)
         .then((res) => {
           if (res.success) {
             this.$message.success('开启流程成功')
