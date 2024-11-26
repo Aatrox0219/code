@@ -590,9 +590,6 @@ export default {
     getLoadClaim() {
       let params = {
         processId: this.instanceClaim,
-        taskName: this.taskName,
-        startTime: this.startTime,
-        endTime: this.endTime,
       };
       nw_postAction1(`/task/getClaim`, params)
         .then((res) => {
@@ -662,12 +659,10 @@ export default {
     //获取可以申请使用的流程
     getUseFlow() {
       let params = {
-        processId: this.instanceHistory,
-        taskName: this.taskName,
-        startTime: this.startTime,
-        endTime: this.endTime,
+        processId: this.instanceClaim,
+        address: this.userInfo.currentLocation,
         categoryId: '1847453055727501313',
-      }
+      };
 
       nw_postAction1('/process/getCompleteProcessInstance', params)
         .then((res) => {
