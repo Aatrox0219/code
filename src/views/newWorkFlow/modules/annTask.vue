@@ -82,13 +82,14 @@ export default {
   },
   updated() { },
   methods: {
-    openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId) {
+    openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, category, data) {
       this.formDesignerId = formDesignerId
       this.onlineDataId = onlineDataId
       this.onlineTableId = onlineTableId
       this.taskId = taskId
       this.processInstanceId = processInstanceId
-      this.getForm()
+
+      this.getForm(category, data)
     },
     //点击关闭按钮关闭
     close() {
@@ -119,7 +120,7 @@ export default {
     },
 
     //得到表单
-    getForm() {
+    getForm(category, data) {
       var id = this.formDesignerId
       t_getAction('/admin/desform/' + id + '/getConent')
         .then((res) => {
@@ -131,8 +132,19 @@ export default {
             this.visible = true
             this.$nextTick(() => {
               if (this.$refs.generateForm) {
-                //将公司名称默认填写为当前登录用户的公司名称
-                this.$refs.generateForm.setData({company_name: this.userInfo.realname});//这里的company_name是表单中的字段标识
+                if(category === '存缴'){
+                  //将公司名称默认填写为当前登录用户的公司名称
+                  this.$refs.generateForm.setData({company_name: this.userInfo.realname});//这里的company_name是表单中的字段标识
+                }
+                else if(category === '使用'){
+                  console.log('保证金使用的数据', data);
+                  this.$refs.generateForm.setData({
+                    company_name: data.companyName,
+                    project_address: data.projectAddress,
+                    
+                  });
+                }
+                
               }
             });
           }
