@@ -93,6 +93,29 @@
           </a-select>
         </a-form-item>
 
+        <a-form-item label="用户所在地" :labelCol="labelCol" :wrapperCol="wrapperCol" v-show="!departDisabled">
+          <a-select
+            style="width: 100%"
+            placeholder="请选择用户所在地"
+            :disabled="disableSubmit"
+            v-model="currentLocation"
+            v-decorator.trim="['currentLocation', validatorRules.currentLocation]"
+          >
+          <a-select-option :value='"黄州区"'>黄州区</a-select-option>
+          <a-select-option :value='"麻城市"'>麻城市</a-select-option>
+          <a-select-option :value='"武穴市"'>武穴市</a-select-option>
+          <a-select-option :value='"团风县"'>团风县</a-select-option>
+          <a-select-option :value='"红安县"'>红安县</a-select-option>
+          <a-select-option :value='"罗田县"'>罗田县</a-select-option>
+          <a-select-option :value='"英山县"'>英山县</a-select-option>
+          <a-select-option :value='"浠水县"'>浠水县</a-select-option>
+          <a-select-option :value='"蕲春县"'>蕲春县</a-select-option>
+          <a-select-option :value='"黄梅县"'>黄梅县</a-select-option>
+          <a-select-option :value='"龙感湖管理区"'>龙感湖管理区</a-select-option>
+          </a-select>
+        </a-form-item>
+
+
         <!-- update--begin--autor:wangshuai-----date:20200108------for：新增身份和负责部门------ -->
         <a-form-item label="身份" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-radio-group v-model="identity" @change="identityChange">
@@ -252,6 +275,7 @@ export default {
           ],
         },
         realname: { rules: [{ required: true, message: '请输入用户名称!' }] },
+        currentLocation: { rules: [{ required: true, message: '请输入用户所在地!' }] },
         phone: { rules: [{ validator: this.validatePhone }] },
         email: {
           rules: [
@@ -300,6 +324,7 @@ export default {
       fileList: [],
       tenantList: [],
       currentTenant: [],
+      currentLocation: [],
     }
   },
   created() {
@@ -393,7 +418,8 @@ export default {
             'activitiSync',
             'workNo',
             'telephone',
-            'post'
+            'post',
+            'currentLocation'
           )
         )
       })
