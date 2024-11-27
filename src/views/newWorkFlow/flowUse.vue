@@ -569,30 +569,15 @@ export default {
 
             for (var i = 0; i < this.loadClaimData.length; i++) {
               this.loadClaimData[i].state = '待领取';
-              console.log(`项目 ${i} 的地址:`, this.loadClaimData[i].projectAddress);
-
-              // 自动认领逻辑
-              const projectAddressMap = {
-                '黄州区': 'huangzhou',
-                '团风县': 'tuanfeng',
-                '红安县': 'hongan',
-                '罗田县': 'luotian',
-                '英山县': 'yingshan',
-                '浠水县': 'xishui',
-                '蕲春县': 'qichun',
-                '黄梅县': 'huangmei',
-                '龙感湖管理区': 'longganhu',
-                '麻城市': 'macheng',
-                '武穴市': 'wuxue',
-              };
 
               const projectAddress = this.loadClaimData[i].projectAddress;
-              const usernamePrefix = projectAddressMap[projectAddress];
 
-              if (usernamePrefix && this.userInfo.username.startsWith(usernamePrefix)) {
+              //通过当前用户的地址和项目的地址进行匹配来自动认领
+              if(this.userInfo.currentLocation === projectAddress){
                 const promise = this.claimTask(this.loadClaimData[i]);
                 claimPromises.push(promise);
               }
+
             }
 
             // 等待所有认领任务完成后更新界面
