@@ -31,7 +31,7 @@ import { nw_postAction1, nw_delete } from '@api/newWorkApi'
 
 export default {
   name: 'AnnTask',
-  components: { GenerateForm, AntdGenerateForm},
+  components: { GenerateForm, AntdGenerateForm },
   props: {
     getData: {
       type: Function,
@@ -92,17 +92,17 @@ export default {
       this.processInstanceId = processInstanceId
 
       //data不为空时才有frontId
-      if(data){
+      if (data) {
         this.frontId = data.projectId
       }
-      else{
+      else {
         this.frontId = ''
       }
       //判断是否是原始流程,如果是原始的流程则没有getdata函数
-      if(category === '原始'){
+      if (category === '原始') {
         this.isOriginal = true
       }
-      else{
+      else {
         this.isOriginal = false
       }
       this.getForm(category, data)
@@ -115,9 +115,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning',
       })
-      .then(async () => {
+        .then(async () => {
           await this.deleteFlow(this.processInstanceId)
-          if(!this.isOriginal){
+          if (!this.isOriginal) {
             this.getData()  //直接关闭流程后刷新数据
           }
           _this.visible = false
@@ -150,19 +150,23 @@ export default {
             this.visible = true
             this.$nextTick(() => {
               if (this.$refs.generateForm) {
-                if(category === '存缴'){
+                if (category === '存缴') {
                   //将公司名称默认填写为当前登录用户的公司名称
-                  this.$refs.generateForm.setData({company_name: this.userInfo.realname});//这里的company_name是表单中的字段标识
+                  this.$refs.generateForm.setData({ company_name: this.userInfo.realname });//这里的company_name是表单中的字段标识
                 }
-                else if(category === '使用'){
+                else if (category === '使用') {
                   console.log('保证金使用的数据', data);
                   this.$refs.generateForm.setData({
                     company_name: data.companyName,
-                    project_address: data.projectAddress,
+                    credit_code: data.creditCode,
 
+                    project_address: data.projectAddress,
+                    address_detail: data.addressDetail,
+                    project_contact: data.responsiblePerson,
+                    project_mobile: data.mobile
                   });
                 }
-                
+
               }
             });
           }
@@ -191,7 +195,7 @@ export default {
         onlineTableId: onlineId,
         onlineDataId: dataId,
       };
-      if(this.frontId){
+      if (this.frontId) {
         params.frontId = this.frontId;
       }
       nw_postAction1('/task/complete', params)
