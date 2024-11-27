@@ -16,7 +16,7 @@
                         <div class="flowAnnounce">
                           <a-table bordered :columns="flowChangecolumns" :dataSource="flowChangeData" rowKey="id">
                             <span slot="flowChangecolumns" slot-scope="text, record, index">
-                              <a @click="startFixedProcess(true)">申请存缴方式变更</a>
+                              <a @click="startFixedProcess(true, record)">申请存缴方式变更</a>
                             </span>
                           </a-table>
                         </div>
@@ -94,7 +94,7 @@
         </div>
       </a-card>
     </div>
-    <a-modal title="存缴方式变更" :visible="isModalVisible" @ok="startProcess" @cancel="handleCancel" width="800px">
+    <a-modal :title="modalTitle" :visible="isModalVisible" @ok="startProcess" @cancel="handleCancel" width="800px">
       <div class="flowConfig">
         <div style="padding-top: 20px">
           <span>请选择变更的存缴方式：</span>
@@ -132,6 +132,8 @@ export default {
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory },
   data() {
     return {
+      currentProjectName: '',
+      currentProjectStatus: '',
       backlogNumber: 0,
       selectedStatus: 'all', // 状态默认选择 "全部"
       taskTab: {
@@ -368,9 +370,18 @@ export default {
     }
   },
   computed: {
-    // ...mapState({
-    //   userInfo: (state) => state.user.info, // 假设用户信息存储在user模块中的info
-    // }),
+    modalTitle() {
+      return (
+        <div>
+          <span style="color: #1890ff; margin-right: 20px;">
+            当前项目：{this.currentProjectName}
+          </span>
+          <span style="color: #52c41a;">
+            当前存缴方式：{this.currentProjectStatus}
+          </span>
+        </div>
+      )
+    },
     userInfo() {
       // 从 Vue.ls 中获取 USER_INFO
       return Vue.ls.get(USER_INFO) || {}; // 如果没有值，默认为空对象
@@ -389,13 +400,16 @@ export default {
     }
   },
   mounted() {
-    this.startFixedProcess(false)
+    this.startFixedProcess(false, null)
     this.getData()
     console.log('当前用户信息', this.userInfo)
   },
   methods: {
     //获取存缴方式变更的流程数据,1860602147955077121是存缴方式变更的流程分类id
-    startFixedProcess(showModal) {
+    startFixedProcess(showModal, record) {
+      //获取当前点击的项目名称和存缴方式
+      this.currentProjectName = record ? record.projectName : '';
+      this.currentProjectStatus = record ? record.processName : '';
       let url = '/process/processList/{categoryId}?categoryId=1860602147955077121&category=1'
       nw_getAction(url)
         .then((res) => {
@@ -423,7 +437,24 @@ export default {
                 }
               }
             }
-            this.flowConfigData = flowConfigData
+
+            this.flowConfigData = flowConfigData.filter(item => {
+            // 如果当前存缴方式包含某些关键词，就过滤掉对应的流程
+            if (this.currentProjectStatus.includes('银行现金存单') && item.name.includes('银行现金存单')) {
+              return false;
+            }
+            if (this.currentProjectStatus.includes('保险公司保函') && item.name.includes('保险公司保函')) {
+              return false;
+            }
+            if (this.currentProjectStatus.includes('银行保函') && item.name.includes('银行保函')) {
+              return false;
+            }
+            if (this.currentProjectStatus.includes('担保公司保函') && item.name.includes('担保公司保函')) {
+              return false;
+            }
+            return true;
+          });
+
             this.$message.success('加载成功')
           } else {
             this.$message.error('查询可开启的流程失败')
@@ -436,12 +467,14 @@ export default {
     },
     handleOk() {
       this.isModalVisible = false // 点击确定后隐藏弹窗
+      this.selectedProcessId = null
     },
     handleCancel() {
       this.isModalVisible = false // 点击取消后隐藏弹窗
+      this.selectedProcessId = null
     },
     //开启流程
-    startProcess() {
+    startProcess(record) {
       this.isModalVisible = false
       let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
       axios.defaults.headers.common['userName'] = userData.value.username
@@ -452,7 +485,7 @@ export default {
             this.$message.success('开启流程成功')
             const { formDesignerId, onlineDataId, onlineTableId, processInstanceId } = res.result.startProcessVO
             const taskId = res.result.fistTaskId
-            this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId)
+            this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, '变更', record)
           } else {
             this.$message.error('开启流程失败')
           }
@@ -554,10 +587,8 @@ export default {
     //获取可以申请使用的流程
     getUseFlow() {
       let params = {
-        processId: this.instanceHistory,
-        taskName: this.taskName,
-        startTime: this.startTime,
-        endTime: this.endTime,
+        processId: this.instanceClaim,
+        address: this.userInfo.currentLocation,
         categoryId: '1847453055727501313',
       }
 
@@ -583,8 +614,9 @@ export default {
           }
           // 使用后端返回的 data 属性
 
-          const flowChangeData = res.result.map((item) => ({
+          const flowChangeData = res.result.map((item, index) => ({
             ...item,
+            key: item.id || `${item.nodeName}_${index}`,
             nodeName: taskStateMapping[item.nodeName],
             companyName: item.enterpriseName,
             projectName: item.projectName,
@@ -613,7 +645,7 @@ export default {
         taskName: this.taskName,
         startTime: this.startTime,
         endTime: this.endTime,
-        categoryId: '1847453556447707137',
+        categoryId: '1860602147955077121',
         address: this.selectedAddress === 'all' ? '' : this.selectedAddress, // 如果选择了全部，则发送空字符串
         applyState: this.selectedState === 'all' ? '' : this.selectedState, // 如果选择了全部，则发送空字符串
         processName: this.processName
@@ -677,7 +709,7 @@ export default {
         taskName: this.taskName,
         startTime: this.startTime,
         endTime: this.endTime,
-        categoryId: '1847453556447707137',
+        categoryId: '1860602147955077121',
       }
 
       nw_postAction1('/task/getPendingTakes', params)

@@ -159,12 +159,14 @@ export default {
                   this.$refs.generateForm.setData({
                     company_name: data.companyName,
                     credit_code: data.creditCode,
-
                     project_address: data.projectAddress,
                     address_detail: data.addressDetail,
                     project_contact: data.responsiblePerson,
                     project_mobile: data.mobile
                   });
+                }
+                else if(category === '变更'){
+                  
                 }
 
               }
