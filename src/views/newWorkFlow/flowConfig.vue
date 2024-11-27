@@ -29,7 +29,7 @@
       </a-card>
     </div>
     <div>
-      <annTask ref="modalform"> </annTask>
+      <annTask ref="modalform" > </annTask>
     </div>
   </div>
 </template>
@@ -126,7 +126,8 @@ export default {
             var onlineDataId = res.result.startProcessVO.onlineDataId
             var onlineTableId = res.result.startProcessVO.onlineTableId
             var taskId = res.result.fistTaskId
-            this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId)
+            var processInstanceId = res.result.processInstanceId
+            this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, '原始', {})
           } else {
             this.$message.error('开启流程失败')
           }
