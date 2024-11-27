@@ -35,15 +35,16 @@ export default {
   props: {
     getData: {
       type: Function,
-      required: true,
+      default: null
     },
     userInfo: {
       type: Object,
-      required: true,
+      default: null
     },
   },
   data() {
     return {
+      isOriginal: false,
       frontId: '',
       formDesignerId: '',
       onlineDataId: '',
@@ -89,13 +90,21 @@ export default {
       this.onlineTableId = onlineTableId
       this.taskId = taskId
       this.processInstanceId = processInstanceId
+
+      //data不为空时才有frontId
       if(data){
         this.frontId = data.projectId
       }
       else{
         this.frontId = ''
       }
-      
+      //判断是否是原始流程,如果是原始的流程则没有getdata函数
+      if(category === '原始'){
+        this.isOriginal = true
+      }
+      else{
+        this.isOriginal = false
+      }
       this.getForm(category, data)
     },
     //点击关闭按钮关闭
@@ -108,7 +117,9 @@ export default {
       })
       .then(async () => {
           await this.deleteFlow(this.processInstanceId)
-          this.getData()  //直接关闭流程后刷新数据
+          if(!this.isOriginal){
+            this.getData()  //直接关闭流程后刷新数据
+          }
           _this.visible = false
         })
         .catch(() => { })
