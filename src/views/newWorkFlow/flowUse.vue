@@ -50,8 +50,7 @@
                       </div>
                       <a-card :bordered="false">
                         <div class="table-container">
-                          <a-table bordered :columns="displayedHistoryColumns" :dataSource="flowHistoryData"
-                            rowKey="id">
+                          <a-table bordered :columns="flowHistorycolumns" :dataSource="flowHistoryData" rowKey="id">
                             <span slot="flowHistoryaction" slot-scope="text, record, index">
                               <a @click="seeHistory(record)">历史</a>
                             </span>
@@ -72,7 +71,7 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <a-table bordered :columns="displayedAnnounceColumns" :dataSource="flowWillAnnounceData"
+                          <a-table bordered :columns="flowWillAnnouncecolumns" :dataSource="flowWillAnnounceData"
                             rowKey="id">
                             <span slot="flowWillAnnounceaction" slot-scope="text, record, index">
                               <a @click="announceTask(record)">处理该任务</a>
@@ -227,95 +226,36 @@ export default {
           align: 'center',
           dataIndex: 'companyName',
         },
-        //   {
-        //     title: '项目名称',
-        //     align: 'center',
-        //     dataIndex: 'projectName',
-        //   },
-        //   {
-        //     title: '所属区县',
-        //     align: 'center',
-        //     dataIndex: 'projectAddress',
-        //   },
-        //   {
-        //     title: '合同金额（万元）',
-        //     align: 'center',
-        //     dataIndex: 'Money',
-        //   },
-        //   {
-        //     title: '负责人',
-        //     align: 'center',
-        //     dataIndex: 'responsiblePerson',
-        //   },
-        //   {
-        //     title: '联系方式',
-        //     align: 'center',
-        //     dataIndex: 'mobile',
-        //   },
         {
-          title: '创建时间',
+          title: '项目名称',
           align: 'center',
-          dataIndex: 'createDate',
+          dataIndex: 'projectName',
         },
         {
-          title: '操作',
+          title: '所属区县',
           align: 'center',
-          width: '20%',
-          dataIndex: 'flowWillAnnounceaction',
-          scopedSlots: { customRender: 'flowWillAnnounceaction' },
+          dataIndex: 'projectAddress',
         },
-      ],
-      chengbanflowWillAnnouncecolumns: [
         {
-          title: '状态',
+          title: '保证金金额（万元）',
           align: 'center',
-          dataIndex: 'nodeName',
+          dataIndex: 'Money',
         },
-        // {
-        //   title: '任务名称',
-        //   align: 'center',
-        //   dataIndex: 'currentTask',
-        // },
-        // {
-        //   title: '流程名称',
-        //   align: 'center',
-        //   dataIndex: 'processName',
-        // },
         {
-          title: '企业名称',
+          title: '使用金额（万元）',
           align: 'center',
-          dataIndex: 'companyName',
+          dataIndex: 'useMoneyLow',
         },
-        //   {
-        //     title: '项目名称',
-        //     align: 'center',
-        //     dataIndex: 'projectName',
-        //   },
-        //   {
-        //     title: '所属区县',
-        //     align: 'center',
-        //     dataIndex: 'projectAddress',
-        //   },
-        //   {
-        //     title: '合同金额（万元）',
-        //     align: 'center',
-        //     dataIndex: 'Money',
-        //   },
-        //   {
-        //     title: '存缴比例',
-        //     align: 'center',
-        //     dataIndex: 'Proportions',
-        //   },
-        //   {
-        //     title: '负责人',
-        //     align: 'center',
-        //     dataIndex: 'responsiblePerson',
-        //   },
-        //   {
-        //     title: '联系方式',
-        //     align: 'center',
-        //     dataIndex: 'mobile',
-        //   },
+        {
+          title: '项目联系人',
+          align: 'center',
+          dataIndex: 'responsiblePerson',
+        },
+        {
+          title: '联系方式',
+          align: 'center',
+          dataIndex: 'mobile',
+        },
         {
           title: '创建时间',
           align: 'center',
@@ -350,94 +290,36 @@ export default {
           align: 'center',
           dataIndex: 'companyName',
         },
-        //   {
-        //     title: '项目名称',
-        //     align: 'center',
-        //     dataIndex: 'projectName',
-        //   },
-        //   {
-        //     title: '所属区县',
-        //     align: 'center',
-        //     dataIndex: 'projectAddress',
-        //   },
-        //   {
-        //     title: '合同金额（万元）',
-        //     align: 'center',
-        //     dataIndex: 'Money',
-        //   },
-        //   {
-        //     title: '负责人',
-        //     align: 'center',
-        //     dataIndex: 'responsiblePerson',
-        //   },
-        //   {
-        //     title: '联系方式',
-        //     align: 'center',
-        //     dataIndex: 'mobile',
-        //   },
         {
-          title: '创建时间',
+          title: '项目名称',
           align: 'center',
-          dataIndex: 'createDate',
+          dataIndex: 'projectName',
         },
         {
-          title: '详情',
+          title: '所属区县',
           align: 'center',
-          dataIndex: 'flowHistoryaction',
-          scopedSlots: { customRender: 'flowHistoryaction' },
+          dataIndex: 'projectAddress',
         },
-      ],
-      chengbanflowHistorycolumns: [
         {
-          title: '状态',
+          title: '保证金金额（万元）',
           align: 'center',
-          dataIndex: 'nodeName',
+          dataIndex: 'Money',
         },
-        // {
-        //   title: '任务名称',
-        //   align: 'center',
-        //   dataIndex: 'currentTask',
-        // },
-        // {
-        //   title: '流程名称',
-        //   align: 'center',
-        //   dataIndex: 'processName',
-        // },
         {
-          title: '企业名称',
+          title: '使用金额（万元）',
           align: 'center',
-          dataIndex: 'companyName',
+          dataIndex: 'useMoneyLow',
         },
-        //   {
-        //     title: '项目名称',
-        //     align: 'center',
-        //     dataIndex: 'projectName',
-        //   },
-        //   {
-        //     title: '所属区县',
-        //     align: 'center',
-        //     dataIndex: 'projectAddress',
-        //   },
-        //   {
-        //     title: '合同金额（万元）',
-        //     align: 'center',
-        //     dataIndex: 'Money',
-        //   },
-        //   {
-        //     title: '存缴比例',
-        //     align: 'center',
-        //     dataIndex: 'Proportions',
-        //   },
-        //   {
-        //     title: '负责人',
-        //     align: 'center',
-        //     dataIndex: 'responsiblePerson',
-        //   },
-        //   {
-        //     title: '联系方式',
-        //     align: 'center',
-        //     dataIndex: 'mobile',
-        //   },
+        {
+          title: '项目联系人',
+          align: 'center',
+          dataIndex: 'responsiblePerson',
+        },
+        {
+          title: '联系方式',
+          align: 'center',
+          dataIndex: 'mobile',
+        },
         {
           title: '创建时间',
           align: 'center',
@@ -460,14 +342,6 @@ export default {
     userInfo() {
       // 从 Vue.ls 中获取 USER_INFO
       return Vue.ls.get(USER_INFO) || {}; // 如果没有值，默认为空对象
-    },
-    displayedAnnounceColumns() {
-      console.log('userInfo.username', this.userInfo.username)
-      return this.userInfo.username.endsWith('cb') ? this.chengbanflowWillAnnouncecolumns : this.flowWillAnnouncecolumns
-    },
-    displayedHistoryColumns() {
-      console.log('userInfo.username', this.userInfo.username)
-      return this.userInfo.username.endsWith('cb') ? this.chengbanflowHistorycolumns : this.flowHistorycolumns
     },
   },
 
@@ -573,7 +447,7 @@ export default {
               const projectAddress = this.loadClaimData[i].projectAddress;
 
               //通过当前用户的地址和项目的地址进行匹配来自动认领
-              if(this.userInfo.currentLocation === projectAddress){
+              if (this.userInfo.currentLocation === projectAddress) {
                 const promise = this.claimTask(this.loadClaimData[i]);
                 claimPromises.push(promise);
               }
