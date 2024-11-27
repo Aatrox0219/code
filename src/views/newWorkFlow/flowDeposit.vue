@@ -799,7 +799,7 @@ export default {
             人社主管领导审核保函: '待人社主管领导审核保函',
           }
           // 使用后端返回的 data 属性
-          const flowHistoryData = res.result.data.map((item) => {
+          const flowHistoryData = res.result.data.map((item, index) => {
             let nodeName;
             if (item.state === 'cancel') {
               nodeName = '已拒绝';
@@ -811,6 +811,7 @@ export default {
 
             return {
               ...item,
+              key: item.id || `${item.nodeName}_${index}`,
               nodeName,
               companyName: item.enterpriseName, // 添加企业名称
               projectName: item.projectName, // 添加项目名称

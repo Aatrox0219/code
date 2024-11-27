@@ -508,7 +508,7 @@ export default {
     //console.log(this.permissionMenuList)
     //console.log('----navTheme------'+this.navTheme)
     //--update-end----author:scott---date:20190320------for:根据后台菜单配置，判断是否路由菜单字段，动态选择是否生成路由（为了支持参数URL菜单）------
-    this.loadWareContent();
+    // this.loadWareContent();
     getAction('/sys/role/list?pageSize=100000').then((res) => {
       this.roleList = res.result.records
       
@@ -972,7 +972,7 @@ export default {
         this.ware_content=JSON.stringify(wareJson);
         document.documentElement.webkitRequestFullScreen()    //开启课程进入全屏
         // this.loadWareContent()
-        this.getRoleId2()
+        // this.getRoleId2()
         // this.showPopover=!this.showPopover;
       })
 
@@ -980,8 +980,8 @@ export default {
     //开启节点
     clickNodePanel(flag) {
       if(flag == 0){
-        this.loadWareContent()
-        this.getRoleId1()
+        // this.loadWareContent()
+        // this.getRoleId1()
         // location.reload(); //刷新页面
       }
       this.showPopover=!this.showPopover;
@@ -1137,7 +1137,7 @@ export default {
       let params = this.ware
       params.plan_content = JSON.stringify(this.data1)
       putAction(this.navigationUrl.updateUrl, params).then((res) => {
-        this.loadWareContent()
+        // this.loadWareContent()
       })
     },
     async handelWrong() {
@@ -1361,26 +1361,26 @@ export default {
 
     // jsPlumb修改
     async show() {
-      // if (this.ware_content) {
-      //   console.log("ware_content:"+JSON.parse(this.ware_content))
-      //   this.dataReload1(JSON.parse(this.ware_content))
-      // } else {
-        // this.$message.warning('暂无课件信息')
-        var url = '/business/getDefaultInformation';
-        var params = {
-          processId: this.processId,
-          planId: this.planId,
-          lessonId: this.lessonId,
-          teachingMode: this.teachingMode
-        }
-        this.data1.lineList = [];
-        //this.jsPlumb1.reset();
-        await ce_getWares2(url,params).then((res)=>{
-          var wareJson = res.result.ware.returnJson;    
-          this.ware_content=JSON.stringify(wareJson);
-          this.dataReload1(JSON.parse(this.ware_content))
-        })
-      // }
+      // // if (this.ware_content) {
+      // //   console.log("ware_content:"+JSON.parse(this.ware_content))
+      // //   this.dataReload1(JSON.parse(this.ware_content))
+      // // } else {
+      //   // this.$message.warning('暂无课件信息')
+      //   var url = '/business/getDefaultInformation';
+      //   var params = {
+      //     processId: this.processId,
+      //     planId: this.planId,
+      //     lessonId: this.lessonId,
+      //     teachingMode: this.teachingMode
+      //   }
+      //   this.data1.lineList = [];
+      //   //this.jsPlumb1.reset();
+      //   await ce_getWares2(url,params).then((res)=>{
+      //     var wareJson = res.result.ware.returnJson;    
+      //     this.ware_content=JSON.stringify(wareJson);
+      //     this.dataReload1(JSON.parse(this.ware_content))
+      //   })
+      // // }
     },
     dataReload1(data) {
       var data1 = {}
