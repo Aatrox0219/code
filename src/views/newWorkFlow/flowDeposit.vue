@@ -133,7 +133,7 @@
         </div>
       </div>
     </a-modal>
-      <annTask ref="modalform" :getData="getData" :userInfo="userInfo"> </annTask>
+    <annTask ref="modalform" :getData="getData" :userInfo="userInfo"> </annTask>
 
     <approve-model ref="approveModel" @close="getData"></approve-model>
     <flow-history ref="flowHistory"></flow-history>
@@ -151,7 +151,7 @@ import approveModel from './modules/approveModel'
 import { w_postAction, w_postAction1, w_getAction } from '@/api/workapi'
 import Template from '../identification/template.vue'
 import FlowHistory from './modules/flowHistory'
-import { USER_NAME,USER_INFO } from '@/store/mutation-types'
+import { USER_NAME, USER_INFO } from '@/store/mutation-types'
 import Vue from 'vue'
 import { mapState } from 'vuex'
 export default {
@@ -797,6 +797,10 @@ export default {
           // 状态映射
           const taskStateMapping = {
             总包施工单位提交保证金存缴申请: '待施工单位提交存缴申请',
+            承办人审核保证金金额以及相关信息: '待承办人核定金额',
+            业务主管领导审核保证金金额以及相关信息: '待业务主管领导审核金额',
+            人社主管领导审核保证金金额以及相关信息: '待人社主管领导审核金额',
+
             承办人审核保证金金额以及相关信息1: '待承办人核定金额',
             业务主管领导审核保证金金额以及相关信息1: '待业务主管领导审核金额',
             人社主管领导审核保证金金额以及相关信息1: '待人社主管领导审核金额',
@@ -861,6 +865,10 @@ export default {
           // this.flowWillAnnounceData = res.result
           const taskStateMapping = {
             总包施工单位提交保证金存缴申请: '待施工单位提交存缴申请',
+            承办人审核保证金金额以及相关信息: '待承办人核定金额',
+            业务主管领导审核保证金金额以及相关信息: '待业务主管领导审核金额',
+            人社主管领导审核保证金金额以及相关信息: '待人社主管领导审核金额',
+            
             承办人审核保证金金额以及相关信息1: '待承办人核定金额',
             业务主管领导审核保证金金额以及相关信息1: '待业务主管领导审核金额',
             人社主管领导审核保证金金额以及相关信息1: '待人社主管领导审核金额',
