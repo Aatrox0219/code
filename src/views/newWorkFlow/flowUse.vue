@@ -507,8 +507,7 @@ export default {
       let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
       axios.defaults.headers.common['userName'] = userData.value.username
       console.log('userData.value.username', userData.value.username)
-      //新增一个frontId，这个是后端用来和前面的保证金存缴的流程关联用的
-      nw_getAction(`/process/startProcess/{processId}?processId=${this.useProcessId}&frontId=${record.projectId}`)
+      nw_getAction(`/process/startProcess/{processId}?processId=${this.useProcessId}`)
         .then((res) => {
           if (res.success) {
             this.$message.success('开启流程成功')

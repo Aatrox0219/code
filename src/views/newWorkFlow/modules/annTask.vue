@@ -44,6 +44,7 @@ export default {
   },
   data() {
     return {
+      frontId: '',
       formDesignerId: '',
       onlineDataId: '',
       onlineTableId: '',
@@ -88,7 +89,13 @@ export default {
       this.onlineTableId = onlineTableId
       this.taskId = taskId
       this.processInstanceId = processInstanceId
-
+      if(data){
+        this.frontId = data.projectId
+      }
+      else{
+        this.frontId = ''
+      }
+      
       this.getForm(category, data)
     },
     //点击关闭按钮关闭
@@ -141,7 +148,7 @@ export default {
                   this.$refs.generateForm.setData({
                     company_name: data.companyName,
                     project_address: data.projectAddress,
-                    
+
                   });
                 }
                 
@@ -168,11 +175,15 @@ export default {
     //完成该节点的任务，把该节点填写的表单id，online表id，online数据id传入工作流
     completeTask(onlineId, dataId) {
       var _this = this;
-      nw_postAction1('/task/complete', {
+      let params = {
         taskId: _this.taskId,
         onlineTableId: onlineId,
         onlineDataId: dataId,
-      })
+      };
+      if(this.frontId){
+        params.frontId = this.frontId;
+      }
+      nw_postAction1('/task/complete', params)
         .then((res) => {
           if (res.result.result) {
             _this.$message.success('通过成功');
