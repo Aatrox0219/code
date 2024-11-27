@@ -166,7 +166,7 @@ export default {
                   });
                 }
                 else if(category === '变更'){
-                  
+                  console.log('保证金变更的数据', data);
                 }
 
               }

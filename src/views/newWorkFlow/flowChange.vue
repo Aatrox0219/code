@@ -132,6 +132,7 @@ export default {
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory },
   data() {
     return {
+      currentRecord: {},
       currentProjectName: '',
       currentProjectStatus: '',
       backlogNumber: 0,
@@ -410,6 +411,7 @@ export default {
       //获取当前点击的项目名称和存缴方式
       this.currentProjectName = record ? record.projectName : '';
       this.currentProjectStatus = record ? record.processName : '';
+      this.currentRecord = record;
       let url = '/process/processList/{categoryId}?categoryId=1860602147955077121&category=1'
       nw_getAction(url)
         .then((res) => {
@@ -485,7 +487,7 @@ export default {
             this.$message.success('开启流程成功')
             const { formDesignerId, onlineDataId, onlineTableId, processInstanceId } = res.result.startProcessVO
             const taskId = res.result.fistTaskId
-            this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, '变更', record)
+            this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, '变更', this.currentRecord)
           } else {
             this.$message.error('开启流程失败')
           }
