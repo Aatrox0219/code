@@ -35,13 +35,9 @@
                           <a-select-option value="instance">进行中</a-select-option>
                         </a-select>
 
-                        <a class="selectText">选择时间: </a>
-                        <a-range-picker style="width: 250px" format="YYYY-MM-DD" :placeholder="['开始时间', '结束时间']"
-                          @change="onChange" :value="dateStrings">
-                        </a-range-picker>
-                        <!-- <a class="selectText">项目名称: </a>
-                          <a-input v-model="taskName" style="width: 200px; margin-left: 10px"></a-input>
-   -->
+                        <a class="selectText">项目名称: </a>
+                        <a-input v-model="taskName" style="width: 200px; margin-left: 10px"></a-input>
+
                         <a-button-group style="margin-left: 20px">
                           <a-button type="primary" icon="search" @click="getData()"
                             style="margin-left: 20px">查询</a-button>
@@ -178,7 +174,7 @@ export default {
           dataIndex: 'projectAddress',
         },
         {
-          title: '合同金额（万元）',
+          title: '保证金金额（万元）',
           align: 'center',
           dataIndex: 'Money',
         },
@@ -499,7 +495,7 @@ export default {
             承办人提交保证金使用申请: '待承办人提交使用申请',
             业务分管领导审核: '待业务分管领导审核',
             人社分管领导审核: '待人社分管领导审核',
-            申请承办人确认使用结果: '待承办人确认使用结果'
+            承办人确认使用结果: '待承办人确认使用结果'
           }
           // 使用后端返回的 data 属性
 
@@ -508,7 +504,7 @@ export default {
             nodeName: taskStateMapping[item.nodeName],
             companyName: item.enterpriseName,
             projectName: item.projectName,
-            Money: item.contractAmount,
+            Money: item.ensureMoney,
             projectAddress: item.projectAddress,
             responsiblePerson: item.responsiblePerson,
             mobile: item.mobile,
@@ -545,7 +541,7 @@ export default {
             承办人提交保证金使用申请: '待承办人提交使用申请',
             业务分管领导审核: '待业务分管领导审核',
             人社分管领导审核: '待人社分管领导审核',
-            申请承办人确认使用结果: '待承办人确认使用结果'
+            承办人确认使用结果: '待承办人确认使用结果'
           }
           // 使用后端返回的 data 属性
           const flowHistoryData = res.result.data.map((item) => {
@@ -563,7 +559,7 @@ export default {
               nodeName,
               companyName: item.enterpriseName, // 添加企业名称
               projectName: item.projectName, // 添加项目名称
-              Money: item.contractAmount, // 添加合同金额
+              Money: item.ensureMoney, // 添加保证金金额
               projectAddress: item.projectAddress, // 添加项目地址
               responsiblePerson: item.responsiblePerson,
               mobile: item.mobile,
@@ -596,7 +592,7 @@ export default {
             承办人提交保证金使用申请: '待承办人提交使用申请',
             业务分管领导审核: '待业务分管领导审核',
             人社分管领导审核: '待人社分管领导审核',
-            申请承办人确认使用结果: '待承办人确认使用结果'
+            承办人确认使用结果: '待承办人确认使用结果'
           }
           // 使用后端返回的 data 属性
           this.backlogNumber = res.result.length
@@ -605,7 +601,7 @@ export default {
             nodeName: taskStateMapping[item.nodeName],
             companyName: item.enterpriseName,
             projectName: item.projectName,
-            Money: item.contractAmount,
+            Money: item.ensureMoney,
             projectAddress: item.projectAddress,
             responsiblePerson: item.responsiblePerson,
             mobile: item.mobile,
