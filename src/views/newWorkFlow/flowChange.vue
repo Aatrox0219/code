@@ -29,7 +29,24 @@
                   <div>
                     <div class="card-table">
                       <div class="doingSearchList">
-                        <a class="selectText">使用申请进度: </a>
+                        <a class="selectText">项目所在地: </a>
+                        <a-select v-model="selectedAddress" style="width: 100px; margin-left: 10px; margin-top: 10px"
+                          :defaultActiveFirstOption="true">
+                          <a-select-option value="all">全部</a-select-option>
+                          <a-select-option value="黄州区">黄州区</a-select-option>
+                          <a-select-option value="团风县">团风县</a-select-option>
+                          <a-select-option value="红安县">红安县</a-select-option>
+                          <a-select-option value="罗田县">罗田县</a-select-option>
+                          <a-select-option value="英山县">英山县</a-select-option>
+                          <a-select-option value="浠水县">浠水县</a-select-option>
+                          <a-select-option value="蕲春县">蕲春县</a-select-option>
+                          <a-select-option value="黄梅县">黄梅县</a-select-option>
+                          <a-select-option value="龙感湖管理区">龙感湖管理区</a-select-option>
+                          <a-select-option value="麻城市">麻城市</a-select-option>
+                          <a-select-option value="武穴市">武穴市</a-select-option>
+                        </a-select>
+
+                        <a class="selectText">变更申请进度: </a>
                         <a-select v-model="selectedState" style="width: 100px; margin-left: 10px; margin-top: 10px"
                           :defaultActiveFirstOption="true">
                           <a-select-option value="all">全部</a-select-option>
@@ -38,13 +55,9 @@
                           <a-select-option value="instance">进行中</a-select-option>
                         </a-select>
 
-                        <a class="selectText">选择时间: </a>
-                        <a-range-picker style="width: 250px" format="YYYY-MM-DD" :placeholder="['开始时间', '结束时间']"
-                          @change="onChange" :value="dateStrings">
-                        </a-range-picker>
-                        <!-- <a class="selectText">项目名称: </a>
-                            <a-input v-model="taskName" style="width: 200px; margin-left: 10px"></a-input>
-     -->
+                        <a class="selectText">项目名称: </a>
+                        <a-input v-model="taskName" style="width: 200px; margin-left: 10px"></a-input>
+
                         <a-button-group style="margin-left: 20px">
                           <a-button type="primary" icon="search" @click="getData()"
                             style="margin-left: 20px">查询</a-button>
@@ -53,8 +66,7 @@
                       </div>
                       <a-card :bordered="false">
                         <div class="table-container">
-                          <a-table bordered :columns="flowHistorycolumns" :dataSource="flowHistoryData"
-                            rowKey="id">
+                          <a-table bordered :columns="flowHistorycolumns" :dataSource="flowHistoryData" rowKey="id">
                             <span slot="flowHistoryaction" slot-scope="text, record, index">
                               <a @click="seeHistory(record)">历史</a>
                             </span>
@@ -198,7 +210,7 @@ export default {
           dataIndex: 'projectAddress',
         },
         {
-          title: '合同金额（万元）',
+          title: '保证金金额（万元）',
           align: 'center',
           dataIndex: 'Money',
         },
@@ -251,40 +263,40 @@ export default {
           align: 'center',
           dataIndex: 'companyName',
         },
-        //   {
-        //     title: '项目名称',
-        //     align: 'center',
-        //     dataIndex: 'projectName',
-        //   },
-        //   {
-        //     title: '所属区县',
-        //     align: 'center',
-        //     dataIndex: 'projectAddress',
-        //   },
-        //   {
-        //     title: '合同金额（万元）',
-        //     align: 'center',
-        //     dataIndex: 'Money',
-        //   },
-        //   {
-        //     title: '负责人',
-        //     align: 'center',
-        //     dataIndex: 'responsiblePerson',
-        //   },
-        //   {
-        //     title: '联系方式',
-        //     align: 'center',
-        //     dataIndex: 'mobile',
-        //   },
+        {
+          title: '项目名称',
+          align: 'center',
+          dataIndex: 'projectName',
+        },
+        {
+          title: '所属区县',
+          align: 'center',
+          dataIndex: 'projectAddress',
+        },
+        {
+          title: '保证金金额（万元）',
+          align: 'center',
+          dataIndex: 'Money',
+        },
         {
           title: '原存缴方式',
           align: 'center',
-          dataIndex: 'oldDepositType',
+          dataIndex: 'processName',
         },
         {
           title: '现存缴方式',
           align: 'center',
-          dataIndex: 'newDepositType',
+          dataIndex: 'newDepositMethod',
+        },
+        {
+          title: '负责人',
+          align: 'center',
+          dataIndex: 'responsiblePerson',
+        },
+        {
+          title: '联系方式',
+          align: 'center',
+          dataIndex: 'mobile',
         },
         {
           title: '创建时间',
@@ -320,40 +332,40 @@ export default {
           align: 'center',
           dataIndex: 'companyName',
         },
-        //   {
-        //     title: '项目名称',
-        //     align: 'center',
-        //     dataIndex: 'projectName',
-        //   },
-        //   {
-        //     title: '所属区县',
-        //     align: 'center',
-        //     dataIndex: 'projectAddress',
-        //   },
-        //   {
-        //     title: '合同金额（万元）',
-        //     align: 'center',
-        //     dataIndex: 'Money',
-        //   },
-        //   {
-        //     title: '负责人',
-        //     align: 'center',
-        //     dataIndex: 'responsiblePerson',
-        //   },
-        //   {
-        //     title: '联系方式',
-        //     align: 'center',
-        //     dataIndex: 'mobile',
-        //   },
+        {
+          title: '项目名称',
+          align: 'center',
+          dataIndex: 'projectName',
+        },
+        {
+          title: '所属区县',
+          align: 'center',
+          dataIndex: 'projectAddress',
+        },
+        {
+          title: '保证金金额（万元）',
+          align: 'center',
+          dataIndex: 'Money',
+        },
         {
           title: '原存缴方式',
           align: 'center',
-          dataIndex: 'oldDepositType',
+          dataIndex: 'processName',
         },
         {
           title: '现存缴方式',
           align: 'center',
-          dataIndex: 'newDepositType',
+          dataIndex: 'newDepositMethod',
+        },
+        {
+          title: '负责人',
+          align: 'center',
+          dataIndex: 'responsiblePerson',
+        },
+        {
+          title: '联系方式',
+          align: 'center',
+          dataIndex: 'mobile',
         },
         {
           title: '创建时间',
@@ -441,21 +453,21 @@ export default {
             }
 
             this.flowConfigData = flowConfigData.filter(item => {
-            // 如果当前存缴方式包含某些关键词，就过滤掉对应的流程
-            if (this.currentProjectStatus.includes('银行现金存单') && item.name.includes('银行现金存单')) {
-              return false;
-            }
-            if (this.currentProjectStatus.includes('保险公司保函') && item.name.includes('保险公司保函')) {
-              return false;
-            }
-            if (this.currentProjectStatus.includes('银行保函') && item.name.includes('银行保函')) {
-              return false;
-            }
-            if (this.currentProjectStatus.includes('担保公司保函') && item.name.includes('担保公司保函')) {
-              return false;
-            }
-            return true;
-          });
+              // 如果当前存缴方式包含某些关键词，就过滤掉对应的流程
+              if (this.currentProjectStatus.includes('银行现金存单') && item.name.includes('银行现金存单')) {
+                return false;
+              }
+              if (this.currentProjectStatus.includes('保险公司保函') && item.name.includes('保险公司保函')) {
+                return false;
+              }
+              if (this.currentProjectStatus.includes('银行保函') && item.name.includes('银行保函')) {
+                return false;
+              }
+              if (this.currentProjectStatus.includes('担保公司保函') && item.name.includes('担保公司保函')) {
+                return false;
+              }
+              return true;
+            });
 
             this.$message.success('加载成功')
           } else {
@@ -524,7 +536,7 @@ export default {
       this.loadClaimData = []
       this.flowHistoryData = []
       this.flowChangeData = []
-      this.getUseFlow()
+      this.getChangeFlow()
       this.getflowAnnounce() // 获取待处理流程
       this.getHistoryFlow()
       this.getLoadClaim() // 获取未认领流程
@@ -558,7 +570,7 @@ export default {
 
             // 等待所有认领任务完成后更新界面
             Promise.all(claimPromises).then(() => {
-              this.getUseFlow();
+              this.getChangeFlow();
               this.getHistoryFlow(); // 更新历史数据
               this.getflowAnnounce(); // 更新待办事项
 
@@ -586,8 +598,8 @@ export default {
         });
     },
 
-    //获取可以申请使用的流程
-    getUseFlow() {
+    //获取可以申请变更的流程
+    getChangeFlow() {
       let params = {
         processId: this.instanceClaim,
         address: this.userInfo.currentLocation,
@@ -598,7 +610,7 @@ export default {
         .then((res) => {
           console.log('res321', res)
           const taskStateMapping = {
-            总包施工单位提交变更申请: '总包施工单位提交变更申请',
+            总包施工单位提交变更申请: '待总包施工单位提交变更申请',
             承办人审核变更申请: '待承办人审核变更申请',
             业务分管领导审核变更申请: '待业务分管领导审核变更申请',
             人社分管领导审核变更申请: '待人社分管领导审核变更申请',
@@ -614,15 +626,24 @@ export default {
             业务分管领导审核保函: '待业务分管领导审核保函',
             人社分管领导审核保函: '待人社分管领导审核保函'
           }
+
+          const processNameMapping = {
+            银行现金存单存缴: '银行现金存单',
+            银行保函存缴: '银行保函',
+            保险公司保函存缴: '保险公司保函',
+            担保公司保函存缴: '担保公司保函'
+          }
+
           // 使用后端返回的 data 属性
 
           const flowChangeData = res.result.map((item, index) => ({
             ...item,
             key: item.id || `${item.nodeName}_${index}`,
             nodeName: taskStateMapping[item.nodeName],
+            processName: processNameMapping[item.processName],
             companyName: item.enterpriseName,
             projectName: item.projectName,
-            Money: item.contractAmount,
+            Money: item.ensureMoney,
             projectAddress: item.projectAddress,
             responsiblePerson: item.responsiblePerson,
             mobile: item.mobile,
@@ -657,10 +678,18 @@ export default {
           console.log('res321', res)
           // 状态映射
           const taskStateMapping = {
-            总包施工单位提交变更申请: '总包施工单位提交变更申请',
+            总包施工单位提交变更申请: '待总包施工单位提交变更申请',
             承办人审核变更申请: '待承办人审核变更申请',
             业务分管领导审核变更申请: '待业务分管领导审核变更申请',
             人社分管领导审核变更申请: '待人社分管领导审核变更申请',
+
+            承办人审核变更申请1: '待承办人审核变更申请',
+            业务分管领导审核变更申请1: '待业务分管领导审核变更申请',
+            人社分管领导审核变更申请1: '待人社分管领导审核变更申请',
+            承办人审核变更申请2: '待承办人审核变更申请',
+            业务分管领导审核变更申请2: '待业务分管领导审核变更申请',
+            人社分管领导审核变更申请2: '待人社分管领导审核变更申请',
+
             总包施工单位上传现金存单电子版文件: '待施工单位上传存缴凭证',
             承办人审核银行存单: '待承办人审核存单凭证',
             业务分管领导审核银行存单: '待业务分管领导审核存单凭证',
@@ -672,6 +701,19 @@ export default {
             承办人审核保函: '待承办人审核保函',
             业务分管领导审核保函: '待业务分管领导审核保函',
             人社分管领导审核保函: '待人社分管领导审核保函'
+          }
+          const processNameMapping = {
+            银行现金存单存缴: '银行现金存单',
+            银行保函存缴: '银行保函',
+            保险公司保函存缴: '保险公司保函',
+            担保公司保函存缴: '担保公司保函'
+          }
+
+          const newDepositMethodMapping = {
+            变更为银行保函: '银行保函',
+            变更为银行现金存单: '银行现金存单',
+            变更为保险公司保函: '保险公司保函',
+            变更为担保公司保函: '担保公司保函'
           }
           // 使用后端返回的 data 属性
           const flowHistoryData = res.result.data.map((item) => {
@@ -687,9 +729,11 @@ export default {
             return {
               ...item,
               nodeName,
+              processName: processNameMapping[item.processName],
+              newDepositMethod: newDepositMethodMapping[item.newDepositMethod],
               companyName: item.enterpriseName, // 添加企业名称
               projectName: item.projectName, // 添加项目名称
-              Money: item.contractAmount, // 添加合同金额
+              Money: item.ensureMoney, // 添加保证金金额
               projectAddress: item.projectAddress, // 添加项目地址
               responsiblePerson: item.responsiblePerson,
               mobile: item.mobile,
@@ -719,10 +763,18 @@ export default {
           console.log('res321', res)
           // this.flowWillAnnounceData = res.result
           const taskStateMapping = {
-            总包施工单位提交变更申请: '总包施工单位提交变更申请',
+            总包施工单位提交变更申请: '待总包施工单位提交变更申请',
             承办人审核变更申请: '待承办人审核变更申请',
             业务分管领导审核变更申请: '待业务分管领导审核变更申请',
             人社分管领导审核变更申请: '待人社分管领导审核变更申请',
+
+            承办人审核变更申请1: '待承办人审核变更申请',
+            业务分管领导审核变更申请1: '待业务分管领导审核变更申请',
+            人社分管领导审核变更申请1: '待人社分管领导审核变更申请',
+            承办人审核变更申请2: '待承办人审核变更申请',
+            业务分管领导审核变更申请2: '待业务分管领导审核变更申请',
+            人社分管领导审核变更申请2: '待人社分管领导审核变更申请',
+
             总包施工单位上传现金存单电子版文件: '待施工单位上传存缴凭证',
             承办人审核银行存单: '待承办人审核存单凭证',
             业务分管领导审核银行存单: '待业务分管领导审核存单凭证',
@@ -735,14 +787,29 @@ export default {
             业务分管领导审核保函: '待业务分管领导审核保函',
             人社分管领导审核保函: '待人社分管领导审核保函'
           }
+          const processNameMapping = {
+            银行现金存单存缴: '银行现金存单',
+            银行保函存缴: '银行保函',
+            保险公司保函存缴: '保险公司保函',
+            担保公司保函存缴: '担保公司保函'
+          }
+
+          const newDepositMethodMapping = {
+            变更为银行保函: '银行保函',
+            变更为银行现金存单: '银行现金存单',
+            变更为保险公司保函: '保险公司保函',
+            变更为担保公司保函: '担保公司保函'
+          }
           // 使用后端返回的 data 属性
           this.backlogNumber = res.result.length
           const flowWillAnnounceData = res.result.map((item) => ({
             ...item,
             nodeName: taskStateMapping[item.nodeName],
+            processName: processNameMapping[item.processName],
+            newDepositMethod: newDepositMethodMapping[item.newDepositMethod],
             companyName: item.enterpriseName,
             projectName: item.projectName,
-            Money: item.contractAmount,
+            Money: item.ensureMoney,
             projectAddress: item.projectAddress,
             responsiblePerson: item.responsiblePerson,
             mobile: item.mobile,
