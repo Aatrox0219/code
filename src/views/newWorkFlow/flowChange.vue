@@ -464,7 +464,7 @@ export default {
       this.selectedProcessId = null
     },
     //开启流程
-    startProcess(record) {
+    startProcess() {
       this.isModalVisible = false
       let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
       axios.defaults.headers.common['userName'] = userData.value.username
@@ -489,7 +489,7 @@ export default {
           } else {
             this.$message.error('开启流程失败')
           }
-          // this.selectedProcessId = null
+          this.selectedProcessId = null
         })
         .catch((error) => {
           console.log(error)
@@ -848,29 +848,6 @@ export default {
       }
       item.type = typeMapping[item.type] || item.type
     },
-    //获得已完成流程实例
-    // getCompleteProcessInstance() {
-    //   const _this = this
-    //   var id = this.instanceCompleted
-    //   this.dialogVisibleFinish = false
-    //   let params = {
-    //     processId: this.instance,
-    //     // startTime: this.startTime,
-    //     // endTime: this.endTime,
-    //   }
-    //   nw_postAction1(`/process/getCompleteProcessInstance`, params)
-    //     .then((res) => {
-    //       if (res.result.length == 0) {
-    //         _this.$message.success('此流程无数据')
-    //         return
-    //       }
-    //       this.flowFinishData = res.result
-    //     })
-    //     .catch((error) => {
-    //       _this.$message.error('查询流程失败')
-    //       console.log(error)
-    //     })
-    // },
     //获得已拒绝的流程
     getCancelProcesses() {
       let params = {
@@ -886,25 +863,6 @@ export default {
             return
           }
           this.flowRejectData = res.result
-        })
-        .catch((error) => {
-          _this.$message.error('查资源失败')
-          console.log(error)
-        })
-    },
-    //得到所有的正在进行的流程
-    getDoingFlow() {
-      let params = {
-        processId: this.instanceInProgress,
-        // taskName: this.taskName,
-        // startTime: this.startTime,
-        // endTime: this.endTime,
-      }
-      nw_postAction1(`/process/getInProgressProcessInstance`, params)
-        .then((res) => {
-          console.log(res)
-          this.flowDoingData = res.result
-          console.log('fsdf', this.flowDoingData)
         })
         .catch((error) => {
           _this.$message.error('查资源失败')

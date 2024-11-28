@@ -124,7 +124,6 @@ export default {
       form: '',
       name: '',
       id: '',
-      selectedProcessId: null,
       columns: [
         {
           title: '流程名称',
@@ -153,11 +152,6 @@ export default {
       flowUseMoneyData: [],
       loadClaimData: [],
       flowUseMoneycolumns: [
-        // {
-        //   title: '状态',
-        //   align: 'center',
-        //   dataIndex: 'nodeName',
-        // },
         {
           title: '企业名称',
           align: 'center',
@@ -207,16 +201,6 @@ export default {
           align: 'center',
           dataIndex: 'nodeName',
         },
-        // {
-        //   title: '任务名称',
-        //   align: 'center',
-        //   dataIndex: 'currentTask',
-        // },
-        // {
-        //   title: '流程名称',
-        //   align: 'center',
-        //   dataIndex: 'processName',
-        // },
         {
           title: '企业名称',
           align: 'center',
@@ -271,16 +255,6 @@ export default {
           align: 'center',
           dataIndex: 'nodeName',
         },
-        // {
-        //   title: '任务名称',
-        //   align: 'center',
-        //   dataIndex: 'currentTask',
-        // },
-        // {
-        //   title: '流程名称',
-        //   align: 'center',
-        //   dataIndex: 'processName',
-        // },
         {
           title: '企业名称',
           align: 'center',
@@ -332,9 +306,6 @@ export default {
     }
   },
   computed: {
-    // ...mapState({
-    //   userInfo: (state) => state.user.info, // 假设用户信息存储在user模块中的info
-    // }),
     userInfo() {
       // 从 Vue.ls 中获取 USER_INFO
       return Vue.ls.get(USER_INFO) || {}; // 如果没有值，默认为空对象
@@ -387,7 +358,6 @@ export default {
           } else {
             this.$message.error('开启流程失败')
           }
-          // this.selectedProcessId = null
         })
         .catch((error) => {
           console.log(error)
@@ -654,29 +624,6 @@ export default {
       }
       item.type = typeMapping[item.type] || item.type
     },
-    //获得已完成流程实例
-    // getCompleteProcessInstance() {
-    //   const _this = this
-    //   var id = this.instanceCompleted
-    //   this.dialogVisibleFinish = false
-    //   let params = {
-    //     processId: this.instance,
-    //     // startTime: this.startTime,
-    //     // endTime: this.endTime,
-    //   }
-    //   nw_postAction1(`/process/getCompleteProcessInstance`, params)
-    //     .then((res) => {
-    //       if (res.result.length == 0) {
-    //         _this.$message.success('此流程无数据')
-    //         return
-    //       }
-    //       this.flowFinishData = res.result
-    //     })
-    //     .catch((error) => {
-    //       _this.$message.error('查询流程失败')
-    //       console.log(error)
-    //     })
-    // },
     //获得已拒绝的流程
     getCancelProcesses() {
       let params = {
@@ -692,25 +639,6 @@ export default {
             return
           }
           this.flowRejectData = res.result
-        })
-        .catch((error) => {
-          _this.$message.error('查资源失败')
-          console.log(error)
-        })
-    },
-    //得到所有的正在进行的流程
-    getDoingFlow() {
-      let params = {
-        processId: this.instanceInProgress,
-        // taskName: this.taskName,
-        // startTime: this.startTime,
-        // endTime: this.endTime,
-      }
-      nw_postAction1(`/process/getInProgressProcessInstance`, params)
-        .then((res) => {
-          console.log(res)
-          this.flowDoingData = res.result
-          console.log('fsdf', this.flowDoingData)
         })
         .catch((error) => {
           _this.$message.error('查资源失败')
