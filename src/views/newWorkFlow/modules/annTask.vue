@@ -187,6 +187,8 @@ export default {
                     proportions: data.proportions,
                     old_deposit_method: data.processName,
                     new_deposit_method: data.newProjectStatus,
+                    reason: data.reason,
+                    ensure_money:data.ensureMoney
                   });
                 }
 
