@@ -189,11 +189,6 @@ export default {
       flowChangeData: [],
       loadClaimData: [],
       flowChangecolumns: [
-        // {
-        //   title: '状态',
-        //   align: 'center',
-        //   dataIndex: 'nodeName',
-        // },
         {
           title: '企业名称',
           align: 'center',
@@ -248,16 +243,6 @@ export default {
           align: 'center',
           dataIndex: 'nodeName',
         },
-        // {
-        //   title: '任务名称',
-        //   align: 'center',
-        //   dataIndex: 'currentTask',
-        // },
-        // {
-        //   title: '流程名称',
-        //   align: 'center',
-        //   dataIndex: 'processName',
-        // },
         {
           title: '企业名称',
           align: 'center',
@@ -317,16 +302,6 @@ export default {
           align: 'center',
           dataIndex: 'nodeName',
         },
-        // {
-        //   title: '任务名称',
-        //   align: 'center',
-        //   dataIndex: 'currentTask',
-        // },
-        // {
-        //   title: '流程名称',
-        //   align: 'center',
-        //   dataIndex: 'processName',
-        // },
         {
           title: '企业名称',
           align: 'center',
@@ -424,6 +399,7 @@ export default {
       this.currentProjectName = record ? record.projectName : '';
       this.currentProjectStatus = record ? record.processName : '';
       this.currentRecord = record;
+      console.log('currentRecord', record);
       let url = '/process/processList/{categoryId}?categoryId=1860602147955077121&category=1'
       nw_getAction(url)
         .then((res) => {
@@ -468,7 +444,7 @@ export default {
               }
               return true;
             });
-
+            console.log('this.flowConfigData', this.flowConfigData);
             this.$message.success('加载成功')
           } else {
             this.$message.error('查询可开启的流程失败')
@@ -499,6 +475,16 @@ export default {
             this.$message.success('开启流程成功')
             const { formDesignerId, onlineDataId, onlineTableId, processInstanceId } = res.result.startProcessVO
             const taskId = res.result.fistTaskId
+            //在传给annTask组件的时候，将新的存缴方式传过去
+            const selectedProcess = this.flowConfigData.find(item => item.processId === this.selectedProcessId);
+            if (selectedProcess) {
+              // 去掉 "变更为" 前缀
+              const processName = selectedProcess.name.replace(/^变更为/, '');
+              // 将处理后的值赋给 newProjectStatus
+              this.currentRecord.newProjectStatus = processName;
+            } else {
+              console.log('未找到匹配的流程配置');
+            }
             this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, '变更', this.currentRecord)
           } else {
             this.$message.error('开启流程失败')

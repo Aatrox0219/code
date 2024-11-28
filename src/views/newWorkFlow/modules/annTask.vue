@@ -186,7 +186,7 @@ export default {
                     project_mobile: data.mobile,
                     proportions: data.proportions,
                     old_deposit_method: data.processName,
-                    // new_deposit_method: selectedProcessName
+                    new_deposit_method: data.newProjectStatus,
                   });
                 }
 
@@ -230,9 +230,11 @@ export default {
             });
           } else {
             _this.$message.error('通过失败');
+            console.log('出错');
           }
         })
         .catch((err) => {
+          this.deleteFlow(this.processInstanceId)
           console.log(err);
         });
     },
