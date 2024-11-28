@@ -173,6 +173,7 @@ export default {
         taskId: this.taskId,
         onlineTableId: onlineId,
         onlineDataId: dataId,
+        isWithdraw: 1,
       })
         .then((res) => {
           console.log(res)
