@@ -335,11 +335,11 @@ export default {
           align: 'center',
           dataIndex: 'Money',
         },
-        {
-          title: '存缴比例',
-          align: 'center',
-          dataIndex: 'Proportions',
-        },
+        // {
+        //   title: '存缴比例',
+        //   align: 'center',
+        //   dataIndex: 'Proportions',
+        // },
         {
           title: '负责人',
           align: 'center',
@@ -457,11 +457,11 @@ export default {
           align: 'center',
           dataIndex: 'Money',
         },
-        {
-          title: '存缴比例',
-          align: 'center',
-          dataIndex: 'Proportions',
-        },
+        // {
+        //   title: '存缴比例',
+        //   align: 'center',
+        //   dataIndex: 'Proportions',
+        // },
         {
           title: '负责人',
           align: 'center',
