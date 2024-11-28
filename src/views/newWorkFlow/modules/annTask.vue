@@ -159,14 +159,35 @@ export default {
                   this.$refs.generateForm.setData({
                     company_name: data.companyName,
                     credit_code: data.creditCode,
+                    company_address: data.companyAddress,
+                    postal_code: data.postalCode,
+                    project_name: data.projectName,
                     project_address: data.projectAddress,
                     address_detail: data.addressDetail,
                     project_contact: data.responsiblePerson,
                     project_mobile: data.mobile
                   });
                 }
-                else if(category === '变更'){
+                else if (category === '变更') {
                   console.log('保证金变更的数据', data);
+                  this.$refs.generateForm.setData({
+                    company_name: data.companyName,
+                    credit_code: data.creditCode,
+                    company_address: data.companyAddress,
+                    postal_code: data.postalCode,
+                    project_name: data.projectName,
+                    project_address: data.projectAddress,
+                    address_detail: data.addressDetail,
+                    money: data.contractAmount,
+                    start_date: data.formCreateDate,
+                    end_date: data.formEndDate,
+                    // reason:,
+                    project_contact: data.responsiblePerson,
+                    project_mobile: data.mobile,
+                    proportions: data.proportions,
+                    old_deposit_method: data.processName,
+                    // new_deposit_method: selectedProcessName
+                  });
                 }
 
               }
