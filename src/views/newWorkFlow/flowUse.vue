@@ -222,9 +222,14 @@ export default {
           dataIndex: 'Money',
         },
         {
-          title: '使用金额（万元）',
+          title: '本次使用金额（万元）',
           align: 'center',
           dataIndex: 'useMoneyLow',
+        },
+        {
+          title: '剩余金额（万元）',
+          align: 'center',
+          dataIndex: 'remainingAmount',
         },
         {
           title: '项目联系人',
@@ -276,9 +281,14 @@ export default {
           dataIndex: 'Money',
         },
         {
-          title: '使用金额（万元）',
+          title: '本次使用金额（万元）',
           align: 'center',
           dataIndex: 'useMoneyLow',
+        },
+        {
+          title: '剩余金额（万元）',
+          align: 'center',
+          dataIndex: 'remainingAmount',
         },
         {
           title: '项目联系人',
@@ -533,7 +543,8 @@ export default {
               projectAddress: item.projectAddress, // 添加项目地址
               responsiblePerson: item.responsiblePerson,
               mobile: item.mobile,
-              Proportions: item.proportions
+              Proportions: item.proportions,
+              remainingAmount: item.remainingAmount
             }
           });
           // 按创建时间排序（从近到远）
@@ -575,7 +586,8 @@ export default {
             projectAddress: item.projectAddress,
             responsiblePerson: item.responsiblePerson,
             mobile: item.mobile,
-            Proportions: item.proportions
+            Proportions: item.proportions,
+            remainingAmount: item.remainingAmount
           }))
 
           // 按创建时间排序（从近到远）
