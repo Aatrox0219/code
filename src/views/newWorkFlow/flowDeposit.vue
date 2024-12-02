@@ -159,6 +159,7 @@ export default {
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory },
   data() {
     return {
+      annTaskData: {},
       backlogNumber: 0,
       selectedStatus: 'all', // 状态默认选择 "全部"
       taskTab: {
@@ -644,6 +645,18 @@ export default {
         this.$message.warning('请选择一个流程')
         return
       }
+      //在传给annTask组件的时候，将新的存缴方式传过去
+      const selectedProcess = this.flowConfigData.find(item => item.processId === this.selectedProcessId);
+      if (selectedProcess) {
+        // 去掉 "存缴" 后缀
+        const processName = selectedProcess.name.replace(/存缴$/, '');
+        console.log('processName', processName);
+        // 将处理后的值赋给 newProjectStatus
+        this.annTaskData.projectStatus = processName;
+      } 
+      else {
+        console.log('未找到匹配的流程配置');
+      }
       this.isModalVisible = false
       let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
       axios.defaults.headers.common['userName'] = userData.value.username
@@ -654,7 +667,7 @@ export default {
             this.$message.success('开启流程成功')
             const { formDesignerId, onlineDataId, onlineTableId, processInstanceId } = res.result.startProcessVO
             const taskId = res.result.fistTaskId
-            this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, '存缴', null)
+            this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, '存缴', this.annTaskData)
           } else {
             this.$message.error('开启流程失败')
           }

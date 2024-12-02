@@ -44,6 +44,8 @@ export default {
   },
   data() {
     return {
+      category: '',
+      projectStatus: '',
       isOriginal: false,
       frontId: '',
       formDesignerId: '',
@@ -90,13 +92,13 @@ export default {
       this.onlineTableId = onlineTableId
       this.taskId = taskId
       this.processInstanceId = processInstanceId
-
-      //data不为空时才有frontId
-      if (data) {
-        this.frontId = data.projectId
+      this.category = category
+     //存缴和原始不需要传frontId
+      if (category === '存缴' || category === '原始') {
+        this.frontId = ''
       }
       else {
-        this.frontId = ''
+        this.frontId = data.projectId
       }
       //判断是否是原始流程,如果是原始的流程则没有getdata函数
       if (category === '原始') {
@@ -104,6 +106,9 @@ export default {
       }
       else {
         this.isOriginal = false
+      }
+      if(category === '存缴'){
+        this.projectStatus = data.projectStatus
       }
       this.getForm(category, data)
     },
@@ -221,6 +226,9 @@ export default {
         onlineTableId: onlineId,
         onlineDataId: dataId,
       };
+      if (this.category === '存缴') {
+        params.depositWay = this.projectStatus
+      }
       if (this.frontId) {
         params.frontId = this.frontId;
       }
