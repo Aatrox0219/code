@@ -266,7 +266,7 @@ export default {
         {
           title: '原存缴方式',
           align: 'center',
-          dataIndex: 'processName',
+          dataIndex: 'oldDepositMethod',
         },
         {
           title: '现存缴方式',
@@ -325,7 +325,7 @@ export default {
         {
           title: '原存缴方式',
           align: 'center',
-          dataIndex: 'processName',
+          dataIndex: 'oldDepositMethod',
         },
         {
           title: '现存缴方式',
@@ -723,7 +723,9 @@ export default {
               projectAddress: item.projectAddress, // 添加项目地址
               responsiblePerson: item.responsiblePerson,
               mobile: item.mobile,
-              Proportions: item.proportions
+              Proportions: item.proportions,
+              oldDepositMethod: item.oldDepositMethod,
+              newDepositMethod: item.newDepositMethod
             }
           });
           // 按创建时间排序（从近到远）
@@ -799,7 +801,9 @@ export default {
             projectAddress: item.projectAddress,
             responsiblePerson: item.responsiblePerson,
             mobile: item.mobile,
-            Proportions: item.proportions
+            Proportions: item.proportions,
+            oldDepositMethod: item.oldDepositMethod,
+            newDepositMethod: item.newDepositMethod
           }))
 
           // 按创建时间排序（从近到远）
