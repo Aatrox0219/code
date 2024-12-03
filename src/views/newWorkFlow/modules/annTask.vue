@@ -190,7 +190,7 @@ export default {
                     project_contact: data.responsiblePerson,
                     project_mobile: data.mobile,
                     proportions: data.proportions,
-                    old_deposit_method: data.processName,
+                    old_deposit_method: data.depositWay,
                     new_deposit_method: data.newProjectStatus,
                     reason: data.reason,
                     proportions: data.proportions,
