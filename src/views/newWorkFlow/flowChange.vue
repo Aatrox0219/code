@@ -325,7 +325,7 @@ export default {
         {
           title: '原存缴方式',
           align: 'center',
-          dataIndex: 'oldDepositMethod',
+          dataIndex: 'depositWay',
         },
         {
           title: '现存缴方式',
@@ -397,7 +397,7 @@ export default {
     startFixedProcess(showModal, record) {
       //获取当前点击的项目名称和存缴方式
       this.currentProjectName = record ? record.projectName : '';
-      this.currentProjectStatus = record ? record.processName : '';
+      this.currentProjectStatus = record ? record.depositWay : '';
       this.currentRecord = record;
       console.log('currentRecord', record);
       let url = '/process/processList/{categoryId}?categoryId=1860602147955077121&category=1'
