@@ -212,7 +212,7 @@ export default {
         {
           title: '原存缴方式',
           align: 'center',
-          dataIndex: 'processName',
+          dataIndex: 'depositWay',
         },
         {
           title: '负责人',
@@ -610,7 +610,7 @@ export default {
             经纪公司上传保函电子版文件: '待经纪公司上传保函',
             承办人审核保函: '待承办人审核保函',
             业务分管领导审核保函: '待业务分管领导审核保函',
-            人社分管领导审核保函: '待人社分管领导审核保函'
+            人社分管领导最终审核: '待人社分管领导审核保函'
           }
 
           const processNameMapping = {
@@ -633,7 +633,9 @@ export default {
             projectAddress: item.projectAddress,
             responsiblePerson: item.responsiblePerson,
             mobile: item.mobile,
-            Proportions: item.proportions
+            Proportions: item.proportions,
+            // 判断 depositWay 是否为空，若为空则使用 processName
+            depositWay: item.depositWay || processNameMapping[item.processName],
           }))
 
           // 按创建时间排序（从近到远）
@@ -686,7 +688,7 @@ export default {
             经纪公司上传保函电子版文件: '待经纪公司上传保函',
             承办人审核保函: '待承办人审核保函',
             业务分管领导审核保函: '待业务分管领导审核保函',
-            人社分管领导审核保函: '待人社分管领导审核保函'
+            人社分管领导最终审核: '待人社分管领导审核保函'
           }
           const processNameMapping = {
             银行现金存单存缴: '银行现金存单',
@@ -773,7 +775,7 @@ export default {
             经纪公司上传保函电子版文件: '待经纪公司上传保函',
             承办人审核保函: '待承办人审核保函',
             业务分管领导审核保函: '待业务分管领导审核保函',
-            人社分管领导审核保函: '待人社分管领导审核保函'
+            人社分管领导最终审核: '待人社分管领导审核保函'
           }
           const processNameMapping = {
             银行现金存单存缴: '银行现金存单',
