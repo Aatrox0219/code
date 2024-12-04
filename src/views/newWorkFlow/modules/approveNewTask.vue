@@ -18,7 +18,7 @@
           </template>
           <a-button type="primary">退回</a-button>
         </a-popover>
-        <a-button  v-if="nodePowerResult.includes('拒绝')" type="danger" @click="handleTest('0')" style="margin-left: 200px">拒绝</a-button>
+        <a-button  v-if="nodePowerResult.includes('终止')" type="danger" @click="handleTest('0')" style="margin-left: 200px">终止</a-button>
       </div>
     </div>
   </div>
@@ -233,7 +233,7 @@ export default {
       }
       o_postAction('/cgform/api/form/' + onlineId, datajson)
         .then((res) => {
-          //stateflag:0 拒绝 ;1 通过;2 退回
+          //stateflag:0 终止 ;1 通过;2 退回
           if (stateflag == '0') {
             this.reject(onlineId, res.result)
           } else if (stateflag == '1') {
