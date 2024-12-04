@@ -325,7 +325,7 @@ export default {
         {
           title: '原存缴方式',
           align: 'center',
-          dataIndex: 'depositWay',
+          dataIndex: 'oldDepositMethod',
         },
         {
           title: '现存缴方式',
