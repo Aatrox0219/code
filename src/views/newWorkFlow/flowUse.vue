@@ -173,6 +173,11 @@ export default {
           dataIndex: 'Money',
         },
         {
+          title: '剩余金额（万元）',
+          align: 'center',
+          dataIndex: 'remainingAmount',
+        },
+        {
           title: '负责人',
           align: 'center',
           dataIndex: 'responsiblePerson',
