@@ -117,9 +117,21 @@ export default {
   created() {
     this.userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
   },
-  mounted() { },
+  mounted() {
+    this.setContainerWidth();  // 初始设置容器宽度
+    window.addEventListener('resize', this.setContainerWidth);  // 添加窗口大小变化监听
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.setContainerWidth);  // 清除事件监听
+  },
   computed: {},
   methods: {
+    // 设置流程图容器宽度
+    setContainerWidth() {
+      const modalWidth = document.querySelector('.ant-modal').offsetWidth;  // 获取弹框宽度
+      const containerWidth = modalWidth * 0.9; // 使容器宽度为弹框宽度的 90%
+      this.$refs.efContainer.style.width = `${containerWidth}px`;  // 更新容器宽度
+    },
     tabChange(activeKey) {
       if (activeKey == '2') {
         this.dataReload(this.returnJson)
@@ -224,6 +236,7 @@ export default {
         this.jsPlumb.importDefaults(this.jsplumbSetting)
         // 会使整个jsPlumb立即重绘。
         this.jsPlumb.setSuspendDrawing(false, true)
+        this.jsPlumb.setZoom(0.8);  // 缩小到 80%
         // 初始化节点
         this.loadEasyFlow()
         this.jsPlumb.setContainer(this.$refs.efContainer)
@@ -297,14 +310,14 @@ export default {
   position: relative;
   flex: 1;
   height: 100%;
-  width: 1500px;
+  width: 100%;
   /* 可根据实际流程图的宽度进行调整 */
   overflow-x: auto;
   /* 开启水平滚动条 */
 }
 
 .flowPicture {
-  width: 700px;
+  width: 100%;
   height: 600px;
   /* pointer-events: none; */
 }
