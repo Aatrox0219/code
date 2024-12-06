@@ -180,11 +180,6 @@ export default {
             flowUseMoneyData: [],
             loadClaimData: [],
             flowBackPaycolumns: [
-                // {
-                //   title: '状态',
-                //   align: 'center',
-                //   dataIndex: 'nodeName',
-                // },
                 {
                     title: '企业名称',
                     align: 'center',
@@ -211,9 +206,9 @@ export default {
                     dataIndex: 'cbMoney',
                 },
                 {
-                    title: '已使用金额（万元）',
+                    title: '剩余金额（万元）',
                     align: 'center',
-                    dataIndex: 'useMoney',
+                    dataIndex: 'remainingAmount',
                 },
                 {
                     title: '负责人',
@@ -244,16 +239,6 @@ export default {
                     align: 'center',
                     dataIndex: 'nodeName',
                 },
-                // {
-                //   title: '任务名称',
-                //   align: 'center',
-                //   dataIndex: 'currentTask',
-                // },
-                // {
-                //   title: '流程名称',
-                //   align: 'center',
-                //   dataIndex: 'processName',
-                // },
                 {
                     title: '企业名称',
                     align: 'center',
@@ -270,22 +255,17 @@ export default {
                     dataIndex: 'projectAddress',
                 },
                 {
-                    title: '合同金额（万元）',
-                    align: 'center',
-                    dataIndex: 'Money',
-                },
-                {
                     title: '保证金金额（万元）',
                     align: 'center',
                     dataIndex: 'cbMoney',
                 },
                 {
-                    title: '已使用金额（万元）',
+                    title: '剩余金额（万元）',
                     align: 'center',
-                    dataIndex: 'useMoney',
+                    dataIndex: 'remainingAmount',
                 },
                 {
-                    title: '负责人',
+                    title: '项目联系人',
                     align: 'center',
                     dataIndex: 'responsiblePerson',
                 },
@@ -313,46 +293,41 @@ export default {
                     align: 'center',
                     dataIndex: 'nodeName',
                 },
-                // {
-                //   title: '任务名称',
-                //   align: 'center',
-                //   dataIndex: 'currentTask',
-                // },
-                // {
-                //   title: '流程名称',
-                //   align: 'center',
-                //   dataIndex: 'processName',
-                // },
                 {
                     title: '企业名称',
                     align: 'center',
                     dataIndex: 'companyName',
                 },
-                //   {
-                //     title: '项目名称',
-                //     align: 'center',
-                //     dataIndex: 'projectName',
-                //   },
-                //   {
-                //     title: '所属区县',
-                //     align: 'center',
-                //     dataIndex: 'projectAddress',
-                //   },
-                //   {
-                //     title: '合同金额（万元）',
-                //     align: 'center',
-                //     dataIndex: 'Money',
-                //   },
-                //   {
-                //     title: '负责人',
-                //     align: 'center',
-                //     dataIndex: 'responsiblePerson',
-                //   },
-                //   {
-                //     title: '联系方式',
-                //     align: 'center',
-                //     dataIndex: 'mobile',
-                //   },
+                {
+                    title: '项目名称',
+                    align: 'center',
+                    dataIndex: 'projectName',
+                },
+                {
+                    title: '所属区县',
+                    align: 'center',
+                    dataIndex: 'projectAddress',
+                },
+                {
+                    title: '保证金金额（万元）',
+                    align: 'center',
+                    dataIndex: 'Money',
+                },
+                {
+                    title: '剩余金额（万元）',
+                    align: 'center',
+                    dataIndex: 'remainingAmount',
+                },
+                {
+                    title: '项目联系人',
+                    align: 'center',
+                    dataIndex: 'responsiblePerson',
+                },
+                {
+                    title: '联系方式',
+                    align: 'center',
+                    dataIndex: 'mobile',
+                },
                 {
                     title: '创建时间',
                     align: 'center',
@@ -369,9 +344,6 @@ export default {
         }
     },
     computed: {
-        // ...mapState({
-        //   userInfo: (state) => state.user.info, // 假设用户信息存储在user模块中的info
-        // }),
         userInfo() {
             // 从 Vue.ls 中获取 USER_INFO
             return Vue.ls.get(USER_INFO) || {}; // 如果没有值，默认为空对象
@@ -380,7 +352,7 @@ export default {
 
     created() {
         // 根据 userInfo.username 动态设置主 Tab 页
-        if ((this.userInfo.username && this.userInfo.username.endsWith('cb')) || this.userInfo.username === 'admin') {
+        if (this.userInfo.username === 'admin' || this.userInfo.username === 'ceshi001' || this.userInfo.username === 'corporation001' || this.userInfo.username === 'corporation002') {
             this.taskTab.tabKey = '3'; // 显示 "待补缴" 页
         } else {
             this.taskTab.tabKey = '2'; // 显示 "历史" 页
@@ -569,15 +541,13 @@ export default {
                 .then((res) => {
                     console.log('res321', res)
                     const taskStateMapping = {
-                        施工单位提交补缴凭证电子版: '待施工单位提交补缴凭证',
-                        承办人审核补缴凭证: '待承办人审核补缴凭证',
-                        业务分管领导审核补缴凭证: '待业务分管领导审核补缴凭证',
-                        人社分管领导审核补缴凭证: '待人社分管领导审核补缴凭证',
+                        总包施工单位提交补缴凭证电子版: '待总包施工单位提交补缴凭证电子版',
+                        承办人审核补缴凭证电子版: '待承办人审核补缴凭证电子版',
+                        业务分管领导审核补缴凭证电子版: '待业务分管领导审核补缴凭证电子版',
+                        人社分管领导审核补缴凭证电子版: '待人社分管领导审核补缴凭证电子版',
 
-                        经纪公司提交保函补缴凭证电子版: '待经纪公司提交保函补缴凭证',
-                        承办人审核保函补缴凭证: '待承办人审核保函补缴凭证',
-                        业务分管领导审核保函补缴凭证: '待业务分管领导审核保函补缴凭证',
-                        人社分管领导审核保函补缴凭证: '待人社分管领导审核保函补缴凭证'
+                        经纪公司提交保函补缴凭证电子版: '待经纪公司提交保函补缴凭证电子版',
+
                     }
                     // 使用后端返回的 data 属性
 
@@ -615,20 +585,17 @@ export default {
                 address: this.selectedAddress === 'all' ? '' : this.selectedAddress, // 如果选择了全部，则发送空字符串
                 applyState: this.selectedState === 'all' ? '' : this.selectedState // 如果选择了全部，则发送空字符串
             }
-            nw_postAction1('/process/getProcessAllState', params)
+            nw_postAction1('/list/getProcessAllState', params)
                 .then((res) => {
                     console.log('res321', res)
                     // 状态映射
                     const taskStateMapping = {
-                        施工单位提交补缴凭证电子版: '待施工单位提交补缴凭证',
-                        承办人审核补缴凭证: '待承办人审核补缴凭证',
-                        业务分管领导审核补缴凭证: '待业务分管领导审核补缴凭证',
-                        人社分管领导审核补缴凭证: '待人社分管领导审核补缴凭证',
+                        总包施工单位提交补缴凭证电子版: '待总包施工单位提交补缴凭证电子版',
+                        承办人审核补缴凭证电子版: '待承办人审核补缴凭证电子版',
+                        业务分管领导审核补缴凭证电子版: '待业务分管领导审核补缴凭证电子版',
+                        人社分管领导审核补缴凭证电子版: '待人社分管领导审核补缴凭证电子版',
 
-                        经纪公司提交保函补缴凭证电子版: '待经纪公司提交保函补缴凭证',
-                        承办人审核保函补缴凭证: '待承办人审核保函补缴凭证',
-                        业务分管领导审核保函补缴凭证: '待业务分管领导审核保函补缴凭证',
-                        人社分管领导审核保函补缴凭证: '待人社分管领导审核保函补缴凭证'
+                        经纪公司提交保函补缴凭证电子版: '待经纪公司提交保函补缴凭证电子版',
                     }
                     // 使用后端返回的 data 属性
                     const flowHistoryData = res.result.data.map((item) => {
@@ -676,10 +643,12 @@ export default {
                     console.log('res321', res)
                     // this.flowWillAnnounceData = res.result
                     const taskStateMapping = {
-                        承办人提交保证金使用申请: '待承办人提交使用申请',
-                        业务分管领导审核: '待业务分管领导审核',
-                        人社分管领导审核: '待人社分管领导审核',
-                        申请承办人确认使用结果: '待承办人确认使用结果'
+                        总包施工单位提交补缴凭证电子版: '待总包施工单位提交补缴凭证电子版',
+                        承办人审核补缴凭证电子版: '待承办人审核补缴凭证电子版',
+                        业务分管领导审核补缴凭证电子版: '待业务分管领导审核补缴凭证电子版',
+                        人社分管领导审核补缴凭证电子版: '待人社分管领导审核补缴凭证电子版',
+
+                        经纪公司提交保函补缴凭证电子版: '待经纪公司提交保函补缴凭证电子版',
                     }
                     // 使用后端返回的 data 属性
                     this.backlogNumber = res.result.length
