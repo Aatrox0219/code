@@ -518,7 +518,7 @@ export default {
         address: this.selectedAddress === 'all' ? '' : this.selectedAddress, // 如果选择了全部，则发送空字符串
         applyState: this.selectedState === 'all' ? '' : this.selectedState // 如果选择了全部，则发送空字符串
       }
-      nw_postAction1('/process/getProcessAllState', params)
+      nw_postAction1('/list/getProcessAllState', params)
         .then((res) => {
           console.log('res321', res)
           // 状态映射

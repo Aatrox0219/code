@@ -89,16 +89,10 @@ export default {
   mounted() { 
     // 监听刷新页面的事件
     window.addEventListener("beforeunload", this.handleBeforeUnload);
-    // 监听页面切换的事件
-    // document.addEventListener("visibilitychange", this.handleVisibilityChange);
-    // window.addEventListener("pagehide", this.handlePageHide);
   },
   beforeDestroy() {
     // 移除事件监听器
     window.removeEventListener("beforeunload", this.handleBeforeUnload);
-
-    // document.removeEventListener("visibilitychange", this.handleVisibilityChange);
-    // window.removeEventListener("pagehide", this.handlePageHide);
   },
   methods: {
     openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, category, data) {
@@ -182,16 +176,6 @@ export default {
         });
       }
     },
-
-
-    // 页面卸载时调用
-    // handlePageHide() {
-    //   console.log('页面卸载时调用');
-    //   if (this.visible) {
-    //     this.deleteFlow(this.processInstanceId); // 页面切换时删除流程
-    //   }
-    // },
-
 
     //得到表单
     getForm(category, data) {
@@ -277,16 +261,17 @@ export default {
         onlineTableId: onlineId,
         onlineDataId: dataId,
       };
-      if (this.category === '存缴') {
-        params.depositWay = this.projectStatus
-      }
-      if (this.frontId) {
-        params.frontId = this.frontId;
-      }
       nw_postAction1('/task/complete', params)
         .then((res) => {
           if (res.result.result) {
             _this.$message.success('通过成功');
+            if (this.category === '存缴') {
+              params.depositWay = this.projectStatus
+            }
+            if (this.frontId) {
+              params.frontId = this.frontId;
+            }
+            this.saveMarginData(params)
             this.$nextTick(() => {
               this.getData()
             });
@@ -297,6 +282,17 @@ export default {
         })
         .catch((err) => {
           this.deleteFlow(this.processInstanceId)
+          console.log(err);
+        });
+    },
+
+    //保存数据的接口
+    saveMarginData(params){
+      nw_postAction1('/margin/saveMarginData', params)
+        .then((res) => {
+          console.log('保存数据的接口返回值',res);
+        })
+        .catch((err) => {
           console.log(err);
         });
     },
