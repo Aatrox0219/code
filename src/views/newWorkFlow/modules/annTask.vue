@@ -44,6 +44,7 @@ export default {
   },
   data() {
     return {
+      isProcessingUnload: false, // 标志位，防止刷新页面时重复执行函数
       category: '',
       projectStatus: '',
       isOriginal: false,
@@ -85,6 +86,14 @@ export default {
     }
   },
   updated() { },
+  mounted() { 
+    // 监听刷新页面的事件
+    window.addEventListener("beforeunload", this.handleBeforeUnload);
+  },
+  beforeDestroy() {
+    // 移除事件监听器
+    window.removeEventListener("beforeunload", this.handleBeforeUnload);
+  },
   methods: {
     openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, category, data) {
       this.formDesignerId = formDesignerId
@@ -139,6 +148,32 @@ export default {
         console.log('删除成功:', res);
       } catch (err) {
         console.error('删除流程时出错:', err);
+      }
+    },
+
+     // 页面刷新时调用，捕捉刷新事件
+    handleBeforeUnload(event) {
+      console.log('页面刷新时调用',event);
+      if (this.isProcessingUnload) {
+        return; // 已经在处理中，直接返回
+      }
+      if (this.visible) {
+
+        // 阻止浏览器默认刷新行为
+        event.preventDefault();
+        console.log('页面刷新时调用，删除流程');
+        this.isProcessingUnload = true;
+        this.deleteFlow(this.processInstanceId)
+        .then(() => {
+          console.log('流程删除完成');
+          // 在异步任务完成后手动刷新页面
+          window.location.reload();
+        })
+        .catch((err) => {
+          console.error('删除流程失败:', err);
+          // 即使失败也手动刷新页面
+          window.location.reload();
+        });
       }
     },
 
@@ -226,16 +261,17 @@ export default {
         onlineTableId: onlineId,
         onlineDataId: dataId,
       };
-      if (this.category === '存缴') {
-        params.depositWay = this.projectStatus
-      }
-      if (this.frontId) {
-        params.frontId = this.frontId;
-      }
       nw_postAction1('/task/complete', params)
         .then((res) => {
           if (res.result.result) {
             _this.$message.success('通过成功');
+            if (this.category === '存缴') {
+              params.depositWay = this.projectStatus
+            }
+            if (this.frontId) {
+              params.frontId = this.frontId;
+            }
+            this.saveMarginData(params)
             this.$nextTick(() => {
               this.getData()
             });
@@ -246,6 +282,17 @@ export default {
         })
         .catch((err) => {
           this.deleteFlow(this.processInstanceId)
+          console.log(err);
+        });
+    },
+
+    //保存数据的接口
+    saveMarginData(params){
+      nw_postAction1('/margin/saveMarginData', params)
+        .then((res) => {
+          console.log('保存数据的接口返回值',res);
+        })
+        .catch((err) => {
           console.log(err);
         });
     },
