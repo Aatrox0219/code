@@ -44,6 +44,7 @@ export default {
   },
   data() {
     return {
+      isProcessingUnload: false, // 标志位，防止刷新页面时重复执行函数
       category: '',
       projectStatus: '',
       isOriginal: false,
@@ -85,6 +86,20 @@ export default {
     }
   },
   updated() { },
+  mounted() { 
+    // 监听刷新页面的事件
+    window.addEventListener("beforeunload", this.handleBeforeUnload);
+    // 监听页面切换的事件
+    // document.addEventListener("visibilitychange", this.handleVisibilityChange);
+    // window.addEventListener("pagehide", this.handlePageHide);
+  },
+  beforeDestroy() {
+    // 移除事件监听器
+    window.removeEventListener("beforeunload", this.handleBeforeUnload);
+
+    // document.removeEventListener("visibilitychange", this.handleVisibilityChange);
+    // window.removeEventListener("pagehide", this.handlePageHide);
+  },
   methods: {
     openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, category, data) {
       this.formDesignerId = formDesignerId
@@ -141,6 +156,42 @@ export default {
         console.error('删除流程时出错:', err);
       }
     },
+
+     // 页面刷新时调用，捕捉刷新事件
+    handleBeforeUnload(event) {
+      console.log('页面刷新时调用',event);
+      if (this.isProcessingUnload) {
+        return; // 已经在处理中，直接返回
+      }
+      if (this.visible) {
+
+        // 阻止浏览器默认刷新行为
+        event.preventDefault();
+        console.log('页面刷新时调用，删除流程');
+        this.isProcessingUnload = true;
+        this.deleteFlow(this.processInstanceId)
+        .then(() => {
+          console.log('流程删除完成');
+          // 在异步任务完成后手动刷新页面
+          window.location.reload();
+        })
+        .catch((err) => {
+          console.error('删除流程失败:', err);
+          // 即使失败也手动刷新页面
+          window.location.reload();
+        });
+      }
+    },
+
+
+    // 页面卸载时调用
+    // handlePageHide() {
+    //   console.log('页面卸载时调用');
+    //   if (this.visible) {
+    //     this.deleteFlow(this.processInstanceId); // 页面切换时删除流程
+    //   }
+    // },
+
 
     //得到表单
     getForm(category, data) {
