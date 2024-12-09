@@ -420,7 +420,7 @@
     <div class="ef-node-form">
       <ul v-show="attMenu2Open" class="ef-node-menu-ul">
         <div class="attMenu2Div">
-          <attribute-form ref="attributesForm1" @changeOnline="changeOnline"> </attribute-form>
+          <attribute-form :data="data" ref="attributesForm1" @changeOnline="changeOnline"> </attribute-form>
         </div>
       </ul>
     </div>
@@ -498,6 +498,9 @@ import axios from 'axios'
 import qs from 'qs'
 import { t_postAction, t_getAction } from '@/api/tempApi'
 export default {
+  props: {
+    data: Object,
+  },
   data() {
     return {
       formAllId: [],
@@ -728,7 +731,7 @@ export default {
       })
     },
     closeAttributesForm() {
-      this.$refs.attributesForm1.close()
+      // this.$refs.attributesForm1.close()
     },
     //得到所有的表单
     getAllForm() {

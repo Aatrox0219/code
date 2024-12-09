@@ -94,6 +94,7 @@
                 ref="nodeForm"
                 @setLineLabel="setLineLabel"
                 @repaintEverything="repaintEverything"
+                :data="data"
               ></flow-node-form>
             </div>
           </a-layout-sider>

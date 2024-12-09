@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="attributeFormFlag">
+    <div v-if="attributeFormFlag" style="max-height: 250px; overflow-y: auto;">
       <div>
         <generate-form style="margin: 0 auto" insite="true" :data="formJson" ref="generateForm">
           <template v-slot:blank="scope">
@@ -10,6 +10,30 @@
           </template>
         </generate-form>
       </div>
+
+      <el-form
+        style="margin-left: 12px;"
+        :model="formAttribute"
+        label-width="90px"
+        label-position="left"
+        ref="dataForm"
+      >
+        <el-form-item label="流程主表:" style="width: 262px; margin-bottom: 3px;">
+          <el-input size="small" v-model="formAttribute.processMainTable"></el-input>
+        </el-form-item>
+        <el-form-item label="主表主键:" style="width: 262px; margin-bottom: 3px;">
+          <el-input size="small" v-model="formAttribute.processMainKey"></el-input>
+        </el-form-item>
+        <el-form-item label="主表外键:" style="width: 262px; margin-bottom: 3px;">
+          <el-input size="small" v-model="formAttribute.MainTableAssociationkey"></el-input>
+        </el-form-item>
+        <el-form-item label="流程关联表:" style="width: 262px; margin-bottom: 3px;">
+          <el-input size="small" v-model="formAttribute.processAssociationTable"></el-input>
+        </el-form-item>
+        <el-form-item label="关联表主键:" style="width: 262px; margin-bottom: 3px;">
+          <el-input size="small" v-model="formAttribute.processAssociationKey"></el-input>
+        </el-form-item>
+      </el-form>
 
       <div class="form-button">
         <el-button class="form-button-save" @click="handleTest">
@@ -26,12 +50,22 @@ import { axios } from '../../../utils/request'
 import api from '../../../api/index'
 export default {
   name: 'AttributeForm',
+  props: {
+    data: Object,
+  },
   components: { GenerateForm, AntdGenerateForm },
   data() {
     return {
+      formAttribute: {
+        processMainTable: '',
+        processMainKey: '',
+        MainTableAssociationkey: '',
+        processAssociationTable: '',
+        processAssociationKey: '',
+      },
       myValue: { formDesignerId: '', onlineTableId: '', onlineDataId: '' },
       formJson: {},
-      attributeFormFlag: false,
+      attributeFormFlag: true,
     }
   },
   // watch: {
@@ -145,69 +179,75 @@ export default {
     },
     //提交表单填写信息
     handleTest() {
-      const $form = this.formJson.config.ui === 'element' ? this.$refs.generateForm : this.$refs.generateAntForm
-      $form
-        .getData()
-        .then((data) => {
-          console.log(data)
-          this.commitToDatabase(data) //将数据存储到online数据库中
-        })
-        .catch((e) => {
-          this.$message.error(e)
-        })
+      this.data.formAttribute = this.formAttribute
+      console.log('this.data',this.data);
+      // const $form = this.formJson.config.ui === 'element' ? this.$refs.generateForm : this.$refs.generateAntForm
+      // $form
+      //   .getData()
+      //   .then((data) => {
+      //     console.log(data)
+      //     this.commitToDatabase(data) //将数据存储到online数据库中
+      //   })
+      //   .catch((e) => {
+      //     this.$message.error(e)
+      //   })
     },
     //提交的信息存入数据库
-    commitToDatabase(commitdata) {
-      console.log('提交的数据', commitdata)
-      var _this = this
-      var onlineId = this.formJson.config.tableId
-      let datajson = {}
-      for (let i = 0; i < this.formJson.list.length; i++) {
-        if (this.formJson.list[i].type == 'grid') {
-          for (let j = 0; j < this.formJson.list[i].columns.length; j++) {
-            for (let z = 0; z < this.formJson.list[i].columns[j].list.length; z++) {
-              let model1 = this.formJson.list[i].columns[j].list[z].model
-              let tableCol1 = this.formJson.list[i].columns[j].list[z].tableCol
-              datajson[tableCol1.toString()] = commitdata[model1]
-            }
-          }
-        } else if (this.formJson.list[i].type == 'divider') {
-          // let model = this.formJson.list[i].model
-          // let key = this.formJson.list[i].key
-          // datajson[key.toString()] = commitdata[model]
-        } else if (this.formJson.list[i].type == 'table') {
-          let schedule = this.formJson.list[i].schedule
-          let array = new Array()
-          for (let k = 0; k < commitdata[this.formJson.list[i].model].length; k++) {
-            let datajson1 = {}
-            for (let h = 0; h < this.formJson.list[i].tableColumns.length; h++) {
-              let model2 = this.formJson.list[i].tableColumns[h].model
-              let tableCol2 = this.formJson.list[i].tableColumns[h].tableCol
-              datajson1[tableCol2.toString()] = commitdata[this.formJson.list[i].model][k][model2]
-            }
-            array.push(datajson1)
-          }
-          datajson[this.formJson.list[i].schedule.toString()] = array
-        } else {
-          let model = this.formJson.list[i].model
-          let tableCol = this.formJson.list[i].tableCol
-          datajson[tableCol.toString()] = commitdata[model]
-          console.log(datajson[tableCol.toString()])
-        }
-      }
-      axios({
-        url: `/online/cgform/api/form/${onlineId}`,
-        method: 'post',
-        data: datajson,
-      })
-        .then((res) => {
-          this.$emit('changeOnline', onlineId, res.result)
-          this.$message.success('保存表单成功')
-        })
-        .catch((err) => {
-          this.$message.error('保存表单失败')
-        })
-    },
+    // commitToDatabase(commitdata) {
+    //   console.log('提交的数据', commitdata)
+    //   var _this = this
+    //   var onlineId = this.formJson.config.tableId
+    //   let datajson = {}
+    //   for (let i = 0; i < this.formJson.list.length; i++) {
+    //     if (this.formJson.list[i].type == 'grid') {
+    //       for (let j = 0; j < this.formJson.list[i].columns.length; j++) {
+    //         for (let z = 0; z < this.formJson.list[i].columns[j].list.length; z++) {
+    //           let model1 = this.formJson.list[i].columns[j].list[z].model
+    //           let tableCol1 = this.formJson.list[i].columns[j].list[z].tableCol
+    //           datajson[tableCol1.toString()] = commitdata[model1]
+    //         }
+    //       }
+    //     } else if (this.formJson.list[i].type == 'divider') {
+    //       // let model = this.formJson.list[i].model
+    //       // let key = this.formJson.list[i].key
+    //       // datajson[key.toString()] = commitdata[model]
+    //     } else if (this.formJson.list[i].type == 'table') {
+    //       let schedule = this.formJson.list[i].schedule
+    //       let array = new Array()
+    //       for (let k = 0; k < commitdata[this.formJson.list[i].model].length; k++) {
+    //         let datajson1 = {}
+    //         for (let h = 0; h < this.formJson.list[i].tableColumns.length; h++) {
+    //           let model2 = this.formJson.list[i].tableColumns[h].model
+    //           let tableCol2 = this.formJson.list[i].tableColumns[h].tableCol
+    //           datajson1[tableCol2.toString()] = commitdata[this.formJson.list[i].model][k][model2]
+    //         }
+    //         array.push(datajson1)
+    //       }
+    //       datajson[this.formJson.list[i].schedule.toString()] = array
+    //     } else {
+    //       let model = this.formJson.list[i].model
+    //       let tableCol = this.formJson.list[i].tableCol
+    //       datajson[tableCol.toString()] = commitdata[model]
+    //       console.log(datajson[tableCol.toString()])
+    //     }
+    //   }
+    //   axios({
+    //     url: `/online/cgform/api/form/${onlineId}`,
+    //     method: 'post',
+    //     data: datajson,
+    //   })
+    //     .then((res) => {
+    //       this.$emit('changeOnline', onlineId, res.result)
+    //       this.$message.success('保存表单成功')
+    //     })
+    //     .catch((err) => {
+    //       this.$message.error('保存表单失败')
+    //     })
+    // },
+  },
+  mounted() {
+    // this.getOnlineData()
+    this.formAttribute = this.data.formAttribute
   },
 }
 </script>
