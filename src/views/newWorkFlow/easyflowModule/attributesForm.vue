@@ -48,6 +48,7 @@ import GenerateForm from '@/components/FormMaking/components/GenerateForm'
 import AntdGenerateForm from '../../../components/FormMaking/components/AntdvGenerator/GenerateForm'
 import { axios } from '../../../utils/request'
 import api from '../../../api/index'
+import { message } from 'ant-design-vue';
 export default {
   name: 'AttributeForm',
   props: {
@@ -180,6 +181,7 @@ export default {
     //提交表单填写信息
     handleTest() {
       this.data.formAttribute = this.formAttribute
+      this.$message.success('保存成功')
       console.log('this.data',this.data);
       // const $form = this.formJson.config.ui === 'element' ? this.$refs.generateForm : this.$refs.generateAntForm
       // $form
