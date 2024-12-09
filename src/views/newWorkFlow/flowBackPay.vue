@@ -12,7 +12,7 @@
                                             <a-card :bordered="false">
                                                 <div class="flowAnnounce">
                                                     <a-table bordered :columns="flowBackPaycolumns"
-                                                        :dataSource="flowUseMoneyData" rowKey="id">
+                                                        :dataSource="flowBackPayData" rowKey="id">
                                                         <span slot="flowBackPaycolumns"
                                                             slot-scope="text, record, index">
                                                             <a @click="urge"
@@ -41,14 +41,10 @@
                                                     <a-select-option value="instance">进行中</a-select-option>
                                                 </a-select>
 
-                                                <a class="selectText">选择时间: </a>
-                                                <a-range-picker style="width: 250px" format="YYYY-MM-DD"
-                                                    :placeholder="['开始时间', '结束时间']" @change="onChange"
-                                                    :value="dateStrings">
-                                                </a-range-picker>
-                                                <!-- <a class="selectText">项目名称: </a>
-                            <a-input v-model="taskName" style="width: 200px; margin-left: 10px"></a-input>
-     -->
+                                                <a class="selectText">项目名称: </a>
+                                                <a-input v-model="taskName"
+                                                    style="width: 200px; margin-left: 10px"></a-input>
+
                                                 <a-button-group style="margin-left: 20px">
                                                     <a-button type="primary" icon="search" @click="getData()"
                                                         style="margin-left: 20px">查询</a-button>
@@ -177,7 +173,7 @@ export default {
             endTime: '',
             flowWillAnnounceData: [],
             flowHistoryData: [],
-            flowUseMoneyData: [],
+            flowBackPayData: [],
             loadClaimData: [],
             flowBackPaycolumns: [
                 {
@@ -464,8 +460,8 @@ export default {
             this.flowWillAnnounceData = []
             this.loadClaimData = []
             this.flowHistoryData = []
-            this.flowUseMoneyData = []
-            this.getUseFlow()
+            this.flowBackPayData = []
+            this.getBackPayFlow()
             this.getflowAnnounce() // 获取待处理流程
             this.getHistoryFlow()
             this.getLoadClaim() // 获取未认领流程
@@ -478,7 +474,7 @@ export default {
                 startTime: this.startTime,
                 endTime: this.endTime,
             };
-            nw_postAction1(`/task/getClaim`, params)
+            nw_postAction1(`/list/getClaim`, params)
                 .then((res) => {
                     console.log('获取未认领的返回数据:', res);
                     this.loadClaimData = res.result;
@@ -499,7 +495,7 @@ export default {
 
                         // 等待所有认领任务完成后更新界面
                         Promise.all(claimPromises).then(() => {
-                            this.getUseFlow();
+                            this.getBackPayFlow();
                             this.getHistoryFlow(); // 更新历史数据
                             this.getflowAnnounce(); // 更新待办事项
 
@@ -528,12 +524,10 @@ export default {
         },
 
         //获取可以申请使用的流程
-        getUseFlow() {
+        getBackPayFlow() {
             let params = {
                 processId: this.instanceHistory,
-                taskName: this.taskName,
-                startTime: this.startTime,
-                endTime: this.endTime,
+                address: this.userInfo.currentLocation,
                 categoryId: '1860939985686949889',
             }
 
@@ -551,7 +545,7 @@ export default {
                     }
                     // 使用后端返回的 data 属性
 
-                    const flowUseMoneyData = res.result.map((item) => ({
+                    const flowBackPayData = res.result.map((item) => ({
                         ...item,
                         nodeName: taskStateMapping[item.nodeName],
                         companyName: item.enterpriseName,
@@ -564,10 +558,10 @@ export default {
                     }))
 
                     // 按创建时间排序（从近到远）
-                    const sortedData = flowUseMoneyData.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+                    const sortedData = flowBackPayData.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
 
-                    this.flowUseMoneyData = sortedData;
-                    console.log('flowUseMoneyData查询', this.flowUseMoneyData)
+                    this.flowBackPayData = sortedData;
+                    console.log('flowBackPayData查询', this.flowBackPayData)
                 })
                 .catch((error) => {
                     console.error(error)
@@ -581,7 +575,7 @@ export default {
                 taskName: this.taskName,
                 startTime: this.startTime,
                 endTime: this.endTime,
-                categoryId: '1847453556447707137',
+                categoryId: '1860939985686949889',
                 address: this.selectedAddress === 'all' ? '' : this.selectedAddress, // 如果选择了全部，则发送空字符串
                 applyState: this.selectedState === 'all' ? '' : this.selectedState // 如果选择了全部，则发送空字符串
             }
@@ -635,10 +629,10 @@ export default {
                 taskName: this.taskName,
                 startTime: this.startTime,
                 endTime: this.endTime,
-                categoryId: '1847453556447707137',
+                categoryId: '1860939985686949889',
             }
 
-            nw_postAction1('/task/getPendingTakes', params)
+            nw_postAction1('/list/getPendingTakes', params)
                 .then((res) => {
                     console.log('res321', res)
                     // this.flowWillAnnounceData = res.result
@@ -710,29 +704,6 @@ export default {
             }
             item.type = typeMapping[item.type] || item.type
         },
-        //获得已完成流程实例
-        // getCompleteProcessInstance() {
-        //   const _this = this
-        //   var id = this.instanceCompleted
-        //   this.dialogVisibleFinish = false
-        //   let params = {
-        //     processId: this.instance,
-        //     // startTime: this.startTime,
-        //     // endTime: this.endTime,
-        //   }
-        //   nw_postAction1(`/process/getCompleteProcessInstance`, params)
-        //     .then((res) => {
-        //       if (res.result.length == 0) {
-        //         _this.$message.success('此流程无数据')
-        //         return
-        //       }
-        //       this.flowFinishData = res.result
-        //     })
-        //     .catch((error) => {
-        //       _this.$message.error('查询流程失败')
-        //       console.log(error)
-        //     })
-        // },
         //获得已拒绝的流程
         getCancelProcesses() {
             let params = {
