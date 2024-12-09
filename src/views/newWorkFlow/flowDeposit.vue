@@ -729,7 +729,7 @@ export default {
         startTime: this.startTime,
         endTime: this.endTime,
       };
-      nw_postAction1(`/task/getClaim`, params)
+      nw_postAction1(`/list/getClaim`, params)
         .then((res) => {
           console.log('获取未认领的返回数据:', res);
           this.loadClaimData = res.result;
@@ -857,7 +857,7 @@ export default {
         categoryId: '1847453055727501313',
       }
 
-      nw_postAction1('/task/getPendingTakes', params)
+      nw_postAction1('/list/getPendingTakes', params)
         .then((res) => {
           console.log('res321', res)
           // this.flowWillAnnounceData = res.result
