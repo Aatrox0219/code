@@ -408,6 +408,16 @@ export default {
             let flowConfigData = res.result
             console.log('flowConfigData', flowConfigData)
 
+            // 去掉name中的“变更为”前缀
+            flowConfigData = flowConfigData.map((item) => {
+              return {
+                ...item,
+                name: item.name.replace(/^变更为/, ''), // 移除前缀
+              };
+            });
+
+            console.log('处理后的flowConfigData', flowConfigData);
+
             //是否显示弹窗
             if (showModal) {
               this.isModalVisible = true
@@ -592,7 +602,7 @@ export default {
         categoryId: '1847453055727501313',
       }
 
-      nw_postAction1('/process/getCompleteProcessInstance', params)
+      nw_postAction1('/list/getCompleteProcessInstance', params)
         .then((res) => {
           console.log('res321', res)
           const taskStateMapping = {

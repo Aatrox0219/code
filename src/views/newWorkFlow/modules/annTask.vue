@@ -86,7 +86,7 @@ export default {
     }
   },
   updated() { },
-  mounted() { 
+  mounted() {
     // 监听刷新页面的事件
     window.addEventListener("beforeunload", this.handleBeforeUnload);
   },
@@ -102,7 +102,7 @@ export default {
       this.taskId = taskId
       this.processInstanceId = processInstanceId
       this.category = category
-     //存缴和原始不需要传frontId
+      //存缴和原始不需要传frontId
       if (category === '存缴' || category === '原始') {
         this.frontId = ''
       }
@@ -116,7 +116,7 @@ export default {
       else {
         this.isOriginal = false
       }
-      if(category === '存缴'){
+      if (category === '存缴') {
         this.projectStatus = data.projectStatus
       }
       this.getForm(category, data)
@@ -151,9 +151,9 @@ export default {
       }
     },
 
-     // 页面刷新时调用，捕捉刷新事件
+    // 页面刷新时调用，捕捉刷新事件
     handleBeforeUnload(event) {
-      console.log('页面刷新时调用',event);
+      console.log('页面刷新时调用', event);
       if (this.isProcessingUnload) {
         return; // 已经在处理中，直接返回
       }
@@ -164,16 +164,16 @@ export default {
         console.log('页面刷新时调用，删除流程');
         this.isProcessingUnload = true;
         this.deleteFlow(this.processInstanceId)
-        .then(() => {
-          console.log('流程删除完成');
-          // 在异步任务完成后手动刷新页面
-          window.location.reload();
-        })
-        .catch((err) => {
-          console.error('删除流程失败:', err);
-          // 即使失败也手动刷新页面
-          window.location.reload();
-        });
+          .then(() => {
+            console.log('流程删除完成');
+            // 在异步任务完成后手动刷新页面
+            window.location.reload();
+          })
+          .catch((err) => {
+            console.error('删除流程失败:', err);
+            // 即使失败也手动刷新页面
+            window.location.reload();
+          });
       }
     },
 
@@ -229,7 +229,20 @@ export default {
                     new_deposit_method: data.newProjectStatus,
                     reason: data.reason,
                     proportions: data.proportions,
-                    ensure_money:data.ensureMoney
+                    ensure_money: data.ensureMoney
+                  });
+                }
+                else if (category === '补缴') {
+                  console.log('保证的数据', data);
+                  this.$refs.generateForm.setData({
+                    company_name: data.companyName,
+                    company_address: data.companyAddress,
+                    postal_code: data.postalCode,
+                    credit_code: data.creditCode,
+                    project_name: data.projectName,
+                    project_address: data.projectAddress,
+                    address_detail: data.addressDetail,
+                    ensure_money: data.ensureMoney
                   });
                 }
 
@@ -287,10 +300,10 @@ export default {
     },
 
     //保存数据的接口
-    saveMarginData(params){
+    saveMarginData(params) {
       nw_postAction1('/margin/saveMarginData', params)
         .then((res) => {
-          console.log('保存数据的接口返回值',res);
+          console.log('保存数据的接口返回值', res);
         })
         .catch((err) => {
           console.log(err);

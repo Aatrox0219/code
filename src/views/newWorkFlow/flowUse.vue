@@ -473,7 +473,7 @@ export default {
         categoryId: '1847453055727501313',
       };
 
-      nw_postAction1('/process/getCompleteProcessInstance', params)
+      nw_postAction1('/list/getCompleteProcessInstance', params)
         .then((res) => {
           console.log('res321', res)
           const taskStateMapping = {

@@ -370,6 +370,16 @@ export default {
                         let flowConfigData = res.result
                         console.log('flowConfigData', flowConfigData)
 
+                        // 去掉name中的“补缴”后缀
+                        flowConfigData = flowConfigData.map((item) => {
+                            return {
+                                ...item,
+                                name: item.name.replace(/补缴$/, ''), // 移除后缀
+                            };
+                        });
+
+                        console.log('处理后的flowConfigData', flowConfigData);
+
                         //是否显示弹窗
                         if (showModal) {
                             this.isModalVisible = true
@@ -424,11 +434,23 @@ export default {
                         this.$message.success('开启流程成功')
                         const { formDesignerId, onlineDataId, onlineTableId, processInstanceId } = res.result.startProcessVO
                         const taskId = res.result.fistTaskId
-                        this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId)
+                        //在传给annTask组件的时候，将新的存缴方式传过去
+                        const selectedProcess = this.flowConfigData.find(item => item.processId === this.selectedProcessId);
+                        if (selectedProcess) {
+                            // 去掉 "补缴" 后缀
+                            const processName = selectedProcess.name.replace(/补缴$/, '');
+                            console.log('processName', processName);
+                            // 将处理后的值赋给 newProjectStatus
+                            this.annTaskData.projectStatus = processName;
+                        }
+                        else {
+                            console.log('未找到匹配的流程配置');
+                        }
+                        this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, '补缴', this.currentRecord)
                     } else {
                         this.$message.error('开启流程失败')
                     }
-                    // this.selectedProcessId = null
+                    this.selectedProcessId = null
                 })
                 .catch((error) => {
                     console.log(error)
@@ -531,7 +553,7 @@ export default {
                 categoryId: '1860939985686949889',
             }
 
-            nw_postAction1('/process/getCompleteProcessInstance', params)
+            nw_postAction1('/list/getCompleteProcessInstance', params)
                 .then((res) => {
                     console.log('res321', res)
                     const taskStateMapping = {

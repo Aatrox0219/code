@@ -603,6 +603,16 @@ export default {
             let flowConfigData = res.result
             console.log('flowConfigData', flowConfigData)
 
+            // 去掉name中的“存缴”后缀
+            flowConfigData = flowConfigData.map((item) => {
+              return {
+                ...item,
+                name: item.name.replace(/存缴$/, ''), // 移除后缀
+              };
+            });
+
+            console.log('处理后的flowConfigData', flowConfigData);
+
             //是否显示弹窗
             if (showModal) {
               this.isModalVisible = true
