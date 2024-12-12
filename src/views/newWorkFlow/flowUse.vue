@@ -107,6 +107,7 @@ import FlowHistory from './modules/flowHistory'
 import { USER_NAME, USER_INFO } from '@/store/mutation-types'
 import Vue from 'vue'
 import { mapState } from 'vuex'
+import { taskStateMapping } from './taskStateMapping'
 export default {
   name: 'flowDeposit',
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory },
@@ -476,12 +477,6 @@ export default {
       nw_postAction1('/list/getCompleteProcessInstance', params)
         .then((res) => {
           console.log('res321', res)
-          const taskStateMapping = {
-            承办人提交保证金使用申请: '待承办人提交使用申请',
-            业务分管领导审核: '待业务分管领导审核',
-            人社分管领导审核: '待人社分管领导审核',
-            承办人确认使用结果: '待承办人确认使用结果'
-          }
           // 使用后端返回的 data 属性
 
           const flowUseMoneyData = res.result.map((item) => ({
@@ -521,13 +516,6 @@ export default {
       nw_postAction1('/list/getProcessAllState', params)
         .then((res) => {
           console.log('res321', res)
-          // 状态映射
-          const taskStateMapping = {
-            承办人提交保证金使用申请: '待承办人提交使用申请',
-            业务分管领导审核: '待业务分管领导审核',
-            人社分管领导审核: '待人社分管领导审核',
-            承办人确认使用结果: '待承办人确认使用结果'
-          }
           // 使用后端返回的 data 属性
           const flowHistoryData = res.result.data.map((item) => {
             let nodeName;
@@ -574,12 +562,6 @@ export default {
         .then((res) => {
           console.log('res321', res)
           // this.flowWillAnnounceData = res.result
-          const taskStateMapping = {
-            承办人提交保证金使用申请: '待承办人提交使用申请',
-            业务分管领导审核: '待业务分管领导审核',
-            人社分管领导审核: '待人社分管领导审核',
-            承办人确认使用结果: '待承办人确认使用结果'
-          }
           // 使用后端返回的 data 属性
           this.backlogNumber = res.result.length
           const flowWillAnnounceData = res.result.map((item) => ({
