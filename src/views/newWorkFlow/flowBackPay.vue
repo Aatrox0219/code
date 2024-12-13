@@ -129,6 +129,7 @@ import FlowHistory from './modules/flowHistory'
 import { USER_NAME, USER_INFO } from '@/store/mutation-types'
 import Vue from 'vue'
 import { mapState } from 'vuex'
+import { taskStateMapping } from './taskStateMapping'
 export default {
     name: 'flowDeposit',
     components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory },
@@ -556,15 +557,6 @@ export default {
             nw_postAction1('/list/getCompleteProcessInstance', params)
                 .then((res) => {
                     console.log('res321', res)
-                    const taskStateMapping = {
-                        总包施工单位提交补缴凭证电子版: '待总包施工单位提交补缴凭证电子版',
-                        承办人审核补缴凭证电子版: '待承办人审核补缴凭证电子版',
-                        业务分管领导审核补缴凭证电子版: '待业务分管领导审核补缴凭证电子版',
-                        人社分管领导审核补缴凭证电子版: '待人社分管领导审核补缴凭证电子版',
-
-                        经纪公司提交保函补缴凭证电子版: '待经纪公司提交保函补缴凭证电子版',
-
-                    }
                     // 使用后端返回的 data 属性
 
                     const flowBackPayData = res.result.map((item) => ({
@@ -604,15 +596,6 @@ export default {
             nw_postAction1('/list/getProcessAllState', params)
                 .then((res) => {
                     console.log('res321', res)
-                    // 状态映射
-                    const taskStateMapping = {
-                        总包施工单位提交补缴凭证电子版: '待总包施工单位提交补缴凭证电子版',
-                        承办人审核补缴凭证电子版: '待承办人审核补缴凭证电子版',
-                        业务分管领导审核补缴凭证电子版: '待业务分管领导审核补缴凭证电子版',
-                        人社分管领导审核补缴凭证电子版: '待人社分管领导审核补缴凭证电子版',
-
-                        经纪公司提交保函补缴凭证电子版: '待经纪公司提交保函补缴凭证电子版',
-                    }
                     // 使用后端返回的 data 属性
                     const flowHistoryData = res.result.data.map((item) => {
                         let nodeName;
@@ -658,14 +641,6 @@ export default {
                 .then((res) => {
                     console.log('res321', res)
                     // this.flowWillAnnounceData = res.result
-                    const taskStateMapping = {
-                        总包施工单位提交补缴凭证电子版: '待总包施工单位提交补缴凭证电子版',
-                        承办人审核补缴凭证电子版: '待承办人审核补缴凭证电子版',
-                        业务分管领导审核补缴凭证电子版: '待业务分管领导审核补缴凭证电子版',
-                        人社分管领导审核补缴凭证电子版: '待人社分管领导审核补缴凭证电子版',
-
-                        经纪公司提交保函补缴凭证电子版: '待经纪公司提交保函补缴凭证电子版',
-                    }
                     // 使用后端返回的 data 属性
                     this.backlogNumber = res.result.length
                     const flowWillAnnounceData = res.result.map((item) => ({
