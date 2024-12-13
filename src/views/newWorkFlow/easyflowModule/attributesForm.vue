@@ -25,7 +25,7 @@
           <el-input size="small" v-model="formAttribute.processMainKey"></el-input>
         </el-form-item>
         <el-form-item label="主表外键:" style="width: 262px; margin-bottom: 3px;">
-          <el-input size="small" v-model="formAttribute.MainTableAssociationkey"></el-input>
+          <el-input size="small" v-model="formAttribute.mainTableAssociationkey"></el-input>
         </el-form-item>
         <el-form-item label="流程关联表:" style="width: 262px; margin-bottom: 3px;">
           <el-input size="small" v-model="formAttribute.processAssociationTable"></el-input>
@@ -60,7 +60,7 @@ export default {
       formAttribute: {
         processMainTable: '',
         processMainKey: '',
-        MainTableAssociationkey: '',
+        mainTableAssociationkey: '',
         processAssociationTable: '',
         processAssociationKey: '',
       },
