@@ -59,12 +59,17 @@
                       </div>
                       <a-card :bordered="false">
                         <div class="table-container">
-                          <a-table bordered :columns="displayedHistoryColumns" :dataSource="flowHistoryData"
+                          <!-- <a-table bordered :columns="displayedHistoryColumns" :dataSource="flowHistoryData"
                             rowKey="id">
                             <span slot="flowHistoryaction" slot-scope="text, record, index">
                               <a @click="seeHistory(record)">历史</a>
                             </span>
-                          </a-table>
+                          </a-table> -->
+                          <commonTable
+                            :columns="displayedHistoryColumns" 
+                            :dataSource="flowHistoryData"
+                            :seeHistory="seeHistory">
+                          </commonTable>
                         </div>
                       </a-card>
                     </div>
@@ -155,9 +160,11 @@ import { USER_NAME, USER_INFO } from '@/store/mutation-types'
 import Vue from 'vue'
 import { mapState } from 'vuex'
 import { taskStateMapping } from './taskStateMapping'
+import commonTable from './modules/commonTable.vue'
+
 export default {
   name: 'flowDeposit',
-  components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory },
+  components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory, commonTable },
   data() {
     return {
       annTaskData: {},
