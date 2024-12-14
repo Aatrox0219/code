@@ -11,14 +11,26 @@
         </generate-form>
       </div>
       <div class="submitBtn">
-        <a-button  v-if="nodePowerResult.includes('通过')" type="primary" @click="handleTest('1')" style="margin-right: 20px">通过</a-button>
-        <a-popover  v-if="nodePowerResult.includes('退回')" title="请选择退回到哪一个节点">
+        <a-button
+          v-if="nodePowerResult.includes('通过')"
+          type="primary"
+          @click="handleTest('1')"
+          style="margin-right: 20px"
+          >通过</a-button
+        >
+        <a-popover v-if="nodePowerResult.includes('退回')" title="请选择退回到哪一个节点">
           <template slot="content">
             <a-button type="dashed" @click="handleTest('2')" style="margin-left: 10px"> 上一个节点 </a-button>
           </template>
           <a-button type="primary">退回</a-button>
         </a-popover>
-        <a-button  v-if="nodePowerResult.includes('终止')" type="danger" @click="handleTest('0')" style="margin-left: 200px">终止</a-button>
+        <a-button
+          v-if="nodePowerResult.includes('终止')"
+          type="danger"
+          @click="handleTest('0')"
+          style="margin-left: 200px"
+          >终止</a-button
+        >
       </div>
     </div>
   </div>
@@ -44,8 +56,8 @@ export default {
     },
     record: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -77,22 +89,20 @@ export default {
         const response = await axios.post(`${api.server_url}${api.global_course_baseURL}/task/nodePower`, {
           taskId: this.record.taskId,
           processId: this.record.processId,
-          processInstanceId: this.record.processInstanceId
+          processInstanceId: this.record.processInstanceId,
         })
-        console.log('检查节点权限成功：', response.data.result);
+        console.log('检查节点权限成功：', response.data.result)
         // this.nodePowerResult = response.data.result
-        if(response.data.result){
+        if (response.data.result) {
           this.nodePowerResult = response.data.result
-        }else{
+        } else {
           this.nodePowerResult = []
         }
-        
       } catch (error) {
         console.error('检查节点权限失败：', error)
         this.$message.error('获取节点权限失败')
       }
     },
-
 
     close() {
       var _this = this
@@ -113,8 +123,8 @@ export default {
       t_getAction('/admin/desform/' + nowid + '/getConent')
         .then((res) => {
           this.newForm = JSON.parse(res.result)
-          console.log('尝试能否得到按钮的数据json');
-          console.log('this.newForm', this.newForm);
+          console.log('尝试能否得到按钮的数据json')
+          console.log('this.newForm', this.newForm)
         })
         .catch((err) => {
           console.log(err)
@@ -140,6 +150,32 @@ export default {
           console.log(err)
         })
     },
+
+    //保存数据的接口
+    saveMarginData(onlineId, dataId) {
+      let params = {
+        taskId: _this.taskId,
+        onlineTableId: onlineId,
+        onlineDataId: dataId,
+      }
+      if (this.category === '存缴') {
+        params.depositWay = this.projectStatus
+      }
+      if (this.frontId) {
+        params.frontId = this.frontId
+      }
+      nw_postAction1('/margin/saveMarginData', params)
+        .then((res) => {
+          console.log('保存数据的接口返回值', res)
+          this.$nextTick(() => {
+            this.completeTask(onlineId, dataId)
+          })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
     //退回操作
     rollback(onlineId, dataId) {
       var _this = this
@@ -237,7 +273,7 @@ export default {
           if (stateflag == '0') {
             this.reject(onlineId, res.result)
           } else if (stateflag == '1') {
-            this.completeTask(onlineId, res.result)
+            this.saveMarginData(onlineId, res.result)
           } else if (stateflag == '2') {
             this.rollback(onlineId, res.result)
           }

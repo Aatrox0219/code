@@ -1,7 +1,14 @@
 <template>
   <div>
-    <a-modal :visible="visible" :footer="null" width="95%" :zIndex="100" :closable="false" :destroyOnClose="true"
-      :centered="true">
+    <a-modal
+      :visible="visible"
+      :footer="null"
+      width="95%"
+      :zIndex="100"
+      :closable="false"
+      :destroyOnClose="true"
+      :centered="true"
+    >
       <div>
         <div id="formContent">
           <div class="formbody">
@@ -35,11 +42,11 @@ export default {
   props: {
     getData: {
       type: Function,
-      default: null
+      default: null,
     },
     userInfo: {
       type: Object,
-      default: null
+      default: null,
     },
   },
   data() {
@@ -85,14 +92,14 @@ export default {
       },
     }
   },
-  updated() { },
+  updated() {},
   mounted() {
     // 监听刷新页面的事件
-    window.addEventListener("beforeunload", this.handleBeforeUnload);
+    window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
   beforeDestroy() {
     // 移除事件监听器
-    window.removeEventListener("beforeunload", this.handleBeforeUnload);
+    window.removeEventListener('beforeunload', this.handleBeforeUnload)
   },
   methods: {
     openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, category, data) {
@@ -105,15 +112,13 @@ export default {
       //存缴和原始不需要传frontId
       if (category === '存缴' || category === '原始') {
         this.frontId = ''
-      }
-      else {
+      } else {
         this.frontId = data.projectId
       }
       //判断是否是原始流程,如果是原始的流程则没有getdata函数
       if (category === '原始') {
         this.isOriginal = true
-      }
-      else {
+      } else {
         this.isOriginal = false
       }
       if (category === '存缴') {
@@ -132,11 +137,11 @@ export default {
         .then(async () => {
           await this.deleteFlow(this.processInstanceId)
           if (!this.isOriginal) {
-            this.getData()  //直接关闭流程后刷新数据
+            this.getData() //直接关闭流程后刷新数据
           }
           _this.visible = false
         })
-        .catch(() => { })
+        .catch(() => {})
     },
 
     //如果点击了返回，则需要将该流程删除
@@ -144,36 +149,35 @@ export default {
       try {
         const res = await nw_delete('/process/deleteProcessInstanceFirst', {
           processInstanceId: record,
-        });
-        console.log('删除成功:', res);
+        })
+        console.log('删除成功:', res)
       } catch (err) {
-        console.error('删除流程时出错:', err);
+        console.error('删除流程时出错:', err)
       }
     },
 
     // 页面刷新时调用，捕捉刷新事件
     handleBeforeUnload(event) {
-      console.log('页面刷新时调用', event);
+      console.log('页面刷新时调用', event)
       if (this.isProcessingUnload) {
-        return; // 已经在处理中，直接返回
+        return // 已经在处理中，直接返回
       }
       if (this.visible) {
-
         // 阻止浏览器默认刷新行为
-        event.preventDefault();
-        console.log('页面刷新时调用，删除流程');
-        this.isProcessingUnload = true;
+        event.preventDefault()
+        console.log('页面刷新时调用，删除流程')
+        this.isProcessingUnload = true
         this.deleteFlow(this.processInstanceId)
           .then(() => {
-            console.log('流程删除完成');
+            console.log('流程删除完成')
             // 在异步任务完成后手动刷新页面
-            window.location.reload();
+            window.location.reload()
           })
           .catch((err) => {
-            console.error('删除流程失败:', err);
+            console.error('删除流程失败:', err)
             // 即使失败也手动刷新页面
-            window.location.reload();
-          });
+            window.location.reload()
+          })
       }
     },
 
@@ -192,10 +196,9 @@ export default {
               if (this.$refs.generateForm) {
                 if (category === '存缴') {
                   //将公司名称默认填写为当前登录用户的公司名称
-                  this.$refs.generateForm.setData({ company_name: this.userInfo.realname });//这里的company_name是表单中的字段标识
-                }
-                else if (category === '使用') {
-                  console.log('保证金使用的数据', data);
+                  this.$refs.generateForm.setData({ company_name: this.userInfo.realname }) //这里的company_name是表单中的字段标识
+                } else if (category === '使用') {
+                  console.log('保证金使用的数据', data)
                   this.$refs.generateForm.setData({
                     company_name: data.companyName,
                     credit_code: data.creditCode,
@@ -205,11 +208,10 @@ export default {
                     project_address: data.projectAddress,
                     address_detail: data.addressDetail,
                     project_contact: data.responsiblePerson,
-                    project_mobile: data.mobile
-                  });
-                }
-                else if (category === '变更') {
-                  console.log('保证金变更的数据', data);
+                    project_mobile: data.mobile,
+                  })
+                } else if (category === '变更') {
+                  console.log('保证金变更的数据', data)
                   this.$refs.generateForm.setData({
                     company_name: data.companyName,
                     credit_code: data.creditCode,
@@ -229,11 +231,10 @@ export default {
                     new_deposit_method: data.newProjectStatus,
                     reason: data.reason,
                     proportions: data.proportions,
-                    ensure_money: data.ensureMoney
-                  });
-                }
-                else if (category === '补缴') {
-                  console.log('保证的数据', data);
+                    ensure_money: data.ensureMoney,
+                  })
+                } else if (category === '补缴') {
+                  console.log('保证的数据', data)
                   this.$refs.generateForm.setData({
                     company_name: data.companyName,
                     company_address: data.companyAddress,
@@ -242,12 +243,11 @@ export default {
                     project_name: data.projectName,
                     project_address: data.projectAddress,
                     address_detail: data.addressDetail,
-                    ensure_money: data.ensureMoney
-                  });
+                    ensure_money: data.ensureMoney,
+                  })
                 }
-
               }
-            });
+            })
           }
         })
         .catch((err) => {
@@ -268,46 +268,60 @@ export default {
     },
     //完成该节点的任务，把该节点填写的表单id，online表id，online数据id传入工作流
     completeTask(onlineId, dataId) {
-      var _this = this;
+      var _this = this
       let params = {
         taskId: _this.taskId,
         onlineTableId: onlineId,
         onlineDataId: dataId,
-      };
+      }
       nw_postAction1('/task/complete', params)
         .then((res) => {
           if (res.result.result) {
-            _this.$message.success('通过成功');
-            if (this.category === '存缴') {
-              params.depositWay = this.projectStatus
-            }
-            if (this.frontId) {
-              params.frontId = this.frontId;
-            }
-            this.saveMarginData(params)
+            _this.$message.success('通过成功')
+            // if (this.category === '存缴') {
+            //   params.depositWay = this.projectStatus
+            // }
+            // if (this.frontId) {
+            //   params.frontId = this.frontId;
+            // }
+            // this.saveMarginData(params)
             this.$nextTick(() => {
               this.getData()
-            });
+            })
           } else {
-            _this.$message.error('通过失败');
-            console.log('出错');
+            _this.$message.error('通过失败')
+            console.log('出错')
           }
         })
         .catch((err) => {
           this.deleteFlow(this.processInstanceId)
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
 
     //保存数据的接口
-    saveMarginData(params) {
+    saveMarginData(onlineId, dataId) {
+      let params = {
+        taskId: _this.taskId,
+        onlineTableId: onlineId,
+        onlineDataId: dataId,
+      }
+      if (this.category === '存缴') {
+        params.depositWay = this.projectStatus
+      }
+      if (this.frontId) {
+        params.frontId = this.frontId
+      }
       nw_postAction1('/margin/saveMarginData', params)
         .then((res) => {
-          console.log('保存数据的接口返回值', res);
+          console.log('保存数据的接口返回值', res)
+          this.$nextTick(() => {
+            this.completeTask(onlineId, dataId)
+          })
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
 
     //得到online的data
@@ -408,7 +422,8 @@ export default {
       o_postAction('/cgform/api/form/' + onlineId, datajson)
         .then((res) => {
           _this.visible = false
-          this.completeTask(onlineId, res.result)
+          this.saveMarginData(onlineId, res.result)
+          // this.completeTask(onlineId, res.result)
           this.$message.success('提交成功')
         })
         .catch((err) => {
