@@ -267,12 +267,13 @@ export default {
         })
     },
     //完成该节点的任务，把该节点填写的表单id，online表id，online数据id传入工作流
-    completeTask(onlineId, dataId) {
+    completeTask(onlineId, dataId, mainId) {
       var _this = this
       let params = {
         taskId: _this.taskId,
         onlineTableId: onlineId,
         onlineDataId: dataId,
+        mainId: mainId,
       }
       nw_postAction1('/task/complete', params)
         .then((res) => {
@@ -302,7 +303,7 @@ export default {
     //保存数据的接口
     saveMarginData(onlineId, dataId) {
       let params = {
-        taskId: _this.taskId,
+        taskId: this.taskId,
         onlineTableId: onlineId,
         onlineDataId: dataId,
       }
@@ -315,8 +316,9 @@ export default {
       nw_postAction1('/margin/saveMarginData', params)
         .then((res) => {
           console.log('保存数据的接口返回值', res)
+          let mainId = res.result.mainId
           this.$nextTick(() => {
-            this.completeTask(onlineId, dataId)
+            this.completeTask(onlineId, dataId, mainId)
           })
         })
         .catch((err) => {
@@ -421,7 +423,7 @@ export default {
       }
       o_postAction('/cgform/api/form/' + onlineId, datajson)
         .then((res) => {
-          _this.visible = false
+          this.visible = false
           this.saveMarginData(onlineId, res.result)
           // this.completeTask(onlineId, res.result)
           this.$message.success('提交成功')
