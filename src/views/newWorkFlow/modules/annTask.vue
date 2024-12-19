@@ -93,16 +93,12 @@ export default {
     }
   },
   updated() {},
-  mounted() {
-    // 监听刷新页面的事件
-    window.addEventListener('beforeunload', this.handleBeforeUnload)
-  },
-  beforeDestroy() {
-    // 移除事件监听器
-    window.removeEventListener('beforeunload', this.handleBeforeUnload)
-  },
+  mounted() {},
   methods: {
     openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, category, data) {
+      console.log('category:', category);
+      console.log('data:', data);
+      console.log('onlineTableId:', onlineTableId);
       this.formDesignerId = formDesignerId
       this.onlineDataId = onlineDataId
       this.onlineTableId = onlineTableId
@@ -113,7 +109,7 @@ export default {
       if (category === '存缴' || category === '原始') {
         this.frontId = ''
       } else {
-        this.frontId = data.projectId
+        this.frontId = data.frontId
       }
       //判断是否是原始流程,如果是原始的流程则没有getdata函数
       if (category === '原始') {
@@ -153,31 +149,6 @@ export default {
         console.log('删除成功:', res)
       } catch (err) {
         console.error('删除流程时出错:', err)
-      }
-    },
-
-    // 页面刷新时调用，捕捉刷新事件
-    handleBeforeUnload(event) {
-      console.log('页面刷新时调用', event)
-      if (this.isProcessingUnload) {
-        return // 已经在处理中，直接返回
-      }
-      if (this.visible) {
-        // 阻止浏览器默认刷新行为
-        event.preventDefault()
-        console.log('页面刷新时调用，删除流程')
-        this.isProcessingUnload = true
-        this.deleteFlow(this.processInstanceId)
-          .then(() => {
-            console.log('流程删除完成')
-            // 在异步任务完成后手动刷新页面
-            window.location.reload()
-          })
-          .catch((err) => {
-            console.error('删除流程失败:', err)
-            // 即使失败也手动刷新页面
-            window.location.reload()
-          })
       }
     },
 
@@ -231,7 +202,7 @@ export default {
                     new_deposit_method: data.newProjectStatus,
                     reason: data.reason,
                     proportions: data.proportions,
-                    ensure_money: data.ensureMoney,
+                    ensure_money: data.Money,
                   })
                 } else if (category === '补缴') {
                   console.log('保证的数据', data)

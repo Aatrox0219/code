@@ -43,6 +43,19 @@ export function nw_delete(url,parameter) {
   })
 }
 
+//获取所有数据
+export function nw_getAllData(url,parameter) {
+  return axios({
+    url: url,
+    method:'post' ,
+    data: parameter,
+    baseURL: api.server_url+api.global_course_baseURL,
+    headers: {
+      'userId': Vue.ls.get(USER_ID),
+    },
+  })
+}
+
 //post method= {post | put}
 export function w_httpAction(url,parameter,method) {
   return axios({
