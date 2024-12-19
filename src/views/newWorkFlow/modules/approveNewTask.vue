@@ -131,12 +131,13 @@ export default {
         })
     },
     //通过操作
-    completeTask(onlineId, dataId) {
+    completeTask(onlineId, dataId, mainId) {
       var _this = this
       nw_postAction1('/task/complete', {
         taskId: this.taskId,
         onlineTableId: onlineId,
         onlineDataId: dataId,
+        mainId: mainId,
       })
         .then((res) => {
           if (res.result.result) {
@@ -154,7 +155,7 @@ export default {
     //保存数据的接口
     saveMarginData(onlineId, dataId) {
       let params = {
-        taskId: _this.taskId,
+        taskId: this.taskId,
         onlineTableId: onlineId,
         onlineDataId: dataId,
       }
@@ -167,8 +168,9 @@ export default {
       nw_postAction1('/margin/saveMarginData', params)
         .then((res) => {
           console.log('保存数据的接口返回值', res)
+          let mainId = res.result.mainId
           this.$nextTick(() => {
-            this.completeTask(onlineId, dataId)
+            this.completeTask(onlineId, dataId, mainId)
           })
         })
         .catch((err) => {

@@ -25,7 +25,7 @@ import { nw_postAction1, nw_getAction } from '@api/newWorkApi'
 export default {
   name: 'RollbackTask',
   components: { GenerateForm, AntdGenerateForm },
-  props: ['formId', 'dataId', 'tableId', 'taskId'],
+  props: ['formId', 'dataId', 'tableId', 'taskId', 'processName'],
   data() {
     return {
       dataForm: {},
@@ -123,6 +123,7 @@ export default {
         })
     },
     commitToDatabase(commitdata) {
+      console.log('commitdata', commitdata);
       var _this = this
       var onlineId = this.dataForm.config.tableId
       let datajson = {}
@@ -161,19 +162,21 @@ export default {
       }
       o_postAction('/cgform/api/form/' + onlineId, datajson)
         .then((res) => {
-          this.completeTask(onlineId,res.result)
+          // this.completeTask(onlineId, res.result)
+          this.saveMarginData(onlineId, res.result)
         })
         .catch((err) => {
           console.log(err)
         })
     },
-    completeTask(onlineId,dataId) {
+    completeTask(onlineId, dataId, mainId) {
       var _this = this
       nw_postAction1('/task/complete', {
         taskId: this.taskId,
         onlineTableId: onlineId,
         onlineDataId: dataId,
         isWithdraw: 1,
+        mainId: mainId,
       })
         .then((res) => {
           console.log(res)
@@ -182,6 +185,27 @@ export default {
         })
         .catch((err) => {
           _this.$message.error('提交失败')
+          console.log(err)
+        })
+    },
+
+    //保存数据的接口
+    saveMarginData(onlineId, dataId) {
+      let params = {
+        taskId: this.taskId,
+        onlineTableId: onlineId,
+        onlineDataId: dataId,
+        depositWay : this.processName
+      }
+      nw_postAction1('/margin/saveMarginData', params)
+        .then((res) => {
+          console.log('保存数据的接口返回值', res)
+          let mainId = res.result.mainId
+          this.$nextTick(() => {
+            this.completeTask(onlineId, dataId, mainId)
+          })
+        })
+        .catch((err) => {
           console.log(err)
         })
     },

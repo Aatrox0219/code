@@ -39,6 +39,7 @@
           :tableId="rollbackForm.prevOnline_table_id"
           :dataId="rollbackForm.prevOnline_data_id"
           :taskId="taskId"
+          :processName="processName"
         ></rollback-task>
       </div>
       <div style="margin-top: 20px" v-model="lastForm">
@@ -68,6 +69,7 @@ export default {
       formList: [],
       formId: '',
       taskId: '',
+      processName: '',
       nowformId: '',
       rollFormList: [],
       rollbackForm: {},
@@ -117,7 +119,9 @@ export default {
     //处理退回任务
     announceRollTask(record) {
       console.log('退回')
+      console.log('record',record);
       this.taskId = record.taskId
+      this.processName = record.processName
       nw_postAction1(`/task/handleTask`, { taskId: record.taskId, processInstanceId: record.processInstanceId })
         .then((res) => {
           var oldIdsList = res.result.oldIdsList
