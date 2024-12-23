@@ -225,8 +225,6 @@ export default {
           categoryId: '1847453055727501313', //流程分类
 
           //通用接口信息
-          pageSize: 100, //页面显示条数
-          pageNum: 1, //当前页面
           processIdList: ['1', '5125', '5127', '5129', '5131'], //想要显示的流程信息
           applyState: ['complete'], //想要查询的流程类型
         },
@@ -350,8 +348,6 @@ export default {
           categoryId: '1860602147955077121', //流程分类
 
           //通用接口信息
-          pageSize: 100, //页面显示条数
-          pageNum: 1, //当前页面
           processIdList: ['1', '5125', '5127', '5129', '15125', '15127', '15129', '15131'], //想要显示的流程信息
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
@@ -394,15 +390,15 @@ export default {
           {
             title: '原存缴方式',
             align: 'center',
-            dataIndex: 'depositWay',
-            dataLocation: 'allData.main_payment.deposit_way',
+            dataIndex: 'oldDepositMethod',
+            dataLocation: 'allData.main_change.old_deposit_method',
             show: true,
           },
           {
             title: '现存缴方式',
             align: 'center',
-            dataIndex: 'depositWay',
-            dataLocation: 'allData.main_payment.deposit_way',
+            dataIndex: 'newDepositMethod',
+            dataLocation: 'allData.main_change.new_deposit_method',
             show: true,
           },
           {
@@ -429,8 +425,8 @@ export default {
           {
             title: '详情',
             align: 'center',
-            dataIndex: 'flowChangecolumns',
-            scopedSlots: { customRender: 'flowChangecolumns' },
+            dataIndex: 'flowHistoryaction',
+            scopedSlots: { customRender: 'flowHistoryaction' },
             show: true,
           },
         ],
@@ -790,15 +786,17 @@ export default {
       // this.getHistoryFlow()
       this.getLoadClaim() // 获取未认领流程
     },
+
     //得到所有未认领的流程
     getLoadClaim() {
       let params = {
-        processId: this.instanceClaim,
-        taskName: this.taskName,
-        startTime: this.startTime,
-        endTime: this.endTime,
+        processIdList: ['1', '5125', '5127', '5129', '15125', '15127', '15129', '15131'],
+        applyState: ['claim'],
+        pageSize: 1000,
+        pageNum: 1,
+        categoryId: '1860602147955077121',
       }
-      nw_postAction1(`/list/getClaim`, params)
+      nw_postAction1(`/generalList/getAllList`, params)
         .then((res) => {
           console.log('获取未认领的返回数据:', res)
           this.loadClaimData = res.result

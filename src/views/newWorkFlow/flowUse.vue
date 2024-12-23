@@ -146,8 +146,6 @@ export default {
           categoryId: '1847453055727501313', //流程分类
 
           //通用接口信息
-          pageSize: 100, //页面显示条数
-          pageNum: 1, //当前页面
           processIdList: ['1', '5125', '5127', '5129'], //想要显示的流程信息
           applyState: ['complete'], //想要查询的流程类型
         },
@@ -158,6 +156,7 @@ export default {
             dataIndex: 'companyName',
             dataLocation: 'allData.main_payment.enterprise_name',
             show: true,
+            filterType: 'select'
           },
           {
             title: '项目名称',
@@ -165,6 +164,7 @@ export default {
             dataIndex: 'projectName',
             dataLocation: 'allData.main_payment.project_name',
             show: true,
+            filterType: 'mixedInput'
           },
           {
             title: '所属区县',
@@ -172,6 +172,7 @@ export default {
             dataIndex: 'projectAddress',
             dataLocation: 'allData.main_payment.project_address',
             show: true,
+            filterType: 'mixedInput'
           },
           {
             title: '保证金金额（万元）',
@@ -193,6 +194,7 @@ export default {
             dataIndex: 'responsiblePerson',
             dataLocation: 'allData.main_payment.responsible_person',
             show: true,
+            filterType: 'input'
           },
           {
             title: '联系方式',
@@ -207,6 +209,7 @@ export default {
             dataIndex: 'createDate',
             dataLocation: 'allData.main_payment.form_create_date',
             show: true,
+            filterType: 'date'
           },
           {
             dataIndex: 'creditCode',
@@ -246,8 +249,6 @@ export default {
           categoryId: '1847453556447707137', //流程分类
 
           //通用接口信息
-          pageSize: 100, //页面显示条数
-          pageNum: 1, //当前页面
           processIdList: ['1', '5125', '5127', '5129', '5131'], //想要显示的流程信息
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
@@ -340,8 +341,6 @@ export default {
           categoryId: '1847453556447707137', //流程分类
 
           //通用接口信息
-          pageSize: 100, //页面显示条数
-          pageNum: 1, //当前页面
           processIdList: ['1', '5125', '5127', '5129', '5131'], //想要显示的流程信息
           applyState: ['pending'], //想要查询的流程类型
         },

@@ -182,8 +182,6 @@ export default {
           categoryId: '1847453055727501313', //流程分类
 
           //通用接口信息
-          pageSize: 100, //页面显示条数
-          pageNum: 1, //当前页面
           processIdList: ['1','5125','5127','5129'], //想要显示的流程信息
           applyState: ['instance','cancel','complete'], //想要查询的流程类型
         },
@@ -262,8 +260,6 @@ export default {
           categoryId: '1847453055727501313', //流程分类
 
           //通用接口信息
-          pageSize: 10, //页面显示条数
-          pageNum: 1, //当前页面
           processIdList: ['1','5125','5127','5129'], //想要显示的流程信息
           applyState: ['pending'], //想要查询的流程类型
         },
