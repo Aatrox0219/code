@@ -29,7 +29,7 @@
       </a-card>
     </div>
     <div>
-      <annTask ref="modalform" > </annTask>
+      <annTask ref="modalform"> </annTask>
     </div>
   </div>
 </template>
@@ -41,7 +41,7 @@ import { nw_postAction, nw_postAction1, nw_getAction } from '@api/newWorkApi'
 export default {
   name: 'flowConfig',
   components: {
-    annTask
+    annTask,
   },
   data() {
     return {
@@ -51,22 +51,32 @@ export default {
       flowConfigData: [],
       columns: [
         {
+          title: '流程ID',
+          align: 'center',
+          dataIndex: 'processId',
+        },
+        {
           title: '流程名称',
           align: 'center',
           dataIndex: 'name',
           scopedSlots: { customRender: 'name' },
         },
         {
+          title: '流程类别ID',
+          align: 'center',
+          dataIndex: 'categoryId',
+        },
+        {
           title: '流程类别',
           align: 'center',
           dataIndex: 'categoryName',
         },
-        {
-          title: '操作',
-          align: 'center',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' },
-        },
+        // {
+        //   title: '操作',
+        //   align: 'center',
+        //   dataIndex: 'action',
+        //   scopedSlots: { customRender: 'action' },
+        // },
       ],
       processCategories: [{ category_name: '所有流程', functional_department: '', id: '' }],
     }
@@ -79,13 +89,13 @@ export default {
     getProcessCatagory() {
       let params = { pageNo: 1, pageSize: 9999 }
       o_getAction('/cgreport/api/getColumnsAndData/1346455081826521090', params).then((res) => {
-        let _temp = res.result.data.records.map(item => {
+        let _temp = res.result.data.records.map((item) => {
           item.category_id = item.id
           return item
         })
         this.processCategories = this.processCategories.concat(_temp)
         this.getflowConfig()
-        console.log('processCategories：',this.processCategories);
+        console.log('processCategories：', this.processCategories)
       })
     },
     //得到所有的流程
@@ -105,6 +115,7 @@ export default {
               }
             }
             this.flowConfigData = flowConfigData
+            console.log('flowConfigData:', this.flowConfigData)
           } else {
             this.$message.error('查询可开启的流程失败')
           }
@@ -127,7 +138,15 @@ export default {
             var onlineTableId = res.result.startProcessVO.onlineTableId
             var taskId = res.result.fistTaskId
             var processInstanceId = res.result.processInstanceId
-            this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, '原始', {})
+            this.$refs.modalform.openModal(
+              formDesignerId,
+              onlineDataId,
+              onlineTableId,
+              taskId,
+              processInstanceId,
+              '原始',
+              {}
+            )
           } else {
             this.$message.error('开启流程失败')
           }
