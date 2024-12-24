@@ -15,11 +15,6 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <!-- <a-table bordered :columns="flowUseMoneycolumns" :dataSource="flowUseMoneyData" rowKey="id">
-                            <span slot="flowUseMoneycolumns" slot-scope="text, record, index">
-                              <a @click="startProcess(record)">申请使用</a>
-                            </span>
-                          </a-table> -->
                           <commonTable :configurationParameter="configurationParameter1" :startProcess="startProcess">
                           </commonTable>
                         </div>
@@ -31,36 +26,8 @@
                 <a-tab-pane key="2" tab="历史">
                   <div>
                     <div class="card-table">
-                      <div class="doingSearchList">
-                        <a class="selectText">使用申请进度: </a>
-                        <a-select
-                          v-model="selectedState"
-                          style="width: 100px; margin-left: 10px; margin-top: 10px"
-                          :defaultActiveFirstOption="true"
-                        >
-                          <a-select-option value="all">全部</a-select-option>
-                          <a-select-option value="complete">已完成</a-select-option>
-                          <a-select-option value="cancel">已拒绝</a-select-option>
-                          <a-select-option value="instance">进行中</a-select-option>
-                        </a-select>
-
-                        <a class="selectText">项目名称: </a>
-                        <a-input v-model="taskName" style="width: 200px; margin-left: 10px"></a-input>
-
-                        <a-button-group style="margin-left: 20px">
-                          <a-button type="primary" icon="search" @click="getData()" style="margin-left: 20px"
-                            >查询</a-button
-                          >
-                          <a-button type="primary" icon="reload" @click="selectCondition()">重置</a-button>
-                        </a-button-group>
-                      </div>
                       <a-card :bordered="false">
                         <div class="table-container">
-                          <!-- <a-table bordered :columns="flowHistorycolumns" :dataSource="flowHistoryData" rowKey="id">
-                            <span slot="flowHistoryaction" slot-scope="text, record, index">
-                              <a @click="seeHistory(record)">历史</a>
-                            </span>
-                          </a-table> -->
                           <commonTable :configurationParameter="configurationParameter2" :seeHistory="seeHistory">
                           </commonTable>
                         </div>
@@ -70,7 +37,6 @@
                 </a-tab-pane>
                 <a-tab-pane key="1">
                   <template #tab>
-                    <!-- <a-badge :count="pendingTasksCount"> -->
                     <a-badge :count="backlogNumber" :offset="[10, 0]">
                       <span>待办事项</span>
                     </a-badge>
@@ -79,18 +45,6 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <!-- <a-table
-                            bordered
-                            :columns="flowWillAnnouncecolumns"
-                            :dataSource="flowWillAnnounceData"
-                            rowKey="id"
-                          >
-                            <span slot="flowWillAnnounceaction" slot-scope="text, record, index">
-                              <a @click="announceTask(record)">处理该任务</a>
-                              <a-divider type="vertical" />
-                              <a @click="seeHistory(record)">历史</a>
-                            </span>
-                          </a-table> -->
                           <commonTable
                             :configurationParameter="configurationParameter3"
                             :seeHistory="seeHistory"
@@ -150,7 +104,7 @@ export default {
             dataIndex: 'companyName',
             dataLocation: 'allData.main_payment.enterprise_name',
             show: true,
-            filterType: 'select'
+            filterType: 'select',
           },
           {
             title: '项目名称',
@@ -158,7 +112,7 @@ export default {
             dataIndex: 'projectName',
             dataLocation: 'allData.main_payment.project_name',
             show: true,
-            filterType: 'mixedInput'
+            filterType: 'mixedInput',
           },
           {
             title: '所属区县',
@@ -166,7 +120,7 @@ export default {
             dataIndex: 'projectAddress',
             dataLocation: 'allData.main_payment.project_address',
             show: true,
-            filterType: 'mixedInput'
+            filterType: 'mixedInput',
           },
           {
             title: '保证金金额（万元）',
@@ -188,7 +142,7 @@ export default {
             dataIndex: 'responsiblePerson',
             dataLocation: 'allData.main_payment.responsible_person',
             show: true,
-            filterType: 'input'
+            filterType: 'input',
           },
           {
             title: '联系方式',
@@ -203,7 +157,7 @@ export default {
             dataIndex: 'createDate',
             dataLocation: 'allData.main_payment.form_create_date',
             show: true,
-            filterType: 'date'
+            filterType: 'date',
           },
           {
             dataIndex: 'creditCode',
@@ -408,210 +362,9 @@ export default {
       },
       useProcessId: 0,
       backlogNumber: 0,
-      selectedStatus: 'all', // 状态默认选择 "全部"
       taskTab: {
         tabKey: '3', // 主 Tab 页的状态
       },
-      instanceClaim: '', // 未认领的选择流程
-      instanceProcessing: '', // 待处理的选择流程
-      instanceHistory: '', // 历史的选择流程
-      form: '',
-      name: '',
-      id: '',
-      columns: [
-        {
-          title: '流程名称',
-          align: 'center',
-          dataIndex: 'name',
-          scopedSlots: { customRender: 'name' },
-        },
-        {
-          title: '操作',
-          align: 'center',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' },
-        },
-      ],
-      processCategories: [{ category_name: '所有流程', functional_department: '', id: '' }],
-      instance: '',
-      processInstance: [{ id: '', name: '所有流程' }],
-      taskName: '',
-      projectName: '',
-      selectedAddress: 'all',
-      selectedState: 'all',
-      startTime: '',
-      endTime: '',
-      flowWillAnnounceData: [],
-      flowHistoryData: [],
-      flowUseMoneyData: [],
-      loadClaimData: [],
-      flowUseMoneycolumns: [
-        {
-          title: '企业名称',
-          align: 'center',
-          dataIndex: 'companyName',
-        },
-        {
-          title: '项目名称',
-          align: 'center',
-          dataIndex: 'projectName',
-        },
-        {
-          title: '所属区县',
-          align: 'center',
-          dataIndex: 'projectAddress',
-        },
-        {
-          title: '保证金金额（万元）',
-          align: 'center',
-          dataIndex: 'Money',
-        },
-        {
-          title: '剩余金额（万元）',
-          align: 'center',
-          dataIndex: 'remainingAmount',
-        },
-        {
-          title: '负责人',
-          align: 'center',
-          dataIndex: 'responsiblePerson',
-        },
-        {
-          title: '联系方式',
-          align: 'center',
-          dataIndex: 'mobile',
-        },
-        {
-          title: '创建时间',
-          align: 'center',
-          dataIndex: 'createDate',
-        },
-        {
-          title: '操作',
-          align: 'center',
-          width: '20%',
-          dataIndex: 'flowUseMoneycolumns',
-          scopedSlots: { customRender: 'flowUseMoneycolumns' },
-        },
-      ],
-      flowWillAnnouncecolumns: [
-        {
-          title: '状态',
-          align: 'center',
-          dataIndex: 'nodeName',
-        },
-        {
-          title: '企业名称',
-          align: 'center',
-          dataIndex: 'companyName',
-        },
-        {
-          title: '项目名称',
-          align: 'center',
-          dataIndex: 'projectName',
-        },
-        {
-          title: '所属区县',
-          align: 'center',
-          dataIndex: 'projectAddress',
-        },
-        {
-          title: '保证金金额（万元）',
-          align: 'center',
-          dataIndex: 'Money',
-        },
-        {
-          title: '本次使用金额（万元）',
-          align: 'center',
-          dataIndex: 'useMoneyLow',
-        },
-        {
-          title: '剩余金额（万元）',
-          align: 'center',
-          dataIndex: 'remainingAmount',
-        },
-        {
-          title: '项目联系人',
-          align: 'center',
-          dataIndex: 'responsiblePerson',
-        },
-        {
-          title: '联系方式',
-          align: 'center',
-          dataIndex: 'mobile',
-        },
-        {
-          title: '创建时间',
-          align: 'center',
-          dataIndex: 'createDate',
-        },
-        {
-          title: '操作',
-          align: 'center',
-          width: '20%',
-          dataIndex: 'flowWillAnnounceaction',
-          scopedSlots: { customRender: 'flowWillAnnounceaction' },
-        },
-      ],
-      flowHistorycolumns: [
-        {
-          title: '状态',
-          align: 'center',
-          dataIndex: 'nodeName',
-        },
-        {
-          title: '企业名称',
-          align: 'center',
-          dataIndex: 'companyName',
-        },
-        {
-          title: '项目名称',
-          align: 'center',
-          dataIndex: 'projectName',
-        },
-        {
-          title: '所属区县',
-          align: 'center',
-          dataIndex: 'projectAddress',
-        },
-        {
-          title: '保证金金额（万元）',
-          align: 'center',
-          dataIndex: 'Money',
-        },
-        {
-          title: '本次使用金额（万元）',
-          align: 'center',
-          dataIndex: 'useMoneyLow',
-        },
-        {
-          title: '剩余金额（万元）',
-          align: 'center',
-          dataIndex: 'remainingAmount',
-        },
-        {
-          title: '项目联系人',
-          align: 'center',
-          dataIndex: 'responsiblePerson',
-        },
-        {
-          title: '联系方式',
-          align: 'center',
-          dataIndex: 'mobile',
-        },
-        {
-          title: '创建时间',
-          align: 'center',
-          dataIndex: 'createDate',
-        },
-        {
-          title: '详情',
-          align: 'center',
-          dataIndex: 'flowHistoryaction',
-          scopedSlots: { customRender: 'flowHistoryaction' },
-        },
-      ],
-      dateStrings: [],
     }
   },
   computed: {
@@ -685,32 +438,8 @@ export default {
     seeHistory(record) {
       this.$refs.flowHistory.openModal(record)
     },
-    //条件重置
-    selectCondition() {
-      this.dateStrings = []
-      this.instance = ''
-      this.selectAddress = 'all'
-      this.selectedState = 'all'
-      this.startTime = ''
-      this.endTime = ''
-      this.taskName = ''
-      this.getData()
-    },
-    onChange(dates, dateStrings) {
-      this.dateStrings = dateStrings
-      console.log('From: ', dateStrings[0], ', to: ', dateStrings[1])
-      this.startTime = dateStrings[0]
-      this.endTime = dateStrings[1]
-    },
     // 更新表格数据
     getData() {
-      // this.flowWillAnnounceData = []
-      // this.loadClaimData = []
-      // this.flowHistoryData = []
-      // this.flowUseMoneyData = []
-      // this.getUseFlow()
-      // this.getflowAnnounce() // 获取待处理流程
-      // this.getHistoryFlow()
       this.getLoadClaim() // 获取未认领流程
     },
     //得到所有未认领的流程
@@ -740,15 +469,14 @@ export default {
             }
 
             // 等待所有认领任务完成后更新界面
-            Promise.all(claimPromises).then(() => {
-              
-            })
+            Promise.all(claimPromises).then(() => {})
           }
         })
         .catch((res) => {
           console.log(res)
         })
     },
+    //认领流程
     claimTask(reocrd) {
       return nw_getAction(`/task/claimTask/` + reocrd.taskId)
         .then((res) => {
@@ -765,185 +493,6 @@ export default {
           return false // 出现错误时返回 false
         })
     },
-
-    //获取可以申请使用的流程
-    getUseFlow() {
-      let params = {
-        processId: this.instanceClaim,
-        address: this.userInfo.currentLocation,
-        categoryId: '1847453055727501313',
-      }
-
-      nw_postAction1('/list/getCompleteProcessInstance', params)
-        .then((res) => {
-          console.log('res321', res)
-          // 使用后端返回的 data 属性
-
-          const flowUseMoneyData = res.result.map((item) => ({
-            ...item,
-            nodeName: taskStateMapping[item.nodeName],
-            companyName: item.enterpriseName,
-            projectName: item.projectName,
-            Money: item.ensureMoney,
-            projectAddress: item.projectAddress,
-            responsiblePerson: item.responsiblePerson,
-            mobile: item.mobile,
-            Proportions: item.proportions,
-          }))
-
-          // 按创建时间排序（从近到远）
-          const sortedData = flowUseMoneyData.sort((a, b) => new Date(b.createDate) - new Date(a.createDate))
-
-          this.flowUseMoneyData = sortedData
-          console.log('flowUseMoneyData查询', this.flowUseMoneyData)
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    },
-
-    //获取历史
-    getHistoryFlow() {
-      let params = {
-        processId: this.instanceHistory,
-        taskName: this.taskName,
-        startTime: this.startTime,
-        endTime: this.endTime,
-        categoryId: '1847453556447707137',
-        address: this.selectedAddress === 'all' ? '' : this.selectedAddress, // 如果选择了全部，则发送空字符串
-        applyState: this.selectedState === 'all' ? '' : this.selectedState, // 如果选择了全部，则发送空字符串
-      }
-      nw_postAction1('/list/getProcessAllState', params)
-        .then((res) => {
-          console.log('res321', res)
-          // 使用后端返回的 data 属性
-          const flowHistoryData = res.result.data.map((item) => {
-            let nodeName
-            if (item.state === 'cancel') {
-              nodeName = '已拒绝'
-            } else if (item.state === 'complete') {
-              nodeName = '已完成'
-            } else {
-              nodeName = taskStateMapping[item.nodeName] || item.nodeName
-            }
-
-            return {
-              ...item,
-              nodeName,
-              companyName: item.enterpriseName, // 添加企业名称
-              projectName: item.projectName, // 添加项目名称
-              Money: item.ensureMoney, // 添加保证金金额
-              projectAddress: item.projectAddress, // 添加项目地址
-              responsiblePerson: item.responsiblePerson,
-              mobile: item.mobile,
-              Proportions: item.proportions,
-              remainingAmount: item.remainingAmount,
-            }
-          })
-          // 按创建时间排序（从近到远）
-          const sortedHistoryData = flowHistoryData.sort((a, b) => new Date(b.createDate) - new Date(a.createDate))
-          this.flowHistoryData = sortedHistoryData
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    },
-    //获得待处理任务
-    getflowAnnounce() {
-      let params = {
-        processId: this.instanceProcessing,
-        taskName: this.taskName,
-        startTime: this.startTime,
-        endTime: this.endTime,
-        categoryId: '1847453556447707137',
-      }
-
-      nw_postAction1('/list/getPendingTakes', params)
-        .then((res) => {
-          console.log('res321', res)
-          // this.flowWillAnnounceData = res.result
-          // 使用后端返回的 data 属性
-          this.backlogNumber = res.result.length
-          const flowWillAnnounceData = res.result.map((item) => ({
-            ...item,
-            nodeName: taskStateMapping[item.nodeName],
-            companyName: item.enterpriseName,
-            projectName: item.projectName,
-            Money: item.ensureMoney,
-            projectAddress: item.projectAddress,
-            responsiblePerson: item.responsiblePerson,
-            mobile: item.mobile,
-            Proportions: item.proportions,
-            remainingAmount: item.remainingAmount,
-          }))
-
-          // 按创建时间排序（从近到远）
-          const sortedData = flowWillAnnounceData.sort((a, b) => new Date(b.createDate) - new Date(a.createDate))
-
-          this.flowWillAnnounceData = sortedData
-          console.log('flowWillAnnounceData查询', this.flowWillAnnounceData)
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    },
-
-    // 处理状态和类型
-    processStateAndType(item) {
-      const stateMapping = {
-        WaitReviewWorkload: '工作量待审核',
-        Ready: '已开始',
-        Completed: '已完成',
-        Reserved: '已领取',
-        Created: '已创建',
-      }
-      item.state = stateMapping[item.state] || item.state
-
-      const typeMapping = {
-        Participative: '竞争任务',
-        Normal: '正常任务',
-      }
-      item.type = typeMapping[item.type] || item.type
-    },
-
-    // 处理状态和类型
-    processStateAndType(item) {
-      const stateMapping = {
-        WaitReviewWorkload: '工作量待审核',
-        Ready: '已开始',
-        Completed: '已完成',
-        Reserved: '已领取',
-        Created: '已创建',
-      }
-      item.state = stateMapping[item.state] || item.state
-
-      const typeMapping = {
-        Participative: '竞争任务',
-        Normal: '正常任务',
-      }
-      item.type = typeMapping[item.type] || item.type
-    },
-    //获得已拒绝的流程
-    getCancelProcesses() {
-      let params = {
-        processId: this.instanceRejected,
-        // startTime: this.startTime,
-        // endTime: this.endTime,
-      }
-      nw_postAction1(`/process/getCancelProcesses`, params)
-        .then((res) => {
-          console.log(res)
-          if (res.result.length == 0) {
-            _this.$message.success('此流程无数据')
-            return
-          }
-          this.flowRejectData = res.result
-        })
-        .catch((error) => {
-          _this.$message.error('查资源失败')
-          console.log(error)
-        })
-    },
     //处理该任务
     announceTask(record) {
       console.log('record1', record)
@@ -957,118 +506,8 @@ export default {
 }
 </script>
 <style scoped>
-.flowNameSpan {
-  display: inline-block;
-  width: 100%;
-}
-
-.iconfont {
-  font-size: 20px;
-}
-
-.iconfont .icon-liucheng {
-  float: left;
-}
-
-.ididididi {
-  margin-top: 20px;
-}
-
-.buttonstyle {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 100%;
-  height: 50px;
-  zoom: 1;
-}
-
-.buttonstyle .xbutton {
-  float: right;
-  height: 30px;
-  width: 40px;
-  margin-top: 10px;
-  margin-right: 10px;
-}
-
-.buttonstyle::after {
-  content: '';
-  height: 0;
-  clear: both;
-}
-
-.addQA1 {
-  z-index: 10;
-  border: 1px solid #aaa;
-  border-radius: 5px;
-  width: 80%;
-  height: 60%;
-  background-color: #fff;
-  height: auto;
-  position: fixed;
-  top: 27%;
-  left: 18%;
-}
-
-.addQA1 .closeButton {
-  font-size: 20px;
-  float: right;
-  margin: 14px;
-  cursor: pointer;
-}
-
-.showHead {
-  border-radius: 5px 5px 0px 0px;
-  height: 40px;
-  color: black;
-  font-size: 20px;
-  position: relative;
-  background-color: #1890ff;
-}
-
-.showHead .showHeadContent {
-  margin-left: 20px;
-  line-height: 40px;
-}
-
-.overflow {
-  transition: all 0.3s ease;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  z-index: 5;
-  background-color: rgba(70, 60, 60, 0.49);
-  top: 0px;
-}
-
 .card-table {
   background-color: white;
-}
-
-.selectText {
-  color: black;
-  font-size: 13px;
-  margin-left: 22px;
-}
-
-.seeInformation {
-  z-index: 300;
-  width: 95%;
-  border: 1px solid #aaa;
-  border-radius: 5px;
-  margin: 20px;
-  background-color: white;
-}
-
-.seeContent {
-  margin-top: 7%;
-  margin-bottom: 7%;
-  margin-left: 7%;
-  margin-right: 7%;
-}
-
-.selectFrame {
-  width: 200px;
 }
 
 .table-container {
