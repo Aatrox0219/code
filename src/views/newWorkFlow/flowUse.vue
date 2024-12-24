@@ -139,13 +139,7 @@ export default {
     return {
       configurationParameter1: {
         inquire: {
-          //基本信息
-          processId: '', //流程id
-          startTime: '', //时间筛选
-          endTime: '',
           categoryId: '1847453055727501313', //流程分类
-
-          //通用接口信息
           processIdList: ['1', '5125', '5127', '5129'], //想要显示的流程信息
           applyState: ['complete'], //想要查询的流程类型
         },
@@ -242,13 +236,7 @@ export default {
       },
       configurationParameter2: {
         inquire: {
-          //基本信息
-          processId: '', //流程id
-          startTime: '', //时间筛选
-          endTime: '',
           categoryId: '1847453556447707137', //流程分类
-
-          //通用接口信息
           processIdList: ['1', '5125', '5127', '5129', '5131'], //想要显示的流程信息
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
@@ -334,13 +322,7 @@ export default {
       },
       configurationParameter3: {
         inquire: {
-          //基本信息
-          processId: '', //流程id
-          startTime: '', //时间筛选
-          endTime: '',
           categoryId: '1847453556447707137', //流程分类
-
-          //通用接口信息
           processIdList: ['1', '5125', '5127', '5129', '5131'], //想要显示的流程信息
           applyState: ['pending'], //想要查询的流程类型
         },
@@ -736,8 +718,6 @@ export default {
       let params = {
         processIdList: ['1', '5125', '5127', '5129', '5131'],
         applyState: ['claim'],
-        pageSize: 1000,
-        pageNum: 1,
         categoryId: '1847453556447707137',
       }
       nw_postAction1(`/generalList/getAllList`, params)
@@ -761,9 +741,7 @@ export default {
 
             // 等待所有认领任务完成后更新界面
             Promise.all(claimPromises).then(() => {
-              this.getUseFlow()
-              this.getHistoryFlow() // 更新历史数据
-              this.getflowAnnounce() // 更新待办事项
+              
             })
           }
         })

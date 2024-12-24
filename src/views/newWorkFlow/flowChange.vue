@@ -110,7 +110,7 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <a-table
+                          <!-- <a-table
                             bordered
                             :columns="flowWillAnnouncecolumns"
                             :dataSource="flowWillAnnounceData"
@@ -121,7 +121,13 @@
                               <a-divider type="vertical" />
                               <a @click="seeHistory(record)">历史</a>
                             </span>
-                          </a-table>
+                          </a-table> -->
+                          <commonTable
+                            :configurationParameter="configurationParameter3"
+                            :seeHistory="seeHistory"
+                            :announceTask="announceTask"
+                          >
+                          </commonTable>
                         </div>
                       </a-card>
                     </div>
@@ -218,13 +224,7 @@ export default {
       loadClaimData: [],
       configurationParameter1: {
         inquire: {
-          //基本信息
-          processId: '', //流程id
-          startTime: '', //时间筛选
-          endTime: '',
           categoryId: '1847453055727501313', //流程分类
-
-          //通用接口信息
           processIdList: ['1', '5125', '5127', '5129', '5131'], //想要显示的流程信息
           applyState: ['complete'], //想要查询的流程类型
         },
@@ -341,13 +341,7 @@ export default {
       },
       configurationParameter2: {
         inquire: {
-          //基本信息
-          processId: '', //流程id
-          startTime: '', //时间筛选
-          endTime: '',
           categoryId: '1860602147955077121', //流程分类
-
-          //通用接口信息
           processIdList: ['1', '5125', '5127', '5129', '15125', '15127', '15129', '15131'], //想要显示的流程信息
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
@@ -427,6 +421,92 @@ export default {
             align: 'center',
             dataIndex: 'flowHistoryaction',
             scopedSlots: { customRender: 'flowHistoryaction' },
+            show: true,
+          },
+        ],
+      },
+      configurationParameter3: {
+        inquire: {
+          categoryId: '1860602147955077121', //流程分类
+          processIdList: ['1', '5125', '5127', '5129', '15125', '15127', '15129', '15131'], //想要显示的流程信息
+          applyState: ['pending'], //想要查询的流程类型
+        },
+        columnsData: [
+          {
+            title: '状态',
+            align: 'center',
+            dataIndex: 'nodeName',
+            dataLocation: 'nodeName',
+            show: true,
+          },
+          {
+            title: '企业名称',
+            align: 'center',
+            dataIndex: 'companyName',
+            dataLocation: 'allData.main_payment.enterprise_name',
+            show: true,
+          },
+          {
+            title: '项目名称',
+            align: 'center',
+            dataIndex: 'projectName',
+            dataLocation: 'allData.main_payment.project_name',
+            show: true,
+          },
+          {
+            title: '所属区县',
+            align: 'center',
+            dataIndex: 'projectAddress',
+            dataLocation: 'allData.main_payment.project_address',
+            show: true,
+          },
+          {
+            title: '保证金金额（万元）',
+            align: 'center',
+            dataIndex: 'Money',
+            dataLocation: 'allData.main_payment.money',
+            show: true,
+          },
+          {
+            title: '原存缴方式',
+            align: 'center',
+            dataIndex: 'oldDepositMethod',
+            dataLocation: 'allData.main_change.old_deposit_method',
+            show: true,
+          },
+          {
+            title: '现存缴方式',
+            align: 'center',
+            dataIndex: 'newDepositMethod',
+            dataLocation: 'allData.main_change.new_deposit_method',
+            show: true,
+          },
+          {
+            title: '负责人',
+            align: 'center',
+            dataIndex: 'responsiblePerson',
+            dataLocation: 'allData.main_payment.responsible_person',
+            show: true,
+          },
+          {
+            title: '联系方式',
+            align: 'center',
+            dataIndex: 'mobile',
+            dataLocation: 'allData.main_payment.mobile',
+            show: true,
+          },
+          {
+            title: '创建时间',
+            align: 'center',
+            dataIndex: 'createDate',
+            dataLocation: 'allData.main_payment.form_create_date',
+            show: true,
+          },
+          {
+            title: '操作',
+            align: 'center',
+            dataIndex: 'flowWillAnnounceaction',
+            scopedSlots: { customRender: 'flowWillAnnounceaction' },
             show: true,
           },
         ],
@@ -792,21 +872,19 @@ export default {
       let params = {
         processIdList: ['1', '5125', '5127', '5129', '15125', '15127', '15129', '15131'],
         applyState: ['claim'],
-        pageSize: 1000,
-        pageNum: 1,
         categoryId: '1860602147955077121',
       }
       nw_postAction1(`/generalList/getAllList`, params)
         .then((res) => {
-          console.log('获取未认领的返回数据:', res)
-          this.loadClaimData = res.result
+          console.log('获取未认领的返回数据:', res.result.dataList)
+          this.loadClaimData = res.result.dataList
           if (this.loadClaimData.length > 0) {
             const claimPromises = [] // 用于存储所有认领任务的 Promise
 
             for (var i = 0; i < this.loadClaimData.length; i++) {
               this.loadClaimData[i].state = '待领取'
 
-              const projectAddress = this.loadClaimData[i].projectAddress
+              const projectAddress = this.loadClaimData[i].allData.main_payment.project_address
 
               //通过当前用户的地址和项目的地址进行匹配来自动认领
               if (this.userInfo.currentLocation === projectAddress) {
@@ -817,9 +895,7 @@ export default {
 
             // 等待所有认领任务完成后更新界面
             Promise.all(claimPromises).then(() => {
-              this.getChangeFlow()
-              this.getHistoryFlow() // 更新历史数据
-              this.getflowAnnounce() // 更新待办事项
+              
             })
           }
         })
