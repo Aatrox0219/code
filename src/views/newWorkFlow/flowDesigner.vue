@@ -40,6 +40,13 @@ let dataInitial = {
   type: 'process',
   nodeList: [],
   lineList: [],
+  formAttribute: {
+    processMainTable: '',
+    processAssociationKey: '',
+    processAssociationTable: '',
+    mainTableAssociationkey: '',
+    processMainKey: '',
+  },
 }
 export default {
   name: 'flowDesigner',
@@ -75,7 +82,7 @@ export default {
   },
   methods: {
     openEasyflow(saveFlag) {
-      this.$refs.panel.openModel(true,dataInitial,saveFlag)
+      this.$refs.panel.openModel(true, dataInitial, saveFlag)
     },
     //得到所有的流程模板
     getList() {
@@ -95,7 +102,7 @@ export default {
     //删除流程模板
     deleteFlow(record) {
       let that = this
-      console.log("进入流程删除！")
+      console.log('进入流程删除！')
       this.$elementConfirm('真的要删除吗 ?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -123,14 +130,14 @@ export default {
       return nw_postAction1(`/design/modifyFile`, qs.stringify({ id: record.id }))
         .then((res) => {
           console.log(res)
-          if(res.success) {
+          if (res.success) {
             this.isNotDeploy = true
             // this.$message.warning('该流程已部署，禁止查看！')
           } else {
             this.isNotDeploy = false
           }
-          console.log('当前表单是不是没部署',this.isNotDeploy);
-          return this.$refs.panel.openModel(this.isNotDeploy,res.result,'1')
+          console.log('当前表单是不是没部署', this.isNotDeploy)
+          return this.$refs.panel.openModel(this.isNotDeploy, res.result, '1')
         })
         .catch((err) => {
           console.log(err)
