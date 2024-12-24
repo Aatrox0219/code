@@ -77,6 +77,7 @@
 
 <script>
 import { nw_getAllData } from '@api/newWorkApi'
+import { taskStateMapping } from '../taskStateMapping'
 
 export default {
   name: 'commonTable',
@@ -144,13 +145,13 @@ export default {
         // 遍历 dataList 生成 dataSourceList
         const dataSourceList = validDataList.map((dataItem) => {
           const item = {}
-          // 流程基本信息
+          // 流程基本值
           item.processName = dataItem.processName
           item.taskId = dataItem.taskId
           item.processId = dataItem.processId
           item.processInstanceId = dataItem.processInstanceId
           item.processHisInstanceId = dataItem.processHisInstanceId
-
+          // 某些流程需要取下面这些值
           item.depositWay = dataItem.allData.main_payment.deposit_way // 保证金存缴方式
           item.flag = dataItem.flag // 用于判断是否是撤回的任务
 
@@ -168,6 +169,18 @@ export default {
               keys.forEach((key) => {
                 value = value[key] || null
               })
+              // 特殊处理 nodeName
+              if (column.dataLocation === 'nodeName') {
+                const dataType = dataItem.dataType // 获取 dataType 值,来判断流程是否已完成或者已终止
+                if (dataType === 'complete') {
+                  value = '已完成'
+                } else if (dataType === 'cancel') {
+                  value = '已终止'
+                } else {
+                  // 映射 nodeName 值
+                  value = taskStateMapping[value] || value
+                }
+              }
               item[column.dataIndex] = value
             }
           })
