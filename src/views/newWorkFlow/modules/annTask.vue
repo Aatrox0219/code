@@ -96,9 +96,9 @@ export default {
   mounted() {},
   methods: {
     openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, category, data) {
-      console.log('category:', category);
-      console.log('data:', data);
-      console.log('onlineTableId:', onlineTableId);
+      console.log('category:', category)
+      console.log('data:', data)
+      console.log('onlineTableId:', onlineTableId)
       this.formDesignerId = formDesignerId
       this.onlineDataId = onlineDataId
       this.onlineTableId = onlineTableId
@@ -167,7 +167,10 @@ export default {
               if (this.$refs.generateForm) {
                 if (category === '存缴') {
                   //将公司名称默认填写为当前登录用户的公司名称
-                  this.$refs.generateForm.setData({ company_name: this.userInfo.realname }) //这里的company_name是表单中的字段标识
+                  this.$refs.generateForm.setData({
+                    company_name: this.userInfo.realname, //这里的company_name是表单中的字段标识
+                    deposit_way: data.projectStatus
+                  })
                 } else if (category === '使用') {
                   console.log('保证金使用的数据', data)
                   this.$refs.generateForm.setData({
@@ -238,25 +241,23 @@ export default {
         })
     },
     //完成该节点的任务，把该节点填写的表单id，online表id，online数据id传入工作流
-    completeTask(onlineId, dataId, mainId) {
+    completeTask(onlineId, dataId) {
       var _this = this
       let params = {
         taskId: _this.taskId,
         onlineTableId: onlineId,
         onlineDataId: dataId,
-        mainId: mainId,
+      }
+      // if (this.category === '存缴') {
+      //   params.depositWay = this.projectStatus
+      // }
+      if (this.frontId) {
+        params.frontId = this.frontId
       }
       nw_postAction1('/task/complete', params)
         .then((res) => {
           if (res.result.result) {
             _this.$message.success('通过成功')
-            // if (this.category === '存缴') {
-            //   params.depositWay = this.projectStatus
-            // }
-            // if (this.frontId) {
-            //   params.frontId = this.frontId;
-            // }
-            // this.saveMarginData(params)
             this.$nextTick(() => {
               this.getData()
             })
@@ -272,30 +273,25 @@ export default {
     },
 
     //保存数据的接口
-    saveMarginData(onlineId, dataId) {
-      let params = {
-        taskId: this.taskId,
-        onlineTableId: onlineId,
-        onlineDataId: dataId,
-      }
-      if (this.category === '存缴') {
-        params.depositWay = this.projectStatus
-      }
-      if (this.frontId) {
-        params.frontId = this.frontId
-      }
-      nw_postAction1('/margin/saveMarginData', params)
-        .then((res) => {
-          console.log('保存数据的接口返回值', res)
-          let mainId = res.result.mainId
-          this.$nextTick(() => {
-            this.completeTask(onlineId, dataId, mainId)
-          })
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    },
+    // saveMarginData(onlineId, dataId) {
+    //   let params = {
+    //     taskId: this.taskId,
+    //     onlineTableId: onlineId,
+    //     onlineDataId: dataId,
+    //   }
+
+    //   nw_postAction1('/margin/saveMarginData', params)
+    //     .then((res) => {
+    //       console.log('保存数据的接口返回值', res)
+    //       let mainId = res.result.mainId
+    //       this.$nextTick(() => {
+    //         this.completeTask(onlineId, dataId)
+    //       })
+    //     })
+    //     .catch((err) => {
+    //       console.log(err)
+    //     })
+    // },
 
     //得到online的data
     getOnlineJson(onlineTableId, onlineDataId, formJson) {
@@ -395,8 +391,7 @@ export default {
       o_postAction('/cgform/api/form/' + onlineId, datajson)
         .then((res) => {
           this.visible = false
-          this.saveMarginData(onlineId, res.result)
-          // this.completeTask(onlineId, res.result)
+          this.completeTask(onlineId, res.result)
           this.$message.success('提交成功')
         })
         .catch((err) => {

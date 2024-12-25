@@ -131,14 +131,20 @@ export default {
         })
     },
     //通过操作
-    completeTask(onlineId, dataId, mainId) {
-      var _this = this
-      nw_postAction1('/task/complete', {
+    completeTask(onlineId, dataId) {
+      let params = {
         taskId: this.taskId,
         onlineTableId: onlineId,
         onlineDataId: dataId,
-        mainId: mainId,
-      })
+      }
+      // if (this.category === '存缴') {
+      //   params.depositWay = this.projectStatus
+      // }
+      if (this.frontId) {
+        params.frontId = this.frontId
+      }
+      var _this = this
+      nw_postAction1('/task/complete',params )
         .then((res) => {
           if (res.result.result) {
             _this.$message.success('通过成功')
@@ -153,30 +159,20 @@ export default {
     },
 
     //保存数据的接口
-    saveMarginData(onlineId, dataId) {
-      let params = {
-        taskId: this.taskId,
-        onlineTableId: onlineId,
-        onlineDataId: dataId,
-      }
-      if (this.category === '存缴') {
-        params.depositWay = this.projectStatus
-      }
-      if (this.frontId) {
-        params.frontId = this.frontId
-      }
-      nw_postAction1('/margin/saveMarginData', params)
-        .then((res) => {
-          console.log('保存数据的接口返回值', res)
-          let mainId = res.result.mainId
-          this.$nextTick(() => {
-            this.completeTask(onlineId, dataId, mainId)
-          })
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    },
+    // saveMarginData(onlineId, dataId) {
+      
+    //   nw_postAction1('/margin/saveMarginData', params)
+    //     .then((res) => {
+    //       console.log('保存数据的接口返回值', res)
+    //       let mainId = res.result.mainId
+    //       this.$nextTick(() => {
+    //         this.completeTask(onlineId, dataId, mainId)
+    //       })
+    //     })
+    //     .catch((err) => {
+    //       console.log(err)
+    //     })
+    // },
 
     //退回操作
     rollback(onlineId, dataId) {
@@ -275,7 +271,8 @@ export default {
           if (stateflag == '0') {
             this.reject(onlineId, res.result)
           } else if (stateflag == '1') {
-            this.saveMarginData(onlineId, res.result)
+            this.completeTask(onlineId, res.result)
+            // this.saveMarginData(onlineId, res.result)
           } else if (stateflag == '2') {
             this.rollback(onlineId, res.result)
           }
