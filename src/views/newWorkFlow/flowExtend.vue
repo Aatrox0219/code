@@ -11,8 +11,9 @@
                                         <div class="card-table" style="padding: 10px">
                                             <a-card :bordered="false">
                                                 <div class="flowAnnounce">
-                                                    <commonTable :configurationParameter="configurationParameter1"
-                                                        :urge="urge" :startFixedProcess="startFixedProcess">
+                                                    <commonTable ref="commonTableRef1"
+                                                        :configurationParameter="configurationParameter1" :urge="urge"
+                                                        :startFixedProcess="startFixedProcess">
                                                     </commonTable>
                                                 </div>
                                             </a-card>
@@ -26,7 +27,8 @@
                                             <a-card :bordered="false">
                                                 <div class="table-container">
                                                     <div class="table-container">
-                                                        <commonTable :configurationParameter="configurationParameter2"
+                                                        <commonTable ref="commonTableRef2"
+                                                            :configurationParameter="configurationParameter2"
                                                             :seeHistory="seeHistory">
                                                         </commonTable>
                                                     </div>
@@ -45,7 +47,8 @@
                                         <div class="card-table" style="padding: 10px">
                                             <a-card :bordered="false">
                                                 <div class="flowAnnounce">
-                                                    <commonTable :configurationParameter="configurationParameter3"
+                                                    <commonTable ref="commonTableRef3"
+                                                        :configurationParameter="configurationParameter3"
                                                         :seeHistory="seeHistory" :announceTask="announceTask">
                                                     </commonTable>
                                                 </div>
@@ -462,6 +465,18 @@ export default {
             this.$refs.flowHistory.openModal(record)
         },        // 更新表格数据
         getData() {
+            const commonTableInstance1 = this.$refs.commonTableRef1;
+            if (commonTableInstance1) {
+                commonTableInstance1.getAllList();
+            }
+            const commonTableInstance2 = this.$refs.commonTableRef2;
+            if (commonTableInstance2) {
+                commonTableInstance2.getAllList();
+            }
+            const commonTableInstance3 = this.$refs.commonTableRef3;
+            if (commonTableInstance3) {
+                commonTableInstance3.getAllList();
+            }
             this.getLoadClaim() // 获取未认领流程
         },
         //得到所有未认领的流程

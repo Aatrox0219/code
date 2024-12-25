@@ -6,16 +6,13 @@
           <div id="taskList">
             <div>
               <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="taskTab.tabKey">
-                <a-tab-pane
-                  key="3"
-                  tab="使用申请"
-                  v-if="userInfo.username.endsWith('cb') || userInfo.username == 'admin'"
-                >
+                <a-tab-pane key="3" tab="使用申请" v-if="userInfo.username.endsWith('cb') || userInfo.username == 'admin'">
                   <div>
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <commonTable :configurationParameter="configurationParameter1" :startProcess="startProcess">
+                          <commonTable ref="commonTableRef" :configurationParameter="configurationParameter1"
+                            :startProcess="startProcess">
                           </commonTable>
                         </div>
                       </a-card>
@@ -28,7 +25,8 @@
                     <div class="card-table">
                       <a-card :bordered="false">
                         <div class="table-container">
-                          <commonTable :configurationParameter="configurationParameter2" :seeHistory="seeHistory">
+                          <commonTable ref="commonTableRef" :configurationParameter="configurationParameter2"
+                            :seeHistory="seeHistory">
                           </commonTable>
                         </div>
                       </a-card>
@@ -45,11 +43,8 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <commonTable
-                            :configurationParameter="configurationParameter3"
-                            :seeHistory="seeHistory"
-                            :announceTask="announceTask"
-                          >
+                          <commonTable ref="commonTableRef3" :configurationParameter="configurationParameter3"
+                            :seeHistory="seeHistory" :announceTask="announceTask">
                           </commonTable>
                         </div>
                       </a-card>
@@ -440,6 +435,19 @@ export default {
     },
     // 更新表格数据
     getData() {
+      // 先获取子组件实例
+      const commonTableInstance1 = this.$refs.commonTableRef1;
+      if (commonTableInstance1) {
+        commonTableInstance1.getAllList();
+      }
+      const commonTableInstance2 = this.$refs.commonTableRef2;
+      if (commonTableInstance2) {
+        commonTableInstance2.getAllList();
+      }
+      const commonTableInstance3 = this.$refs.commonTableRef3;
+      if (commonTableInstance3) {
+        commonTableInstance3.getAllList();
+      }
       this.getLoadClaim() // 获取未认领流程
     },
     //得到所有未认领的流程
@@ -469,7 +477,7 @@ export default {
             }
 
             // 等待所有认领任务完成后更新界面
-            Promise.all(claimPromises).then(() => {})
+            Promise.all(claimPromises).then(() => { })
           }
         })
         .catch((res) => {

@@ -2,17 +2,12 @@
   <div>
     <div>
       <a-card :bordered="false">
-        <a-button
-          v-if="
-            userInfo.username === 'corporation001' ||
-            userInfo.username === 'corporation002' ||
-            userInfo.username === 'admin' ||
-            userInfo.username === 'ceshi001'
-          "
-          type="primary"
-          @click="startFixedProcess(true)"
-          style="margin-right: 10px"
-        >
+        <a-button v-if="
+          userInfo.username === 'corporation001' ||
+          userInfo.username === 'corporation002' ||
+          userInfo.username === 'admin' ||
+          userInfo.username === 'ceshi001'
+        " type="primary" @click="startFixedProcess(true)" style="margin-right: 10px">
           保证金存缴申请
         </a-button>
         <div id="formContent" style="margin-top: -10px">
@@ -24,7 +19,8 @@
                     <div class="card-table">
                       <a-card :bordered="false">
                         <div class="table-container">
-                          <commonTable :configurationParameter="configurationParameter1" :seeHistory="seeHistory">
+                          <commonTable ref="commonTableRef1" :configurationParameter="configurationParameter1"
+                            :seeHistory="seeHistory">
                           </commonTable>
                         </div>
                       </a-card>
@@ -41,11 +37,8 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <commonTable
-                            :configurationParameter="configurationParameter2"
-                            :seeHistory="seeHistory"
-                            :announceTask="announceTask"
-                          >
+                          <commonTable ref="commonTableRef2" :configurationParameter="configurationParameter2"
+                            :seeHistory="seeHistory" :announceTask="announceTask">
                           </commonTable>
                         </div>
                       </a-card>
@@ -364,6 +357,17 @@ export default {
     },
     // 更新表格数据
     getData() {
+      // 先获取子组件实例
+      const commonTableInstance1 = this.$refs.commonTableRef1;
+      if (commonTableInstance1) {
+        // 调用子组件的getAllList方法
+        commonTableInstance1.getAllList();
+      }
+
+      const commonTableInstance2 = this.$refs.commonTableRef2;
+      if (commonTableInstance2) {
+        commonTableInstance2.getAllList();
+      }
       this.getLoadClaim() // 获取未认领流程
     },
 
@@ -396,7 +400,7 @@ export default {
             }
 
             // 等待所有认领任务完成后更新界面
-            Promise.all(claimPromises).then(() => {})
+            Promise.all(claimPromises).then(() => { })
           }
         })
         .catch((res) => {
@@ -432,7 +436,6 @@ export default {
 }
 </script>
 <style scoped>
-
 .card-table {
   background-color: white;
 }
