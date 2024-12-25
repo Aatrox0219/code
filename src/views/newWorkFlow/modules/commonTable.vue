@@ -3,41 +3,24 @@
     <!-- 筛选部分 -->
     <a-row v-if="hasFilterOptions" :gutter="24" style="margin-bottom: 20px">
       <!-- 普通筛选控件 -->
-      <a-col
-        v-for="column in configurationParameter.columnsData"
-        :key="column.dataIndex"
-        :span="5"
-        v-if="column.filterType && column.filterType !== 'mixedInput'"
-        style="display: flex; align-items: center"
-      >
+      <a-col v-for="column in configurationParameter.columnsData" :key="column.dataIndex" :span="5"
+        v-if="column.filterType && column.filterType !== 'mixedInput'" style="display: flex; align-items: center">
         <!-- 控件的左侧标签 -->
         <span style="width: 100px; text-align: right; margin-right: 8px; font-weight: bold">{{ column.title }}：</span>
 
         <!-- 根据 filterType 渲染不同的筛选控件,目前支持 input、select和日期选择器 -->
-        <a-input
-          v-if="column.filterType === 'input'"
-          v-model="filterConditions[column.dataIndex]"
-          :placeholder="`请输入${column.title}`"
-          style="flex: 1; max-width: 200px"
-          allowClear
-        />
+        <a-input v-if="column.filterType === 'input'" v-model="filterConditions[column.dataIndex]"
+          :placeholder="`请输入${column.title}`" style="flex: 1; max-width: 200px" allowClear />
 
-        <a-select
-          v-if="column.filterType === 'select'"
-          v-model="filterConditions[column.dataIndex]"
-          :placeholder="`请选择${column.title}`"
-          style="flex: 1; max-width: 200px"
-        >
+        <a-select v-if="column.filterType === 'select'" v-model="filterConditions[column.dataIndex]"
+          :placeholder="`请选择${column.title}`" style="flex: 1; max-width: 200px">
           <a-select-option v-for="(item, index) in getSelectOptions(column.dataIndex)" :key="index" :value="item">
             {{ item }}
           </a-select-option>
         </a-select>
 
-        <a-range-picker
-          v-if="column.filterType === 'date'"
-          v-model="filterConditions[column.dataIndex]"
-          style="flex: 1; max-width: 300px"
-        />
+        <a-range-picker v-if="column.filterType === 'date'" v-model="filterConditions[column.dataIndex]"
+          style="flex: 1; max-width: 300px" />
       </a-col>
 
       <!-- 混合筛选控件 -->
@@ -71,6 +54,22 @@
       <span slot="flowChangecolumns" slot-scope="text, record, index">
         <a @click="startFixedProcess(true, record)">申请存缴方式变更</a>
       </span>
+      <!-- <span slot="flowBackPaycolumns" slot-scope="text, record, index">
+        <a @click="urge"
+          v-if="userInfo.username.endsWith('cb') || userInfo.username.endsWith('yw') || userInfo.username.endsWith('rs')">催缴</a>
+        <a @click="startFixedProcess(true)"
+          v-if="userInfo.username === 'corporation001' || userInfo.username === 'corporation002' || userInfo.username === 'admin' || userInfo.username === 'ceshi001'">补缴</a>
+      </span> -->
+      <span slot="flowBackPaycolumns" slot-scope="text, record, index">
+        <a @click="startFixedProcess(record)">补缴</a>
+      </span>
+
+      <span slot="flowExtendcolumns" slot-scope="text, record, index">
+        <a @click="startProcess(record)">更换保函</a>
+      </span>
+      <span slot="flowReturncolumns" slot-scope="text, record, index">
+        <a @click="startProcess(record)">申请返还</a>
+      </span>
     </a-table>
   </div>
 </template>
@@ -84,23 +83,23 @@ export default {
   props: {
     configurationParameter: {
       type: Object,
-      default: () => {},
+      default: () => { },
     },
     announceTask: {
       type: Function,
-      default: () => {},
+      default: () => { },
     },
     seeHistory: {
       type: Function,
-      default: () => {},
+      default: () => { },
     },
     startProcess: {
       type: Function,
-      default: () => {},
+      default: () => { },
     },
     startFixedProcess: {
       type: Function,
-      default: () => {},
+      default: () => { },
     },
   },
   data() {
@@ -273,5 +272,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

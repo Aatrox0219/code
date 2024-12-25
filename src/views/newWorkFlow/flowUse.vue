@@ -87,14 +87,14 @@ import { taskStateMapping } from './taskStateMapping'
 import commonTable from './modules/commonTable.vue'
 
 export default {
-  name: 'flowDeposit',
+  name: 'flowUse',
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory, commonTable },
   data() {
     return {
       configurationParameter1: {
         inquire: {
           categoryId: '1847453055727501313', //流程分类
-          processIdList: ['1', '5125', '5127', '5129'], //想要显示的流程信息
+          processIdList: ['20010', '20013', '20016', '20019'], //想要显示的流程信息
           applyState: ['complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -191,7 +191,7 @@ export default {
       configurationParameter2: {
         inquire: {
           categoryId: '1847453556447707137', //流程分类
-          processIdList: ['1', '5125', '5127', '5129', '5131'], //想要显示的流程信息
+          processIdList: ['20010', '20013', '20016', '20019', '20022'], //想要显示的流程信息
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -277,7 +277,7 @@ export default {
       configurationParameter3: {
         inquire: {
           categoryId: '1847453556447707137', //流程分类
-          processIdList: ['1', '5125', '5127', '5129', '5131'], //想要显示的流程信息
+          processIdList: ['20010', '20013', '20016', '20019', '20022'], //想要显示的流程信息
           applyState: ['pending'], //想要查询的流程类型
         },
         columnsData: [
@@ -445,7 +445,7 @@ export default {
     //得到所有未认领的流程
     getLoadClaim() {
       let params = {
-        processIdList: ['1', '5125', '5127', '5129', '5131'],
+        processIdList: ['20010', '20013', '20016', '20019', '20022'],
         applyState: ['claim'],
         categoryId: '1847453556447707137',
       }
