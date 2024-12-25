@@ -6,24 +6,17 @@
           <div id="taskList">
             <div>
               <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="taskTab.tabKey">
-                <a-tab-pane
-                  key="3"
-                  tab="可变更"
-                  v-if="
-                    userInfo.username === 'corporation001' ||
-                    userInfo.username === 'corporation002' ||
-                    userInfo.username === 'admin' ||
-                    userInfo.username === 'ceshi001'
-                  "
-                >
+                <a-tab-pane key="3" tab="待返还" v-if="userInfo.username.endsWith('cb') || userInfo.username == 'admin'">
                   <div>
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <commonTable
-                            :configurationParameter="configurationParameter1"
-                            :startFixedProcess="startFixedProcess"
-                          >
+                          <!-- <a-table bordered :columns="flowReturncolumns" :dataSource="flowReturnData" rowKey="id">
+                              <span slot="flowReturncolumns" slot-scope="text, record, index">
+                                <a @click="startProcess(record)">申请返还</a>
+                              </span>
+                            </a-table> -->
+                          <commonTable :configurationParameter="configurationParameter1" :startProcess="startProcess">
                           </commonTable>
                         </div>
                       </a-card>
@@ -36,6 +29,11 @@
                     <div class="card-table">
                       <a-card :bordered="false">
                         <div class="table-container">
+                          <!-- <a-table bordered :columns="flowHistorycolumns" :dataSource="flowHistoryData" rowKey="id">
+                            <span slot="flowHistoryaction" slot-scope="text, record, index">
+                              <a @click="seeHistory(record)">历史</a>
+                            </span>
+                          </a-table> -->
                           <commonTable :configurationParameter="configurationParameter2" :seeHistory="seeHistory">
                           </commonTable>
                         </div>
@@ -45,7 +43,8 @@
                 </a-tab-pane>
                 <a-tab-pane key="1">
                   <template #tab>
-                    <a-badge :count="backlogNumber" :offset="[10, 0]">
+                    <!-- <a-badge :count="pendingTasksCount"> -->
+                    <a-badge :count=backlogNumber :offset="[10, 0]">
                       <span>待办事项</span>
                     </a-badge>
                   </template>
@@ -53,11 +52,16 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <commonTable
-                            :configurationParameter="configurationParameter3"
-                            :seeHistory="seeHistory"
-                            :announceTask="announceTask"
-                          >
+                          <!-- <a-table bordered :columns="flowWillAnnouncecolumns" :dataSource="flowWillAnnounceData"
+                            rowKey="id">
+                            <span slot="flowWillAnnounceaction" slot-scope="text, record, index">
+                              <a @click="announceTask(record)">处理该任务</a>
+                              <a-divider type="vertical" />
+                              <a @click="seeHistory(record)">历史</a>
+                            </span>
+                          </a-table> -->
+                          <commonTable :configurationParameter="configurationParameter3" :seeHistory="seeHistory"
+                            :announceTask="announceTask">
                           </commonTable>
                         </div>
                       </a-card>
@@ -70,18 +74,6 @@
         </div>
       </a-card>
     </div>
-    <a-modal :title="modalTitle" :visible="isModalVisible" @ok="startProcess" @cancel="handleCancel" width="800px">
-      <div class="flowConfig">
-        <div style="padding-top: 20px">
-          <span>请选择变更的存缴方式：</span>
-          <a-select v-model="selectedProcessId" placeholder="请选择一个流程" style="width: 300px">
-            <a-select-option v-for="item in flowConfigData" :key="item.processId" :value="item.processId">
-              {{ item.name }}
-            </a-select-option>
-          </a-select>
-        </div>
-      </div>
-    </a-modal>
     <annTask ref="modalform" :getData="getData" :userInfo="userInfo"> </annTask>
 
     <approve-model ref="approveModel" @close="getData"></approve-model>
@@ -106,23 +98,14 @@ import { mapState } from 'vuex'
 import { taskStateMapping } from './taskStateMapping'
 import commonTable from './modules/commonTable.vue'
 export default {
-  name: 'flowChange',
+  name: 'flowReturn',
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory, commonTable },
   data() {
     return {
-      currentRecord: {},
-      currentProjectStatus: '',
-      backlogNumber: 0,
-      taskTab: {
-        tabKey: '3', // 主 Tab 页的状态
-      },
-      flowConfigData: [],
-      isModalVisible: false,
-      selectedProcessId: null,
       configurationParameter1: {
         inquire: {
           categoryId: '1847453055727501313', //流程分类
-          processIdList: ['20010', '20013', '20016', '20019', '20022'], //想要显示的流程信息
+          processIdList: ['20010', '20013', '20016', '20019'], //想要显示的流程信息
           applyState: ['complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -132,6 +115,7 @@ export default {
             dataIndex: 'companyName',
             dataLocation: 'allData.main_payment.enterprise_name',
             show: true,
+            filterType: 'select',
           },
           {
             title: '项目名称',
@@ -139,6 +123,7 @@ export default {
             dataIndex: 'projectName',
             dataLocation: 'allData.main_payment.project_name',
             show: true,
+            filterType: 'mixedInput',
           },
           {
             title: '所属区县',
@@ -146,6 +131,7 @@ export default {
             dataIndex: 'projectAddress',
             dataLocation: 'allData.main_payment.project_address',
             show: true,
+            filterType: 'mixedInput',
           },
           {
             title: '保证金金额（万元）',
@@ -155,10 +141,10 @@ export default {
             show: true,
           },
           {
-            title: '原存缴方式',
+            title: '剩余金额（万元）',
             align: 'center',
-            dataIndex: 'depositWay',
-            dataLocation: 'allData.main_payment.deposit_way',
+            dataIndex: 'remainingAmount',
+            dataLocation: 'allData.main_payment.remaining_amount',
             show: true,
           },
           {
@@ -167,6 +153,7 @@ export default {
             dataIndex: 'responsiblePerson',
             dataLocation: 'allData.main_payment.responsible_person',
             show: true,
+            filterType: 'input',
           },
           {
             title: '联系方式',
@@ -181,6 +168,7 @@ export default {
             dataIndex: 'createDate',
             dataLocation: 'allData.main_payment.form_create_date',
             show: true,
+            filterType: 'date',
           },
           {
             dataIndex: 'creditCode',
@@ -198,48 +186,24 @@ export default {
             show: false,
           },
           {
-            dataIndex: 'contractAmount',
-            dataLocation: 'allData.main_payment.contract_amount',
-            show: false,
-          },
-          {
             dataIndex: 'addressDetail',
             dataLocation: 'allData.main_payment.address_detail',
             show: false,
           },
           {
-            dataIndex: 'formCreateDate',
-            dataLocation: 'allData.main_payment.form_create_date',
-            show: false,
-          },
-          {
-            dataIndex: 'formEndDate',
-            dataLocation: 'allData.main_payment.form_end_date',
-            show: false,
-          },
-          {
-            dataIndex: 'proportions',
-            dataLocation: 'allData.main_payment.proportions',
-            show: false,
-          },
-          {
-            dataIndex: 'reason',
-            dataLocation: 'allData.main_payment.reason',
-            show: false,
-          },
-          {
-            title: '详情',
+            title: '操作',
             align: 'center',
-            dataIndex: 'flowChangecolumns',
-            scopedSlots: { customRender: 'flowChangecolumns' },
+            dataIndex: 'flowUseMoneycolumns',
+            scopedSlots: { customRender: 'flowUseMoneycolumns' },
             show: true,
           },
         ],
       },
       configurationParameter2: {
         inquire: {
-          categoryId: '1860602147955077121', //流程分类
-          processIdList: ['20010', '20013', '20016', '20019', '20025', '20028', '20031', '20034'], //想要显示的流程信息
+          categoryId: '1867119977859956738', //流程分类
+          // 这里差一个返还的流程
+          processIdList: ['20010', '20013', '20016', '20019'], //想要显示的流程信息
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -279,17 +243,17 @@ export default {
             show: true,
           },
           {
-            title: '原存缴方式',
+            title: '剩余金额（万元）',
             align: 'center',
-            dataIndex: 'oldDepositMethod',
-            dataLocation: 'allData.main_change.old_deposit_method',
+            dataIndex: 'remainingAmount',
+            dataLocation: 'allData.main_payment.remaining_amount',
             show: true,
           },
           {
-            title: '现存缴方式',
+            title: '申请返还金额（万元）',
             align: 'center',
-            dataIndex: 'newDepositMethod',
-            dataLocation: 'allData.main_change.new_deposit_method',
+            dataIndex: 'returnAmount',
+            dataLocation: 'allData.main_return.return_amount',
             show: true,
           },
           {
@@ -310,11 +274,11 @@ export default {
             title: '创建时间',
             align: 'center',
             dataIndex: 'createDate',
-            dataLocation: 'allData.main_payment.form_create_date',
+            dataLocation: 'allData.main_use.create_time',
             show: true,
           },
           {
-            title: '详情',
+            title: '操作',
             align: 'center',
             dataIndex: 'flowHistoryaction',
             scopedSlots: { customRender: 'flowHistoryaction' },
@@ -324,8 +288,9 @@ export default {
       },
       configurationParameter3: {
         inquire: {
-          categoryId: '1860602147955077121', //流程分类
-          processIdList: ['20010', '20013', '20016', '20019', '20025', '20028', '20031', '20034'], //想要显示的流程信息
+          categoryId: '1867119977859956738', //流程分类
+          // 这里差一个返还的流程
+          processIdList: ['20010', '20013', '20016', '20019'], //想要显示的流程信息
           applyState: ['pending'], //想要查询的流程类型
         },
         columnsData: [
@@ -365,17 +330,17 @@ export default {
             show: true,
           },
           {
-            title: '原存缴方式',
+            title: '剩余金额（万元）',
             align: 'center',
-            dataIndex: 'oldDepositMethod',
-            dataLocation: 'allData.main_change.old_deposit_method',
+            dataIndex: 'remainingAmount',
+            dataLocation: 'allData.main_payment.remaining_amount',
             show: true,
           },
           {
-            title: '现存缴方式',
+            title: '申请返还金额（万元）',
             align: 'center',
-            dataIndex: 'newDepositMethod',
-            dataLocation: 'allData.main_change.new_deposit_method',
+            dataIndex: 'returnAmount',
+            dataLocation: 'allData.main_return.return_amount',
             show: true,
           },
           {
@@ -396,7 +361,7 @@ export default {
             title: '创建时间',
             align: 'center',
             dataIndex: 'createDate',
-            dataLocation: 'allData.main_payment.form_create_date',
+            dataLocation: 'allData.main_use.create_time',
             show: true,
           },
           {
@@ -408,84 +373,42 @@ export default {
           },
         ],
       },
+      returnProcessId: 0,
+      backlogNumber: 0,
+      taskTab: {
+        tabKey: '3', // 主 Tab 页的状态
+      },
     }
   },
   computed: {
-    modalTitle() {
-      return (
-        <div>
-          <span style="color: #52c41a;">当前存缴方式：{this.currentProjectStatus}</span>
-        </div>
-      )
-    },
     userInfo() {
       // 从 Vue.ls 中获取 USER_INFO
-      return Vue.ls.get(USER_INFO) || {} // 如果没有值，默认为空对象
+      return Vue.ls.get(USER_INFO) || {}; // 如果没有值，默认为空对象
     },
   },
 
   created() {
     // 根据 userInfo.username 动态设置主 Tab 页
-    if (
-      this.userInfo.username &&
-      (this.userInfo.username === 'corporation001' ||
-        this.userInfo.username === 'corporation002' ||
-        this.userInfo.username === 'admin' ||
-        this.userInfo.username === 'ceshi001')
-    ) {
-      this.taskTab.tabKey = '3' // 显示 "可变更" 页
+    if ((this.userInfo.username && this.userInfo.username.endsWith('cb')) || this.userInfo.username === 'admin') {
+      this.taskTab.tabKey = '3'; // 显示 "使用申请" 页
     } else {
-      this.taskTab.tabKey = '2' // 显示 "历史" 页
+      this.taskTab.tabKey = '2'; // 显示 "历史" 页
     }
   },
   mounted() {
-    this.startFixedProcess(false, null)
+    this.startFixedProcess()
     this.getData()
     console.log('当前用户信息', this.userInfo)
   },
   methods: {
-    //获取存缴方式变更的流程数据,1860602147955077121是存缴方式变更的流程分类id
-    startFixedProcess(showModal, record) {
-      //获取当前点击的项目名称和存缴方式
-      // this.currentProjectName = record ? record.projectName : ''
-      this.currentProjectStatus = record ? record.depositWay : ''
-      this.currentRecord = record
-      let url = '/process/processList/{categoryId}?categoryId=1860602147955077121&category=1'
+    //获取保证金返还的流程数据,1867119977859956738是保证金返还的流程分类id
+    startFixedProcess() {
+      let url = '/process/processList/{categoryId}?categoryId=1867119977859956738&category=1'
       nw_getAction(url)
         .then((res) => {
-          console.log('存缴方式变更流程数据', res)
+          console.log('保证金返还流程数据', res)
           if (res.success) {
-            let flowConfigData = res.result
-
-            // 去掉name中的“变更为”前缀
-            flowConfigData = flowConfigData.map((item) => {
-              return {
-                ...item,
-                name: item.name.replace(/^变更为/, ''), // 移除前缀
-              }
-            })
-
-            //是否显示弹窗
-            if (showModal) {
-              this.isModalVisible = true
-            }
-            this.flowConfigData = flowConfigData.filter((item) => {
-              // 如果当前存缴方式包含某些关键词，就过滤掉对应的流程
-              if (this.currentProjectStatus.includes('银行现金存单') && item.name.includes('银行现金存单')) {
-                return false
-              }
-              if (this.currentProjectStatus.includes('保险公司保函') && item.name.includes('保险公司保函')) {
-                return false
-              }
-              if (this.currentProjectStatus.includes('银行保函') && item.name.includes('银行保函')) {
-                return false
-              }
-              if (this.currentProjectStatus.includes('担保公司保函') && item.name.includes('担保公司保函')) {
-                return false
-              }
-              return true
-            })
-            this.$message.success('加载成功')
+            this.returnProcessId = res.result[0].processId
           } else {
             this.$message.error('查询可开启的流程失败')
           }
@@ -496,40 +419,20 @@ export default {
         })
     },
     //开启流程
-    startProcess() {
-      this.isModalVisible = false
+    startProcess(record) {
       let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
       axios.defaults.headers.common['userName'] = userData.value.username
       console.log('userData.value.username', userData.value.username)
-      nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
+      nw_getAction(`/process/startProcess/{processId}?processId=${this.returnProcessId}`)
         .then((res) => {
           if (res.success) {
             this.$message.success('开启流程成功')
             const { formDesignerId, onlineDataId, onlineTableId, processInstanceId } = res.result.startProcessVO
             const taskId = res.result.fistTaskId
-            //在传给annTask组件的时候，将新的存缴方式传过去
-            const selectedProcess = this.flowConfigData.find((item) => item.processId === this.selectedProcessId)
-            if (selectedProcess) {
-              // 去掉 "变更为" 前缀
-              const processName = selectedProcess.name.replace(/^变更为/, '')
-              // 将处理后的值赋给 newProjectStatus
-              this.currentRecord.newProjectStatus = processName
-            } else {
-              console.log('未找到匹配的流程配置')
-            }
-            this.$refs.modalform.openModal(
-              formDesignerId,
-              onlineDataId,
-              onlineTableId,
-              taskId,
-              processInstanceId,
-              '变更',
-              this.currentRecord
-            )
+            this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, '返还', record)
           } else {
             this.$message.error('开启流程失败')
           }
-          this.selectedProcessId = null
         })
         .catch((error) => {
           console.log(error)
@@ -543,64 +446,61 @@ export default {
     getData() {
       this.getLoadClaim() // 获取未认领流程
     },
-
     //得到所有未认领的流程
     getLoadClaim() {
       let params = {
-        processIdList: ['20010', '20013', '20016', '20019', '20025', '20028', '20031', '20034'],
+        // 这里差一个返还的流程
+        processIdList: ['20010', '20013', '20016', '20019'],
         applyState: ['claim'],
-        categoryId: '1860602147955077121',
-      }
+        categoryId: '1867119977859956738',
+      };
       nw_postAction1(`/generalList/getAllList`, params)
         .then((res) => {
-          console.log('获取未认领的返回数据:', res.result.dataList)
-          this.loadClaimData = res.result.dataList
+          console.log('获取未认领的返回数据:', res.result.dataList);
+          this.loadClaimData = res.result.dataList;
           if (this.loadClaimData.length > 0) {
-            const claimPromises = [] // 用于存储所有认领任务的 Promise
+            const claimPromises = []; // 用于存储所有认领任务的 Promise
 
             for (var i = 0; i < this.loadClaimData.length; i++) {
-              this.loadClaimData[i].state = '待领取'
+              this.loadClaimData[i].state = '待领取';
 
               const projectAddress = this.loadClaimData[i].allData.main_payment.project_address
 
               //通过当前用户的地址和项目的地址进行匹配来自动认领
               if (this.userInfo.currentLocation === projectAddress) {
-                const promise = this.claimTask(this.loadClaimData[i])
-                claimPromises.push(promise)
+                const promise = this.claimTask(this.loadClaimData[i]);
+                claimPromises.push(promise);
               }
+
             }
 
             // 等待所有认领任务完成后更新界面
-            Promise.all(claimPromises).then(() => {})
+            Promise.all(claimPromises).then(() => {});
           }
         })
         .catch((res) => {
-          console.log(res)
-        })
+          console.log(res);
+        });
     },
-    //认领任务
     claimTask(reocrd) {
       return nw_getAction(`/task/claimTask/` + reocrd.taskId)
         .then((res) => {
           if (res.result) {
-            console.log('认领成功', reocrd)
-            return true // 认领成功返回 true
+            console.log('认领成功', reocrd);
+            return true; // 认领成功返回 true
           } else {
-            console.error('认领失败')
-            return false // 认领失败返回 false
+            console.error('认领失败');
+            return false; // 认领失败返回 false
           }
         })
         .catch((error) => {
-          console.log(error)
-          return false // 出现错误时返回 false
-        })
-    },
-    handleCancel() {
-      this.isModalVisible = false // 点击取消后隐藏弹窗
-      this.selectedProcessId = null
+          console.log(error);
+          return false; // 出现错误时返回 false
+        });
     },
     //处理该任务
     announceTask(record) {
+      console.log('record1', record)
       if (record.flag) {
         this.$refs.approveModel.announceRollTask(record)
       } else {

@@ -6,7 +6,7 @@
                     <div id="taskList">
                         <div>
                             <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="taskTab.tabKey">
-                                <a-tab-pane key="3" tab="待补缴">
+                                <a-tab-pane key="3" tab="待更换">
                                     <div>
                                         <div class="card-table" style="padding: 10px">
                                             <a-card :bordered="false">
@@ -25,9 +25,11 @@
                                         <div class="card-table">
                                             <a-card :bordered="false">
                                                 <div class="table-container">
-                                                    <commonTable :configurationParameter="configurationParameter2"
-                                                        :seeHistory="seeHistory">
-                                                    </commonTable>
+                                                    <div class="table-container">
+                                                        <commonTable :configurationParameter="configurationParameter2"
+                                                            :seeHistory="seeHistory">
+                                                        </commonTable>
+                                                    </div>
                                                 </div>
                                             </a-card>
                                         </div>
@@ -57,10 +59,10 @@
                 </div>
             </a-card>
         </div>
-        <a-modal title="保证金补缴" :visible="isModalVisible" @ok="startProcess" @cancel="handleCancel" width="800px">
+        <a-modal title="更换保函/延长有效期" :visible="isModalVisible" @ok="startProcess" @cancel="handleCancel" width="800px">
             <div class="flowConfig">
                 <div style="padding-top: 20px">
-                    <span>请选择补缴方式：</span>
+                    <span>请选择更换方式：</span>
                     <a-select v-model="selectedProcessId" placeholder="请选择一个流程" style="width: 300px">
                         <a-select-option v-for="item in flowConfigData" :key="item.processId" :value="item.processId">
                             {{ item.name }}
@@ -93,15 +95,14 @@ import { mapState } from 'vuex'
 import { taskStateMapping } from './taskStateMapping'
 import commonTable from './modules/commonTable.vue'
 export default {
-    name: 'flowBackPay',
+    name: 'flowExtend',
     components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory, commonTable },
     data() {
         return {
             configurationParameter1: {
                 inquire: {
-                    //基本信息
-                    categoryId: '1847453556447707137', //流程分类
-                    processIdList: ['5131'], //想要显示的流程信息
+                    categoryId: '1847453055727501313', //流程分类
+                    processIdList: ['20010', '20013', '20016', '20019'], //想要显示的流程信息
                     applyState: ['complete'], //想要查询的流程类型
                 },
                 columnsData: [
@@ -110,56 +111,54 @@ export default {
                         align: 'center',
                         dataIndex: 'companyName',
                         dataLocation: 'allData.main_payment.enterprise_name',
-                        show: true
+                        show: true,
+                        filterType: 'select',
                     },
                     {
                         title: '项目名称',
                         align: 'center',
                         dataIndex: 'projectName',
                         dataLocation: 'allData.main_payment.project_name',
-                        show: true
+                        show: true,
+                        filterType: 'mixedInput',
                     },
                     {
                         title: '所属区县',
                         align: 'center',
                         dataIndex: 'projectAddress',
                         dataLocation: 'allData.main_payment.project_address',
-                        show: true
+                        show: true,
+                        filterType: 'mixedInput',
                     },
                     {
                         title: '保证金金额（万元）',
                         align: 'center',
                         dataIndex: 'Money',
                         dataLocation: 'allData.main_payment.money',
-                        show: true
-                    },
-                    {
-                        title: '剩余金额（万元）',
-                        align: 'center',
-                        dataIndex: 'remainingAmount',
-                        dataLocation: 'allData.main_payment.remaining_amount',
-                        show: true
+                        show: true,
                     },
                     {
                         title: '负责人',
                         align: 'center',
                         dataIndex: 'responsiblePerson',
                         dataLocation: 'allData.main_payment.responsible_person',
-                        show: true
+                        show: true,
+                        filterType: 'input',
                     },
                     {
                         title: '联系方式',
                         align: 'center',
                         dataIndex: 'mobile',
                         dataLocation: 'allData.main_payment.mobile',
-                        show: true
+                        show: true,
                     },
                     {
                         title: '创建时间',
                         align: 'center',
                         dataIndex: 'createDate',
-                        dataLocation: 'allData.main_payment.create_time',
-                        show: true
+                        dataLocation: 'allData.main_payment.form_create_date',
+                        show: true,
+                        filterType: 'date',
                     },
                     {
                         dataIndex: 'creditCode',
@@ -174,235 +173,6 @@ export default {
                     {
                         dataIndex: 'postalCode',
                         dataLocation: 'allData.main_payment.postal_code',
-                        show: false,
-                    },
-                    {
-                        dataIndex: 'contractAmount',
-                        dataLocation: 'allData.main_payment.contract_amount',
-                        show: false,
-                    },
-                    {
-                        dataIndex: 'addressDetail',
-                        dataLocation: 'allData.main_payment.address_detail',
-                        show: false,
-                    },
-                    // {
-                    //     title: '操作',
-                    //     align: 'center',
-                    //     dataIndex: 'flowBackPaycolumns',
-                    //     scopedSlots: { customRender: 'flowBackPaycolumns' },
-                    //     show: true,
-                    // },
-                ],
-            },
-            configurationParameter2: {
-                inquire: {
-                    //基本信息
-                    categoryId: '1860939985686949889', //流程分类
-                    processIdList: ['5131', '15762', '15764', '15766', '15768'], //想要显示的流程信息
-                    applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
-                },
-                columnsData: [
-                    {
-                        title: '状态',
-                        align: 'center',
-                        dataIndex: 'nodeName',
-                        // dataLocation: 'nodeName',
-                        show: true
-                    },
-                    {
-                        title: '企业名称',
-                        align: 'center',
-                        dataIndex: 'companyName',
-                        dataLocation: 'allData.main_payment.enterprise_name',
-                        show: true
-                    },
-                    {
-                        title: '项目名称',
-                        align: 'center',
-                        dataIndex: 'projectName',
-                        dataLocation: 'allData.main_payment.project_name',
-                        show: true
-                    },
-                    {
-                        title: '所属区县',
-                        align: 'center',
-                        dataIndex: 'projectAddress',
-                        dataLocation: 'allData.main_payment.project_address',
-                        show: true
-                    },
-                    {
-                        title: '保证金金额（万元）',
-                        align: 'center',
-                        dataIndex: 'Money',
-                        dataLocation: 'allData.main_payment.money',
-                        show: true
-                    },
-                    {
-                        title: '剩余金额（万元）',
-                        align: 'center',
-                        dataIndex: 'remainingAmount',
-                        dataLocation: 'allData.main_payment.remaining_amount',
-                        show: true
-                    },
-                    {
-                        title: '补缴金额（万元）',
-                        align: 'center',
-                        dataIndex: 'supplementary',
-                        dataLocation: 'allData.main_backpay.supplementary',
-                        show: true
-                    },
-                    {
-                        title: '负责人',
-                        align: 'center',
-                        dataIndex: 'responsiblePerson',
-                        dataLocation: 'allData.main_payment.responsible_person',
-                        show: true
-                    },
-                    {
-                        title: '联系方式',
-                        align: 'center',
-                        dataIndex: 'mobile',
-                        dataLocation: 'allData.main_payment.mobile',
-                        show: true
-                    },
-                    {
-                        title: '创建时间',
-                        align: 'center',
-                        dataIndex: 'createDate',
-                        dataLocation: 'allData.main_payment.create_time',
-                        show: true
-                    },
-                    {
-                        dataIndex: 'creditCode',
-                        dataLocation: 'allData.main_payment.credit_code',
-                        show: false,
-                    },
-                    {
-                        dataIndex: 'companyAddress',
-                        dataLocation: 'allData.main_payment.company_address',
-                        show: false,
-                    },
-                    {
-                        dataIndex: 'postalCode',
-                        dataLocation: 'allData.main_payment.postal_code',
-                        show: false,
-                    },
-                    {
-                        dataIndex: 'contractAmount',
-                        dataLocation: 'allData.main_payment.contract_amount',
-                        show: false,
-                    },
-                    {
-                        dataIndex: 'addressDetail',
-                        dataLocation: 'allData.main_payment.address_detail',
-                        show: false,
-                    },
-                    {
-                        title: '详情',
-                        align: 'center',
-                        dataIndex: 'flowHistoryaction',
-                        scopedSlots: { customRender: 'flowHistoryaction' },
-                        show: true
-                    },
-                ],
-            },
-            configurationParameter3: {
-                inquire: {
-                    //基本信息
-                    categoryId: '1860939985686949889', //流程分类
-                    processIdList: ['5131', '15762', '15764', '15766', '15768'], //想要显示的流程信息
-                    applyState: ['pending'], //想要查询的流程类型
-                },
-                columnsData: [
-                    {
-                        title: '状态',
-                        align: 'center',
-                        dataIndex: 'nodeName',
-                        // dataLocation: 'nodeName',
-                        show: true
-                    },
-                    {
-                        title: '企业名称',
-                        align: 'center',
-                        dataIndex: 'companyName',
-                        dataLocation: 'allData.main_payment.enterprise_name',
-                        show: true
-                    },
-                    {
-                        title: '项目名称',
-                        align: 'center',
-                        dataIndex: 'projectName',
-                        dataLocation: 'allData.main_payment.project_name',
-                        show: true
-                    },
-                    {
-                        title: '所属区县',
-                        align: 'center',
-                        dataIndex: 'projectAddress',
-                        dataLocation: 'allData.main_payment.project_address',
-                        show: true
-                    },
-                    {
-                        title: '保证金金额（万元）',
-                        align: 'center',
-                        dataIndex: 'Money',
-                        dataLocation: 'allData.main_payment.money',
-                        show: true
-                    },
-                    {
-                        title: '剩余金额（万元）',
-                        align: 'center',
-                        dataIndex: 'remainingAmount',
-                        dataLocation: 'allData.main_payment.remaining_amount',
-                        show: true
-                    },
-                    {
-                        title: '补缴金额（万元）',
-                        align: 'center',
-                        dataIndex: 'supplementary',
-                        dataLocation: 'allData.main_backpay.supplementary',
-                        show: true
-                    },
-                    {
-                        title: '负责人',
-                        align: 'center',
-                        dataIndex: 'responsiblePerson',
-                        dataLocation: 'allData.main_payment.responsible_person',
-                        show: true
-                    },
-                    {
-                        title: '联系方式',
-                        align: 'center',
-                        dataIndex: 'mobile',
-                        dataLocation: 'allData.main_payment.mobile',
-                        show: true
-                    },
-                    {
-                        title: '创建时间',
-                        align: 'center',
-                        dataIndex: 'createDate',
-                        dataLocation: 'allData.main_payment.create_time',
-                        show: true
-                    },
-                    {
-                        dataIndex: 'creditCode',
-                        dataLocation: 'allData.main_payment.credit_code',
-                        show: false,
-                    },
-                    {
-                        dataIndex: 'companyAddress',
-                        dataLocation: 'allData.main_payment.company_address',
-                        show: false,
-                    },
-                    {
-                        dataIndex: 'postalCode',
-                        dataLocation: 'allData.main_payment.postal_code',
-                        show: false,
-                    },
-                    {
-                        dataIndex: 'contractAmount',
-                        dataLocation: 'allData.main_payment.contract_amount',
                         show: false,
                     },
                     {
@@ -413,12 +183,157 @@ export default {
                     {
                         title: '操作',
                         align: 'center',
+                        dataIndex: 'flowExtendcolumns',
+                        scopedSlots: { customRender: 'flowExtendcolumns' },
+                        show: true,
+                    },
+                ],
+            },
+            configurationParameter2: {
+                inquire: {
+                    categoryId: '1867119925569568769', //流程分类
+                    processIdList: [], //想要显示的流程信息
+                    applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
+                },
+                columnsData: [
+                    {
+                        title: '状态',
+                        align: 'center',
+                        dataIndex: 'nodeName',
+                        dataLocation: 'nodeName',
+                        show: true,
+                    },
+                    {
+                        title: '企业名称',
+                        align: 'center',
+                        dataIndex: 'companyName',
+                        dataLocation: 'allData.main_payment.enterprise_name',
+                        show: true,
+                    },
+                    {
+                        title: '项目名称',
+                        align: 'center',
+                        dataIndex: 'projectName',
+                        dataLocation: 'allData.main_payment.project_name',
+                        show: true,
+                    },
+                    {
+                        title: '所属区县',
+                        align: 'center',
+                        dataIndex: 'projectAddress',
+                        dataLocation: 'allData.main_payment.project_address',
+                        show: true,
+                    },
+                    {
+                        title: '保证金金额（万元）',
+                        align: 'center',
+                        dataIndex: 'Money',
+                        dataLocation: 'allData.main_payment.money',
+                        show: true,
+                    },
+                    {
+                        title: '负责人',
+                        align: 'center',
+                        dataIndex: 'responsiblePerson',
+                        dataLocation: 'allData.main_payment.responsible_person',
+                        show: true,
+                    },
+                    {
+                        title: '联系方式',
+                        align: 'center',
+                        dataIndex: 'mobile',
+                        dataLocation: 'allData.main_payment.mobile',
+                        show: true,
+                    },
+                    {
+                        title: '创建时间',
+                        align: 'center',
+                        dataIndex: 'createDate',
+                        dataLocation: 'allData.main_use.create_time',
+                        show: true,
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        dataIndex: 'flowHistoryaction',
+                        scopedSlots: { customRender: 'flowHistoryaction' },
+                        show: true,
+                    },
+                ],
+            },
+            configurationParameter3: {
+                inquire: {
+                    categoryId: '1867119925569568769', //流程分类
+                    processIdList: [], //想要显示的流程信息
+                    applyState: ['pending'], //想要查询的流程类型
+                },
+                columnsData: [
+                    {
+                        title: '状态',
+                        align: 'center',
+                        dataIndex: 'nodeName',
+                        dataLocation: 'nodeName',
+                        show: true,
+                    },
+                    {
+                        title: '企业名称',
+                        align: 'center',
+                        dataIndex: 'companyName',
+                        dataLocation: 'allData.main_payment.enterprise_name',
+                        show: true,
+                    },
+                    {
+                        title: '项目名称',
+                        align: 'center',
+                        dataIndex: 'projectName',
+                        dataLocation: 'allData.main_payment.project_name',
+                        show: true,
+                    },
+                    {
+                        title: '所属区县',
+                        align: 'center',
+                        dataIndex: 'projectAddress',
+                        dataLocation: 'allData.main_payment.project_address',
+                        show: true,
+                    },
+                    {
+                        title: '保证金金额（万元）',
+                        align: 'center',
+                        dataIndex: 'Money',
+                        dataLocation: 'allData.main_payment.money',
+                        show: true,
+                    },
+                    {
+                        title: '负责人',
+                        align: 'center',
+                        dataIndex: 'responsiblePerson',
+                        dataLocation: 'allData.main_payment.responsible_person',
+                        show: true,
+                    },
+                    {
+                        title: '联系方式',
+                        align: 'center',
+                        dataIndex: 'mobile',
+                        dataLocation: 'allData.main_payment.mobile',
+                        show: true,
+                    },
+                    {
+                        title: '创建时间',
+                        align: 'center',
+                        dataIndex: 'createDate',
+                        dataLocation: 'allData.main_use.create_time',
+                        show: true,
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
                         dataIndex: 'flowWillAnnounceaction',
                         scopedSlots: { customRender: 'flowWillAnnounceaction' },
                         show: true,
                     },
                 ],
             },
+            extendProcessId: 0,
             backlogNumber: 0,
             taskTab: {
                 tabKey: '3', // 主 Tab 页的状态
@@ -435,7 +350,7 @@ export default {
     created() {
         // 根据 userInfo.username 动态设置主 Tab 页
         if (this.userInfo.username === 'admin' || this.userInfo.username === 'ceshi001' || this.userInfo.username === 'corporation001' || this.userInfo.username === 'corporation002') {
-            this.taskTab.tabKey = '3'; // 显示 "待补缴" 页
+            this.taskTab.tabKey = '3'; // 显示 "待更换" 页
         } else {
             this.taskTab.tabKey = '2'; // 显示 "历史" 页
         }
@@ -446,12 +361,12 @@ export default {
         console.log('当前用户信息', this.userInfo)
     },
     methods: {
-        //获取保证金补缴的流程数据,1860939985686949889是保证金补缴的流程分类id
+        //获取保函变更/延长有效期的流程数据,1867119925569568769是保函变更/延长有效期的流程分类id
         startFixedProcess(showModal) {
-            let url = '/process/processList/{categoryId}?categoryId=1860939985686949889&category=1'
+            let url = '/process/processList/{categoryId}?categoryId=1867119925569568769&category=1'
             nw_getAction(url)
                 .then((res) => {
-                    console.log('保证金补缴流程数据', res)
+                    console.log('更换保函/延长有效期流程数据', res)
                     if (res.success) {
                         let flowConfigData = res.result
                         console.log('flowConfigData', flowConfigData)
@@ -460,7 +375,7 @@ export default {
                         flowConfigData = flowConfigData.map((item) => {
                             return {
                                 ...item,
-                                name: item.name.replace(/补缴$/, ''), // 移除后缀
+                                name: item.name.replace(/更换$/, ''), // 移除后缀
                             };
                         });
 
@@ -524,7 +439,7 @@ export default {
                         const selectedProcess = this.flowConfigData.find(item => item.processId === this.selectedProcessId);
                         if (selectedProcess) {
                             // 去掉 "补缴" 后缀
-                            const processName = selectedProcess.name.replace(/补缴$/, '');
+                            const processName = selectedProcess.name.replace(/更换$/, '');
                             console.log('processName', processName);
                             // 将处理后的值赋给 newProjectStatus
                             this.annTaskData.projectStatus = processName;
@@ -545,19 +460,16 @@ export default {
         //查看历史
         seeHistory(record) {
             this.$refs.flowHistory.openModal(record)
-        },
-        // 更新表格数据
+        },        // 更新表格数据
         getData() {
             this.getLoadClaim() // 获取未认领流程
         },
         //得到所有未认领的流程
         getLoadClaim() {
             let params = {
-                processIdList: ['5131'],
+                processIdList: [],
                 applyState: ['claim'],
-                pageSize: 1000,
-                pageNum: 1,
-                categoryId: '1860939985686949889'
+                categoryId: '1867119925569568769',
             };
             nw_postAction1(`/generalList/getAllList`, params)
                 .then((res) => {
@@ -579,7 +491,7 @@ export default {
                         }
 
                         // 等待所有认领任务完成后更新界面
-                        Promise.all(claimPromises).then(() => {});
+                        Promise.all(claimPromises).then(() => { });
                     }
                 })
                 .catch((res) => {
@@ -615,118 +527,8 @@ export default {
 }
 </script>
 <style scoped>
-.flowNameSpan {
-    display: inline-block;
-    width: 100%;
-}
-
-.iconfont {
-    font-size: 20px;
-}
-
-.iconfont .icon-liucheng {
-    float: left;
-}
-
-.ididididi {
-    margin-top: 20px;
-}
-
-.buttonstyle {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 100%;
-    height: 50px;
-    zoom: 1;
-}
-
-.buttonstyle .xbutton {
-    float: right;
-    height: 30px;
-    width: 40px;
-    margin-top: 10px;
-    margin-right: 10px;
-}
-
-.buttonstyle::after {
-    content: '';
-    height: 0;
-    clear: both;
-}
-
-.addQA1 {
-    z-index: 10;
-    border: 1px solid #aaa;
-    border-radius: 5px;
-    width: 80%;
-    height: 60%;
-    background-color: #fff;
-    height: auto;
-    position: fixed;
-    top: 27%;
-    left: 18%;
-}
-
-.addQA1 .closeButton {
-    font-size: 20px;
-    float: right;
-    margin: 14px;
-    cursor: pointer;
-}
-
-.showHead {
-    border-radius: 5px 5px 0px 0px;
-    height: 40px;
-    color: black;
-    font-size: 20px;
-    position: relative;
-    background-color: #1890ff;
-}
-
-.showHead .showHeadContent {
-    margin-left: 20px;
-    line-height: 40px;
-}
-
-.overflow {
-    transition: all 0.3s ease;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    z-index: 5;
-    background-color: rgba(70, 60, 60, 0.49);
-    top: 0px;
-}
-
 .card-table {
     background-color: white;
-}
-
-.selectText {
-    color: black;
-    font-size: 13px;
-    margin-left: 22px;
-}
-
-.seeInformation {
-    z-index: 300;
-    width: 95%;
-    border: 1px solid #aaa;
-    border-radius: 5px;
-    margin: 20px;
-    background-color: white;
-}
-
-.seeContent {
-    margin-top: 7%;
-    margin-bottom: 7%;
-    margin-left: 7%;
-    margin-right: 7%;
-}
-
-.selectFrame {
-    width: 200px;
 }
 
 .table-container {
