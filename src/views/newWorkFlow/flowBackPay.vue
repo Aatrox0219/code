@@ -104,7 +104,7 @@ export default {
                 inquire: {
                     //基本信息
                     categoryId: '1847453556447707137', //流程分类
-                    processIdList: ['5131'], //想要显示的流程信息
+                    processIdList: ['20010','20013','20016','20019','20022'], //想要显示的流程信息
                     applyState: ['complete'], //想要查询的流程类型
                 },
                 columnsData: [
@@ -158,10 +158,10 @@ export default {
                         show: true
                     },
                     {
-                        title: '创建时间',
+                        title: '使用完成时间',
                         align: 'center',
                         dataIndex: 'createDate',
-                        dataLocation: 'allData.main_payment.create_time',
+                        dataLocation: 'allData.main_use.create_time',
                         show: true
                     },
                     {
@@ -189,13 +189,13 @@ export default {
                         dataLocation: 'allData.main_payment.address_detail',
                         show: false,
                     },
-                    // {
-                    //     title: '操作',
-                    //     align: 'center',
-                    //     dataIndex: 'flowBackPaycolumns',
-                    //     scopedSlots: { customRender: 'flowBackPaycolumns' },
-                    //     show: true,
-                    // },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        dataIndex: 'flowBackPaycolumns',
+                        scopedSlots: { customRender: 'flowBackPaycolumns' },
+                        show: true,
+                    },
                 ],
             },
             configurationParameter2: {
@@ -273,7 +273,7 @@ export default {
                         title: '创建时间',
                         align: 'center',
                         dataIndex: 'createDate',
-                        dataLocation: 'allData.main_payment.create_time',
+                        dataLocation: 'allData.main_backpay.create_time',
                         show: true
                     },
                     {
@@ -385,7 +385,7 @@ export default {
                         title: '创建时间',
                         align: 'center',
                         dataIndex: 'createDate',
-                        dataLocation: 'allData.main_payment.create_time',
+                        dataLocation: 'allData.main_backpay.create_time',
                         show: true
                     },
                     {

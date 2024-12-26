@@ -6,12 +6,12 @@
           <div id="taskList">
             <div>
               <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="taskTab.tabKey">
-                <a-tab-pane key="3" tab="使用申请" v-if="userInfo.username.endsWith('cb') || userInfo.username == 'admin'">
+                <a-tab-pane key="3" tab="可使用" v-if="userInfo.username.endsWith('cb') || userInfo.username == 'admin'">
                   <div>
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <commonTable ref="commonTableRef" :configurationParameter="configurationParameter1"
+                          <commonTable ref="commonTableRef1" :configurationParameter="configurationParameter1"
                             :startProcess="startProcess">
                           </commonTable>
                         </div>
@@ -25,7 +25,7 @@
                     <div class="card-table">
                       <a-card :bordered="false">
                         <div class="table-container">
-                          <commonTable ref="commonTableRef" :configurationParameter="configurationParameter2"
+                          <commonTable ref="commonTableRef2" :configurationParameter="configurationParameter2"
                             :seeHistory="seeHistory">
                           </commonTable>
                         </div>
@@ -147,10 +147,10 @@ export default {
             show: true,
           },
           {
-            title: '创建时间',
+            title: '存缴完成时间',
             align: 'center',
             dataIndex: 'createDate',
-            dataLocation: 'allData.main_payment.form_create_date',
+            dataLocation: 'endDate',
             show: true,
             filterType: 'date',
           },

@@ -156,10 +156,10 @@ export default {
                         show: true,
                     },
                     {
-                        title: '创建时间',
+                        title: '存缴完成时间',
                         align: 'center',
                         dataIndex: 'createDate',
-                        dataLocation: 'allData.main_payment.form_create_date',
+                        dataLocation: 'endDate',
                         show: true,
                         filterType: 'date',
                     },
@@ -252,7 +252,7 @@ export default {
                         title: '创建时间',
                         align: 'center',
                         dataIndex: 'createDate',
-                        dataLocation: 'allData.main_use.create_time',
+                        dataLocation: 'allData.main_extend.create_time',
                         show: true,
                     },
                     {
@@ -324,7 +324,7 @@ export default {
                         title: '创建时间',
                         align: 'center',
                         dataIndex: 'createDate',
-                        dataLocation: 'allData.main_use.create_time',
+                        dataLocation: 'allData.main_extend.create_time',
                         show: true,
                     },
                     {

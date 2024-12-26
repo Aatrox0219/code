@@ -114,7 +114,7 @@ export default {
       configurationParameter1: {
         inquire: {
           categoryId: '1847453055727501313', //流程分类
-          processIdList: ['20010', '20013', '20016', '20019', '20022'], //想要显示的流程信息
+          processIdList: ['20010', '20013', '20016', '20019', '20025', '20028', '20031', '20034'], //想要显示的流程信息
           applyState: ['complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -147,7 +147,7 @@ export default {
             show: true,
           },
           {
-            title: '原存缴方式',
+            title: '存缴方式',
             align: 'center',
             dataIndex: 'depositWay',
             dataLocation: 'allData.main_payment.deposit_way',
@@ -168,10 +168,10 @@ export default {
             show: true,
           },
           {
-            title: '创建时间',
+            title: '存缴完成时间',
             align: 'center',
             dataIndex: 'createDate',
-            dataLocation: 'allData.main_payment.form_create_date',
+            dataLocation: 'endDate',
             show: true,
           },
           {
@@ -220,7 +220,7 @@ export default {
             show: false,
           },
           {
-            title: '详情',
+            title: '操作',
             align: 'center',
             dataIndex: 'flowChangecolumns',
             scopedSlots: { customRender: 'flowChangecolumns' },
@@ -302,11 +302,11 @@ export default {
             title: '创建时间',
             align: 'center',
             dataIndex: 'createDate',
-            dataLocation: 'allData.main_payment.form_create_date',
+            dataLocation: 'allData.main_change.create_time',
             show: true,
           },
           {
-            title: '详情',
+            title: '操作',
             align: 'center',
             dataIndex: 'flowHistoryaction',
             scopedSlots: { customRender: 'flowHistoryaction' },
@@ -388,7 +388,7 @@ export default {
             title: '创建时间',
             align: 'center',
             dataIndex: 'createDate',
-            dataLocation: 'allData.main_payment.form_create_date',
+            dataLocation: 'allData.main_change.create_time',
             show: true,
           },
           {
