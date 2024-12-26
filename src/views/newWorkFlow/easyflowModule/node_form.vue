@@ -736,11 +736,12 @@ export default {
     //得到所有的表单
     getAllForm() {
       var data = new FormData()
-      data.append('current', 1)
+      // data.append('current', 1)
       //data.append('size', 22)
       data.append('deleteFlag', 1)
-      data.append('encoding', 'Scheduling')
-      t_postAction('/admin/desform/search', data).then((res) => {
+      // data.append('encoding', 'Scheduling')
+      data.append('encoding', '')
+      t_postAction('/admin/desform/searchAll', data).then((res) => {
         this.formList = res.result.list
       })
     },
