@@ -211,10 +211,20 @@ export default {
           dataIndex: 'encoding',
         },
         {
-          title: '表单图标',
+          title: '创建时间',
           align: 'center',
-          dataIndex: 'icon',
+          dataIndex: 'createTime',
         },
+        {
+          title: '更新时间',
+          align: 'center',
+          dataIndex: 'updateTime',
+        },
+        // {
+        //   title: '表单图标',
+        //   align: 'center',
+        //   dataIndex: 'icon',
+        // },
         {
           title: '操作',
           align: 'center',
