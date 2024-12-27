@@ -1,6 +1,7 @@
 import api from './index'
 import { axios } from '@/utils/request'
-
+import Vue from 'vue'
+import { USER_ID } from '@/store/mutation-types'
 /**
  * login func
  * parameter: {
@@ -17,6 +18,30 @@ export function login(parameter) {
     url: '/sys/login',
     method: 'post',
     data: parameter
+  })
+}
+
+//获取登录用户的角色id信息
+export function getRoleInfo(userid) {
+  return axios({
+    url: `/stj/sys/user/queryUserRole?&userid=${userid}` ,
+    method:'get',
+    baseURL: api.server_url+api.global_workflow_baseURL,
+    headers: {
+      'userId': Vue.ls.get(USER_ID),
+    },
+  })
+}
+
+//获取全部角色id和对应的角色名称
+export function getRoleName() {
+  return axios({
+    url: '/stj/sys/role/queryall',
+    method:'get',
+    baseURL: api.server_url+api.global_workflow_baseURL,
+    headers: {
+      'userId': Vue.ls.get(USER_ID),
+    },
   })
 }
 

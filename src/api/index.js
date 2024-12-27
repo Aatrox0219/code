@@ -30,6 +30,7 @@ const api = {
     global_cms_baseURL: '/cms',/* cms栏目接口公共url */
     // global_edu_baseURL: ':8012/edu',
     global_edu_baseURL: ':8012',
+    global_workflow_baseURL: ':35367',/* 工作流接口公共url */
     // global_online_baseURL: '/stj-boot/stj/online',/* online表单接口公共url */
     global_online_baseURL: 'http://111.229.140.21:35367/stj/online',/* online表单接口公共url */
     // global_online_baseURL: 'http://14.55.6.35:8082/stj/online/',/* online表单接口公共url */

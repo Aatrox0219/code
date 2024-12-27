@@ -1,22 +1,36 @@
 <template>
   <div class="main">
-    <div element-loading-text="Loading..." v-loading.fullscreen.lock="hasToken"
-      element-loading-background="rgba(255, 255, 255, 1)"></div>
+    <div
+      element-loading-text="Loading..."
+      v-loading.fullscreen.lock="hasToken"
+      element-loading-background="rgba(255, 255, 255, 1)"
+    ></div>
     <a-form v-show="!hasToken" :form="form" class="user-layout-login" ref="formLogin" id="formLogin">
-      <a-tabs :activeKey="customActiveKey" :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
-        @change="handleTabClick">
+      <a-tabs
+        :activeKey="customActiveKey"
+        :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
+        @change="handleTabClick"
+      >
         <a-tab-pane key="tab1" tab="账号密码登录">
           <a-form-item>
-            <a-input size="large"
-              v-decorator="['username', validatorRules.username, { validator: this.handleUsernameOrEmail }]" type="text"
-              placeholder="请输入帐户名">
+            <a-input
+              size="large"
+              v-decorator="['username', validatorRules.username, { validator: this.handleUsernameOrEmail }]"
+              type="text"
+              placeholder="请输入帐户名"
+            >
               <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input>
           </a-form-item>
 
           <a-form-item>
-            <a-input v-decorator="['password', validatorRules.password]" size="large" type="password"
-              autocomplete="false" placeholder="密码">
+            <a-input
+              v-decorator="['password', validatorRules.password]"
+              size="large"
+              type="password"
+              autocomplete="false"
+              placeholder="密码"
+            >
               <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input>
           </a-form-item>
@@ -24,15 +38,24 @@
           <a-row :gutter="0">
             <a-col :span="16">
               <a-form-item>
-                <a-input v-decorator="['inputCode', validatorRules.inputCode]" size="large" type="text"
-                  @change="inputCodeChange" placeholder="请输入验证码">
+                <a-input
+                  v-decorator="['inputCode', validatorRules.inputCode]"
+                  size="large"
+                  type="text"
+                  @change="inputCodeChange"
+                  placeholder="请输入验证码"
+                >
                   <a-icon slot="prefix" type="smile" :style="{ color: 'rgba(0,0,0,.25)' }" />
                 </a-input>
               </a-form-item>
             </a-col>
             <a-col :span="8" style="text-align: right">
-              <img v-if="requestCodeSuccess" style="margin-top: 2px" :src="randCodeImage"
-                @click="handleChangeCheckCode" />
+              <img
+                v-if="requestCodeSuccess"
+                style="margin-top: 2px"
+                :src="randCodeImage"
+                @click="handleChangeCheckCode"
+              />
               <img v-else style="margin-top: 2px" src="../../assets/checkcode.png" @click="handleChangeCheckCode" />
             </a-col>
           </a-row>
@@ -72,29 +95,39 @@
       </a-form-item> -->
 
       <a-form-item style="margin-top: 24px">
-        <a-button size="large" type="primary" htmlType="submit" class="login-button" :loading="loginBtn"
-          @click.stop.prevent="handleSubmit" :disabled="loginBtn">确定
+        <a-button
+          size="large"
+          type="primary"
+          htmlType="submit"
+          class="login-button"
+          :loading="loginBtn"
+          @click.stop.prevent="handleSubmit"
+          :disabled="loginBtn"
+          >确定
         </a-button>
 
-        <a v-if="department === 'qiye'" @click="" style="margin-left: 10px;">
-          注册账户
-        </a>
-        <a href="https://m12333.cn/policy/mazrc.html#:~:text=%E7%AC%AC%E4%B8%80%E6%9D%A1%20%E4%B8%BA%E4%BE%9D%E6%B3%95%E4%BF%9D%E6%8A%A4%E5%86%9C"
-          target="_blank" style="float: right;">
+        <a v-if="department === 'qiye'" @click="" style="margin-left: 10px"> 注册账户 </a>
+        <a
+          href="https://m12333.cn/policy/mazrc.html#:~:text=%E7%AC%AC%E4%B8%80%E6%9D%A1%20%E4%B8%BA%E4%BE%9D%E6%B3%95%E4%BF%9D%E6%8A%A4%E5%86%9C"
+          target="_blank"
+          style="float: right"
+        >
           操作指南
         </a>
-
       </a-form-item>
     </a-form>
 
-    <two-step-captcha v-if="requiredTwoStepCaptcha" :visible="stepCaptchaVisible" @success="stepCaptchaSuccess"
-      @cancel="stepCaptchaCancel" v-show="!hasToken"></two-step-captcha>
+    <two-step-captcha
+      v-if="requiredTwoStepCaptcha"
+      :visible="stepCaptchaVisible"
+      @success="stepCaptchaSuccess"
+      @cancel="stepCaptchaCancel"
+      v-show="!hasToken"
+    ></two-step-captcha>
     <login-select-tenant v-show="!hasToken" ref="loginSelect" @success="loginSelectOk"></login-select-tenant>
     <!-- <third-login ref="thirdLogin"></third-login> -->
 
-    <a-modal>
-      
-    </a-modal>
+    <a-modal> </a-modal>
   </div>
 </template>
 
@@ -113,9 +146,9 @@ import store from '@/store/'
 import { USER_INFO } from '@/store/mutation-types'
 // import ThirdLogin from './third/ThirdLogin'
 import LoginSelectTenant from './LoginSelectTenant'
-import axios from 'axios';
+import axios from 'axios'
 import { Message } from 'element-ui'
-
+import { getRoleName, getRoleInfo } from '@/api/login'
 
 export default {
   components: {
@@ -174,7 +207,6 @@ export default {
 
     // 在很多的GetPermissionList方法里都清除了token，应该会导致以后那个弹窗都不会弹出了
     // this.getToken()
-
   },
   mounted() {
     this.getToken()
@@ -185,15 +217,14 @@ export default {
     ...mapActions(['Login', 'Logout', 'PhoneLogin']),
     // 解析token，存入localstore
     getToken() {
-
-      const url = window.location.href;
-      const params = new URLSearchParams(new URL(url).search);
-      this._token = params.get('token');
-      console.log("Token:", this._token); // 输出获取到的token值
+      const url = window.location.href
+      const params = new URLSearchParams(new URL(url).search)
+      this._token = params.get('token')
+      console.log('Token:', this._token) // 输出获取到的token值
       console.log('第一次' + this.$route.path)
 
       // 获取之后去除url中的token
-      history.pushState({}, '', url.replace("token=" + this._token, ""));
+      history.pushState({}, '', url.replace('token=' + this._token, ''))
 
       // // 创建一个Date对象表示当前时间
       // const currentDate = new Date();
@@ -212,10 +243,9 @@ export default {
       // }
       if (this._token) {
         // localStorage.setItem("pro__Access-Token", JSON.stringify(obj));
-        this.hasToken = true;
+        this.hasToken = true
 
-        this.validToken();
-
+        this.validToken()
 
         // setTimeout(()=> {
         //   // location.reload();
@@ -225,32 +255,31 @@ export default {
         // if(path == 'langchain') {
         //   this.$router.push('/llm-kg/subject-one/stj-front#/langchain')
         // }
-
       }
     },
     validToken() {
       // 验证token是否有效
       axios({
         method: 'POST',
-        url: "https://ai.wust.edu.cn/llm-kg/subject-one/jeecg-stj/stj/sys/getUserByToken",
+        url: 'https://ai.wust.edu.cn/llm-kg/subject-one/jeecg-stj/stj/sys/getUserByToken',
         // url: "http://14.55.6.35:8082/stj/sys/getUserByToken",
         data: {
-          "token": this._token,
+          token: this._token,
         },
       }).then((response) => {
         if (response.data.code == 200) {
           // 验证成功后用这个token进行一次等于，否则登出接口会失败
           // localStorage.clear();
-          this.handleSubmit();
+          this.handleSubmit()
         } else {
           Message({
             showClose: true,
             message: '请重新登录!',
             type: 'warning',
           })
-          this.hasToken = false;
+          this.hasToken = false
         }
-      });
+      })
     },
 
     // handler
@@ -290,9 +319,9 @@ export default {
 
               // 如果携带token，则直接登陆
               if (that.hasToken) {
-                loginParams.tokenParam = that._token;
+                loginParams.tokenParam = that._token
               } else {
-                loginParams.tokenParam = "";
+                loginParams.tokenParam = ''
               }
 
               localStorage.setItem('login_information', JSON.stringify(loginParams))
@@ -316,11 +345,11 @@ export default {
                     //   that.hasToken = false;
                     // }
                   }
-                  this.$refs.loginSelect.show(res.result)   //去掉租户选择
+                  this.$refs.loginSelect.show(res.result) //去掉租户选择
                   // this.loginSuccess()
                 })
                 .catch((err) => {
-                  that.requestFailed(err);
+                  that.requestFailed(err)
                 })
             } else {
               that.loginBtn = false
@@ -412,8 +441,48 @@ export default {
           this.requestCodeSuccess = false
         })
     },
+
+    //获取登录用户的角色信息
+    fetchUserRole() {
+      const userInfo = Vue.ls.get(USER_INFO) || {}
+      const userId = userInfo.id
+      if (!userId) {
+        console.error('用户id不存在')
+        return
+      }
+      // 获取角色信息
+      getRoleName()
+        .then((response) => {
+          // 获取返回的角色信息列表
+          const roleNameList = response.result
+          // 获取角色 ID 列表
+          getRoleInfo(userId)
+            .then((roleInfoResponse) => {
+              // 获取角色 ID 列表
+              const roleIds = roleInfoResponse.result
+              // 遍历角色 ID 列表，获取对应的 roleName
+              const userRoleNames = roleIds.map((roleId) => {
+                // 在 roleNameList 中查找对应的 roleName
+                const role = roleNameList.find((role) => role.id === roleId)
+                return role ? role.roleName : null // 如果找到了对应的 roleName，就返回，否则返回 null
+              })
+              userInfo.roleNames = userRoleNames // 添加角色信息到 userInfo 中
+              // 保存更新后的 userInfo 到 localStorage
+              Vue.ls.set(USER_INFO, userInfo)
+              console.log('用户信息已更新并存储:', userInfo)
+            })
+            .catch((error) => {
+              console.error(error)
+            })
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    },
+
     loginSuccess() {
       console.log('怎么登录成功了？？路由' + this.$route.path)
+      this.fetchUserRole()
       this.$router.push({ path: '/dashboard/analysis' }).catch(() => {
         console.log('登录跳转首页出错,这个错误从哪里来的')
       })
@@ -458,7 +527,7 @@ export default {
       this.inputCodeContent = e.target.value
     },
     loginSelectOk() {
-      console.log('loginSelectOk triggered, hasToken:', this.hasToken);
+      console.log('loginSelectOk triggered, hasToken:', this.hasToken)
       console.log('成功调用了loginSelectOk() ')
       this.loginSuccess()
     },
