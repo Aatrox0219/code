@@ -172,14 +172,14 @@
               style="background:url('https://images.weserv.nl/?url=https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPng2bcd29cfbc0a2bbc68be9227df9db5a6a3563626c82027e9fca34b93a27d4eca')"
             ></div> -->
 
-            <div
+            <!-- <div
               slot="reference"
               class="navigation"
               id="navigatePopover"
               style="background-size:60px 60px"
             >
               <img src="../../assets/image.png" width="60px" height="60px" />
-            </div>
+            </div> -->
             <!-- <img
               slot="reference"
               class="navigation"
