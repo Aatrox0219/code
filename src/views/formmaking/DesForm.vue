@@ -3,78 +3,52 @@
     <a-card :bordered="false">
       <a-form layout="inline">
         <a-form-item label="表单名称">
-          <a-input
-            v-model="searchData.name"
-            placeholder="请输入表单名称"
-          />
+          <a-input v-model="searchData.name" placeholder="请输入表单名称" />
         </a-form-item>
         <a-form-item label="表单编码">
-          <a-input
-            v-model="searchData.encoding"
-            placeholder="请输入表单编号"
-          />
+          <a-input v-model="searchData.encoding" placeholder="请输入表单编号" />
         </a-form-item>
         <a-form-item>
           <a-button-group>
-            <a-button
-              type="primary"
-              icon="search"
-              @click="loadData(searchData)"
-            >查询</a-button>
-            <a-button
-              type="primary"
-              icon="reload"
-              @click="loadData(searchData1)"
-            >重置</a-button>
+            <a-button type="primary" icon="search" @click="loadData(searchData)">查询</a-button>
+            <a-button type="primary" icon="reload" @click="loadData(searchData1)">重置</a-button>
           </a-button-group>
         </a-form-item>
       </a-form>
       <div>
         <a-button-group>
-          <a-button
-            type="primary"
-            icon="plus"
-            @click="openAddFormModal"
-          >新增</a-button>
+          <a-button type="primary" icon="plus" @click="openAddFormModal">新增</a-button>
           <!-- <a-button
             type="primary"
             icon="reload"
           >重置索引</a-button> -->
         </a-button-group>
         <a-button
-          v-show="selectedRowKeys.length>0"
-          style="margin-left:20px"
-          @click="openDeleteFormConfirm('Multiple',selectedRowKeys)"
-        >批量删除</a-button>
-      </div>
-      <div style="padding-top:20px">
-        <div
-          class="ant-alert ant-alert-info"
-          style="margin-bottom: 16px;"
+          v-show="selectedRowKeys.length > 0"
+          style="margin-left: 20px"
+          @click="openDeleteFormConfirm('Multiple', selectedRowKeys)"
+          >批量删除</a-button
         >
-          <i class="anticon anticon-info-circle ant-alert-icon">
-          </i> 已选择 <a><b>{{ selectedRowKeys.length }}</b></a>项
+      </div>
+      <div style="padding-top: 20px">
+        <div class="ant-alert ant-alert-info" style="margin-bottom: 16px">
+          <i class="anticon anticon-info-circle ant-alert-icon"> </i> 已选择
           <a
-            style="margin-left: 24px"
-            @click="clearSelectedRows"
-          >清空</a>
+            ><b>{{ selectedRowKeys.length }}</b></a
+          >项
+          <a style="margin-left: 24px" @click="clearSelectedRows">清空</a>
         </div>
         <a-table
           :loading="tableLoading"
           :columns="columns"
           :dataSource="formTableData"
-          :rowSelection="{selectedRowKeys: selectedRowKeys,onChange: onSelectChange}"
+          :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
           :pagination="ipagination"
         >
-          <span
-            class="desformspana"
-            slot="action"
-            slot-scope="text, record,index"
-          >
+          <span class="desformspana" slot="action" slot-scope="text, record, index">
             <a @click="openEditFormModal(index)">编辑</a>
             <a-divider type="vertical" />
-            <a @click="openDesFormModal(index)">
-              <a-icon type="setting" />设计表单</a>
+            <a @click="openDesFormModal(index)"> <a-icon type="setting" />设计表单</a>
             <a-divider type="vertical" />
             <!-- <a @click="openFormData(index)">表单数据</a>
             <a-divider type="vertical" />
@@ -93,7 +67,7 @@
                   <a>权限控制</a>
                 </a-menu-item> -->
                 <a-menu-item>
-                  <a @click="openDeleteFormConfirm('single',index)">删除</a>
+                  <a @click="openDeleteFormConfirm('single', index)">删除</a>
                 </a-menu-item>
               </a-menu>
             </a-dropdown>
@@ -150,7 +124,7 @@ import EditFormModal from './modules/EditFormModal'
 // import TestFormModal from './modules/TestFormModal'
 // import ConfigAddressModal from './modules/ConfigAddressModal'
 import { getAction } from '@/api/manage'
-import { t_postAction, t_deleteAction, t_getAction } from '@/api/tempApi'
+import { t_postAction, t_deleteAction, t_getAction, batch_deletion } from '@/api/tempApi'
 import { o_getAction } from '@/api/onApi'
 import { axios } from '@/utils/request'
 import { ACCESS_TOKEN, USER_NAME, USER_INFO, ENCRYPTED_STRING } from '@/store/mutation-types'
@@ -170,34 +144,35 @@ export default {
       searchData: {
         name: '',
         encoding: '',
-        deleteFlag : 1,
+        deleteFlag: 1,
         current: 1,
         size: 10,
       },
-      searchData1: {//重置的时候传参用。如果无参会将已经删除掉的数据也给查出来了
+      searchData1: {
+        //重置的时候传参用。如果无参会将已经删除掉的数据也给查出来了
         name: '',
         encoding: '',
-        deleteFlag : 1,
+        deleteFlag: 1,
         current: 1,
         size: 10,
       },
-      ipagination:{
-        current:0,
-        pageSize:10,
-        pageSizeOptions:['10','20','30'],
-        total:0,
-        showSizeChanger:true,
-        showQuickJumper:true,
-        showTotal:(total, range)=>range+' 共'+total+'条',
-        onChange:this.onPageChange.bind(this),
-        onShowSizeChange:(current, pageSize)=>{
+      ipagination: {
+        current: 0,
+        pageSize: 10,
+        pageSizeOptions: ['10', '20', '30'],
+        total: 0,
+        showSizeChanger: true,
+        showQuickJumper: true,
+        showTotal: (total, range) => range + ' 共' + total + '条',
+        onChange: this.onPageChange.bind(this),
+        onShowSizeChange: (current, pageSize) => {
           this.ipagination.current = 1
           this.ipagination.pageSize = pageSize
           this.searchData.current = 1
           this.searchData.size = pageSize
           this.loadData(this.searchData)
-          }
         },
+      },
       tableLoading: false,
       columns: [
         {
@@ -220,11 +195,6 @@ export default {
           align: 'center',
           dataIndex: 'updateTime',
         },
-        // {
-        //   title: '表单图标',
-        //   align: 'center',
-        //   dataIndex: 'icon',
-        // },
         {
           title: '操作',
           align: 'center',
@@ -252,14 +222,14 @@ export default {
   },
   methods: {
     loadData(data) {
-      this.tableLoading = true;
-      console.log(data);
-      let qs = require('qs');
+      this.tableLoading = true
+      console.log(data)
+      let qs = require('qs')
       t_postAction('/admin/desform/search', qs.stringify(data)).then((res) => {
         if (res.success) {
           console.log(res)
           this.formTableData = res.result.list
-          this.ipagination.total=res.result.total 
+          this.ipagination.total = res.result.total
           this.tableLoading = false
         } else {
           this.$message.error('数据获取失败')
@@ -336,7 +306,7 @@ export default {
         .then((data) => {
           console.log('openDesFormModal(index)函数里面的data值为：', data)
           if ($.isEmptyObject(data)) {
-            console.log("date是空的****************")
+            console.log('date是空的****************')
             return false
           } else {
             if (data.config.tableId) {
@@ -364,12 +334,13 @@ export default {
     },
     openDeleteFormConfirm(type, index) {
       const that = this
-        this.$elementConfirm('确定删除?','提示',{
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-            if (type === 'single') {
+      this.$elementConfirm('确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(() => {
+          if (type === 'single') {
             t_postAction('/admin/desform/updateDeleteFlag?id=' + that.formTableData[index].id + '&deleteFlag=' + 0)
               .then((res) => {
                 if (res.success) {
@@ -387,12 +358,16 @@ export default {
             for (let i = 0; i < index.length; i++) {
               requestData[i] = that.formTableData[index[i]].id
             }
-            axios({
-              url: '/admin/desform/ids/delete',
-              method: 'delete',
-              data: requestData,
-              baseURL: '/api',
-            })
+            let jsonRequest = {
+              ids: requestData,
+            }
+            // axios({
+            //   url: '/admin/desform/ids/delete',
+            //   method: 'delete',
+            //   data: requestData,
+            //   baseURL: '/api',
+            // })
+            batch_deletion('/admin/desform/ids/delete', jsonRequest)
               .then((res) => {
                 if (res.success) {
                   that.$message.success('删除成功')
@@ -405,8 +380,8 @@ export default {
                 that.$message.error(e)
               })
           }
-          }).catch(()=>{
         })
+        .catch(() => {})
 
       // 原jeecg代码
       // let that = this
@@ -460,8 +435,9 @@ export default {
       axios({
         url: `/admin/desform/${this.formTableData[index].id}/getConent`,
         method: 'get',
-        baseURL: process.env.VUE_APP_ONLINE_BASE_URL
-      }).then((res) => {
+        baseURL: process.env.VUE_APP_ONLINE_BASE_URL,
+      })
+        .then((res) => {
           if (res.success) {
             this.formTableData[index].content = res.data
             this.selectedFormIndex = index
@@ -478,8 +454,9 @@ export default {
       axios({
         url: `/admin/desform/${this.formTableData[index].id}/getConent`,
         method: 'get',
-        baseURL:  process.env.VUE_APP_ONLINE_BASE_URL
-      }).then((res) => {
+        baseURL: process.env.VUE_APP_ONLINE_BASE_URL,
+      })
+        .then((res) => {
           if (res.success) {
             this.formTableData[index].content = res.data
             let formJson = JSON.parse(this.formTableData[index].content)
@@ -502,8 +479,9 @@ export default {
       axios({
         url: `/admin/desform/${this.formTableData[index].id}/getConent`,
         method: 'get',
-        baseURL:  process.env.VUE_APP_ONLINE_BASE_URL
-      }).then((res) => {
+        baseURL: process.env.VUE_APP_ONLINE_BASE_URL,
+      })
+        .then((res) => {
           if (res.success) {
             this.formTableData[index].content = res.data
             let formJson = JSON.parse(this.formTableData[index].content)
@@ -536,9 +514,9 @@ export default {
       }
       axios({
         url: '/admin/cgform/head/list',
-        method:'post' ,
+        method: 'post',
         data: param,
-        baseURL: Vue.API_BASE_URL
+        baseURL: Vue.API_BASE_URL,
       }).then((res) => {
         if (res.success) {
           this.$store.commit('changeDataBaseList', res.result.records)
@@ -556,10 +534,10 @@ export default {
         }
       })
     },
-    onPageChange(page,pageSize){
+    onPageChange(page, pageSize) {
       this.ipagination.current = page
       this.searchData.current = page
-      this.searchData.size=pageSize
+      this.searchData.size = pageSize
       this.loadData(this.searchData)
     },
     // onShowSizeChange(current, size) {
