@@ -25,7 +25,7 @@
 
       <!-- 混合筛选控件 -->
       <a-col :span="6" v-if="mixedFilterColumns.length" style="display: flex; align-items: center">
-        <span style="width: 150px; text-align: right; margin-right: 8px">
+        <span style="width: 150px; text-align: right; margin-right: 8px;  font-weight: bold">
           {{ mixedFilterTitles }}
         </span>
         <a-input v-model="mixedFilterValue" placeholder="请输入关键字" style="flex: 1; max-width: 400px" allowClear />
