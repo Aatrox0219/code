@@ -280,7 +280,7 @@ export default {
             show: true,
           },
           {
-            title: '操作',
+            title: '详情',
             align: 'center',
             dataIndex: 'flowHistoryaction',
             scopedSlots: { customRender: 'flowHistoryaction' },

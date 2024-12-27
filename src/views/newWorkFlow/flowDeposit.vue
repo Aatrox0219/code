@@ -228,7 +228,7 @@ export default {
             show: true,
           },
           {
-            title: '详情',
+            title: '操作',
             align: 'center',
             dataIndex: 'flowWillAnnounceaction',
             scopedSlots: { customRender: 'flowWillAnnounceaction' },

@@ -271,14 +271,14 @@ export default {
             show: true,
           },
           {
-            title: '原存缴方式',
+            title: '变更前存缴方式',
             align: 'center',
             dataIndex: 'oldDepositMethod',
             dataLocation: 'allData.main_change.old_deposit_method',
             show: true,
           },
           {
-            title: '现存缴方式',
+            title: '变更后存缴方式',
             align: 'center',
             dataIndex: 'newDepositMethod',
             dataLocation: 'allData.main_change.new_deposit_method',
@@ -306,7 +306,7 @@ export default {
             show: true,
           },
           {
-            title: '操作',
+            title: '详情',
             align: 'center',
             dataIndex: 'flowHistoryaction',
             scopedSlots: { customRender: 'flowHistoryaction' },
@@ -357,14 +357,14 @@ export default {
             show: true,
           },
           {
-            title: '原存缴方式',
+            title: '变更前存缴方式',
             align: 'center',
             dataIndex: 'oldDepositMethod',
             dataLocation: 'allData.main_change.old_deposit_method',
             show: true,
           },
           {
-            title: '现存缴方式',
+            title: '变更后存缴方式',
             align: 'center',
             dataIndex: 'newDepositMethod',
             dataLocation: 'allData.main_change.new_deposit_method',
