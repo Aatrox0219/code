@@ -2,12 +2,8 @@
   <div>
     <div>
       <a-card :bordered="false">
-        <a-button v-if="
-          userInfo.username === 'corporation001' ||
-          userInfo.username === 'corporation002' ||
-          userInfo.username === 'admin' ||
-          userInfo.username === 'ceshi001'
-        " type="primary" @click="startFixedProcess(true)" style="margin-right: 10px">
+        <a-button v-if="['施工企业', '管理员'].some(role => userInfo.roleNames.includes(role))" type="primary"
+          @click="startFixedProcess(true)" style="margin-right: 10px">
           保证金存缴申请
         </a-button>
         <div id="formContent" style="margin-top: -10px">

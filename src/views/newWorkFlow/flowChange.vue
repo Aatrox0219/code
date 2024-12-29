@@ -6,12 +6,7 @@
           <div id="taskList">
             <div>
               <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="taskTab.tabKey">
-                <a-tab-pane key="3" tab="可变更" v-if="
-                  userInfo.username === 'corporation001' ||
-                  userInfo.username === 'corporation002' ||
-                  userInfo.username === 'admin' ||
-                  userInfo.username === 'ceshi001'
-                ">
+                <a-tab-pane key="3" tab="可变更" v-if="['施工企业', '管理员'].some(role => userInfo.roleNames.includes(role))">
                   <div>
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
@@ -417,14 +412,7 @@ export default {
   },
 
   created() {
-    // 根据 userInfo.username 动态设置主 Tab 页
-    if (
-      this.userInfo.username &&
-      (this.userInfo.username === 'corporation001' ||
-        this.userInfo.username === 'corporation002' ||
-        this.userInfo.username === 'admin' ||
-        this.userInfo.username === 'ceshi001')
-    ) {
+    if (['施工企业', '管理员'].some(role => this.userInfo.roleNames.includes(role))) {
       this.taskTab.tabKey = '3' // 显示 "可变更" 页
     } else {
       this.taskTab.tabKey = '2' // 显示 "历史" 页
