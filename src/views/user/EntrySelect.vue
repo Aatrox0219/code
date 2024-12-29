@@ -16,13 +16,7 @@
                 </div>
                 <div class="text">企业入口</div>
             </div>
-            <div class="card3" @click="goToLogin('hangye')">
-                <div class="icon">
-                    <img src="@/assets/hangye.png" alt="icon" class="icon-img" />
-                </div>
-                <div class="text">行业主管</div>
-            </div>
-            <div class="card4" @click="goToLogin('yinhang')">
+            <div class="card3" @click="goToLogin('yinhang')">
                 <div class="icon">
                     <img src="@/assets/yinhang.png" alt="icon" class="icon-img" />
                 </div>
@@ -80,8 +74,7 @@ export default {
 /* 设置每个卡片的样式 */
 .card1,
 .card2,
-.card3,
-.card4 {
+.card3 {
     flex: 1;
     min-width: 200px;
     max-width: 280px;
@@ -105,10 +98,6 @@ export default {
 }
 
 .card3 {
-    background: linear-gradient(135deg, #6a9bd0, #85e3ff);
-}
-
-.card4 {
     background: linear-gradient(135deg, #d6a2e8, #e5b0e4);
 }
 
