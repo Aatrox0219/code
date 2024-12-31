@@ -1,36 +1,22 @@
 <template>
   <div class="main">
-    <div
-      element-loading-text="Loading..."
-      v-loading.fullscreen.lock="hasToken"
-      element-loading-background="rgba(255, 255, 255, 1)"
-    ></div>
+    <div element-loading-text="Loading..." v-loading.fullscreen.lock="hasToken"
+      element-loading-background="rgba(255, 255, 255, 1)"></div>
     <a-form v-show="!hasToken" :form="form" class="user-layout-login" ref="formLogin" id="formLogin">
-      <a-tabs
-        :activeKey="customActiveKey"
-        :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
-        @change="handleTabClick"
-      >
+      <a-tabs :activeKey="customActiveKey" :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
+        @change="handleTabClick">
         <a-tab-pane key="tab1" tab="账号密码登录">
           <a-form-item>
-            <a-input
-              size="large"
-              v-decorator="['username', validatorRules.username, { validator: this.handleUsernameOrEmail }]"
-              type="text"
-              placeholder="请输入帐户名"
-            >
+            <a-input size="large"
+              v-decorator="['username', validatorRules.username, { validator: this.handleUsernameOrEmail }]" type="text"
+              placeholder="请输入帐户名">
               <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input>
           </a-form-item>
 
           <a-form-item>
-            <a-input
-              v-decorator="['password', validatorRules.password]"
-              size="large"
-              type="password"
-              autocomplete="false"
-              placeholder="密码"
-            >
+            <a-input v-decorator="['password', validatorRules.password]" size="large" type="password"
+              autocomplete="false" placeholder="密码">
               <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input>
           </a-form-item>
@@ -38,24 +24,15 @@
           <a-row :gutter="0">
             <a-col :span="16">
               <a-form-item>
-                <a-input
-                  v-decorator="['inputCode', validatorRules.inputCode]"
-                  size="large"
-                  type="text"
-                  @change="inputCodeChange"
-                  placeholder="请输入验证码"
-                >
+                <a-input v-decorator="['inputCode', validatorRules.inputCode]" size="large" type="text"
+                  @change="inputCodeChange" placeholder="请输入验证码">
                   <a-icon slot="prefix" type="smile" :style="{ color: 'rgba(0,0,0,.25)' }" />
                 </a-input>
               </a-form-item>
             </a-col>
             <a-col :span="8" style="text-align: right">
-              <img
-                v-if="requestCodeSuccess"
-                style="margin-top: 2px"
-                :src="randCodeImage"
-                @click="handleChangeCheckCode"
-              />
+              <img v-if="requestCodeSuccess" style="margin-top: 2px" :src="randCodeImage"
+                @click="handleChangeCheckCode" />
               <img v-else style="margin-top: 2px" src="../../assets/checkcode.png" @click="handleChangeCheckCode" />
             </a-col>
           </a-row>
@@ -95,35 +72,20 @@
       </a-form-item> -->
 
       <a-form-item style="margin-top: 24px">
-        <a-button
-          size="large"
-          type="primary"
-          htmlType="submit"
-          class="login-button"
-          :loading="loginBtn"
-          @click.stop.prevent="handleSubmit"
-          :disabled="loginBtn"
-          >确定
+        <a-button size="large" type="primary" htmlType="submit" class="login-button" :loading="loginBtn"
+          @click.stop.prevent="handleSubmit" :disabled="loginBtn">确定
         </a-button>
 
         <a v-if="department === 'qiye'" @click="" style="margin-left: 10px"> 注册账户 </a>
-        <a
-          href="https://m12333.cn/policy/mazrc.html#:~:text=%E7%AC%AC%E4%B8%80%E6%9D%A1%20%E4%B8%BA%E4%BE%9D%E6%B3%95%E4%BF%9D%E6%8A%A4%E5%86%9C"
-          target="_blank"
-          style="float: right"
-        >
+        <a href="https://m12333.cn/policy/mazrc.html#:~:text=%E7%AC%AC%E4%B8%80%E6%9D%A1%20%E4%B8%BA%E4%BE%9D%E6%B3%95%E4%BF%9D%E6%8A%A4%E5%86%9C"
+          target="_blank" style="float: right">
           操作指南
         </a>
       </a-form-item>
     </a-form>
 
-    <two-step-captcha
-      v-if="requiredTwoStepCaptcha"
-      :visible="stepCaptchaVisible"
-      @success="stepCaptchaSuccess"
-      @cancel="stepCaptchaCancel"
-      v-show="!hasToken"
-    ></two-step-captcha>
+    <two-step-captcha v-if="requiredTwoStepCaptcha" :visible="stepCaptchaVisible" @success="stepCaptchaSuccess"
+      @cancel="stepCaptchaCancel" v-show="!hasToken"></two-step-captcha>
     <login-select-tenant v-show="!hasToken" ref="loginSelect" @success="loginSelectOk"></login-select-tenant>
     <!-- <third-login ref="thirdLogin"></third-login> -->
 
@@ -149,6 +111,7 @@ import LoginSelectTenant from './LoginSelectTenant'
 import axios from 'axios'
 import { Message } from 'element-ui'
 import { getRoleName, getRoleInfo } from '@/api/login'
+import { reject } from 'lodash'
 
 export default {
   components: {
@@ -444,47 +407,59 @@ export default {
 
     //获取登录用户的角色信息
     fetchUserRole() {
-      const userInfo = Vue.ls.get(USER_INFO) || {}
-      const userId = userInfo.id
-      if (!userId) {
-        console.error('用户id不存在')
-        return
-      }
-      // 获取角色信息
-      getRoleName()
-        .then((response) => {
-          // 获取返回的角色信息列表
-          const roleNameList = response.result
-          // 获取角色 ID 列表
-          getRoleInfo(userId)
-            .then((roleInfoResponse) => {
-              // 获取角色 ID 列表
-              const roleIds = roleInfoResponse.result
-              // 遍历角色 ID 列表，获取对应的 roleName
-              const userRoleNames = roleIds.map((roleId) => {
-                // 在 roleNameList 中查找对应的 roleName
-                const role = roleNameList.find((role) => role.id === roleId)
-                return role ? role.roleName : null // 如果找到了对应的 roleName，就返回，否则返回 null
+      return new Promise((resolve, reject) => {
+        const userInfo = Vue.ls.get(USER_INFO) || {}
+        const userId = userInfo.id
+        if (!userId) {
+          console.error('用户id不存在')
+          reject('用户id不存在')
+          return
+        }
+        // 获取角色信息
+        getRoleName()
+          .then((response) => {
+            // 获取返回的角色信息列表
+            const roleNameList = response.result
+            // 获取角色 ID 列表
+            getRoleInfo(userId)
+              .then((roleInfoResponse) => {
+                // 获取角色 ID 列表
+                const roleIds = roleInfoResponse.result
+                // 遍历角色 ID 列表，获取对应的 roleName
+                const userRoleNames = roleIds.map((roleId) => {
+                  // 在 roleNameList 中查找对应的 roleName
+                  const role = roleNameList.find((role) => role.id === roleId)
+                  return role ? role.roleName : null // 如果找到了对应的 roleName，就返回，否则返回 null
+                })
+                userInfo.roleNames = userRoleNames // 添加角色信息到 userInfo 中
+                // 保存更新后的 userInfo 到 localStorage
+                Vue.ls.set(USER_INFO, userInfo)
+                console.log('用户信息已更新并存储:', userInfo)
+                resolve();
               })
-              userInfo.roleNames = userRoleNames // 添加角色信息到 userInfo 中
-              // 保存更新后的 userInfo 到 localStorage
-              Vue.ls.set(USER_INFO, userInfo)
-              console.log('用户信息已更新并存储:', userInfo)
-            })
-            .catch((error) => {
-              console.error(error)
-            })
-        })
-        .catch((error) => {
-          console.error(error)
-        })
+              .catch((error) => {
+                console.error(error)
+                reject(error)
+              })
+          })
+          .catch((error) => {
+            console.error(error)
+            reject(error)
+          })
+      })
     },
 
     loginSuccess() {
-      console.log('怎么登录成功了？？路由' + this.$route.path)
-      this.fetchUserRole()
-      this.$router.push({ path: '/dashboard/analysis' }).catch(() => {
-        console.log('登录跳转首页出错,这个错误从哪里来的')
+      console.log('登录成功，路由' + this.$route.path)
+      this.fetchUserRole().then(() => {
+        const userInfo = Vue.ls.get(USER_INFO) || {};
+        const roleNames = userInfo.roleNames || {};
+        // 假设通过判断角色名称里是否包含特定字符串来确定是否为施工企业角色，这里示例字符串为"construction_enterprise"，需根据实际调整
+        const isCompany = roleNames.some(roleName => roleName.includes("施工企业"));
+        const targetPath = isCompany ? '/newWorkFlow/flowDeposit' : '/dashboard/analysis';
+        this.$router.push({ path: targetPath }).catch(() => {
+          console.log('登录跳转首页出错')
+        });
       })
       this.$notification.success({
         message: '欢迎',
