@@ -11,11 +11,6 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <!-- <a-table bordered :columns="flowReturncolumns" :dataSource="flowReturnData" rowKey="id">
-                              <span slot="flowReturncolumns" slot-scope="text, record, index">
-                                <a @click="startProcess(record)">申请返还</a>
-                              </span>
-                            </a-table> -->
                           <commonTable ref="commonTableRef1" :configurationParameter="configurationParameter1"
                             :startProcess="startProcess">
                           </commonTable>
@@ -30,11 +25,6 @@
                     <div class="card-table">
                       <a-card :bordered="false">
                         <div class="table-container">
-                          <!-- <a-table bordered :columns="flowHistorycolumns" :dataSource="flowHistoryData" rowKey="id">
-                            <span slot="flowHistoryaction" slot-scope="text, record, index">
-                              <a @click="seeHistory(record)">历史</a>
-                            </span>
-                          </a-table> -->
                           <commonTable ref="commonTableRef2" :configurationParameter="configurationParameter2"
                             :seeHistory="seeHistory">
                           </commonTable>
@@ -54,14 +44,6 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <!-- <a-table bordered :columns="flowWillAnnouncecolumns" :dataSource="flowWillAnnounceData"
-                            rowKey="id">
-                            <span slot="flowWillAnnounceaction" slot-scope="text, record, index">
-                              <a @click="announceTask(record)">处理该任务</a>
-                              <a-divider type="vertical" />
-                              <a @click="seeHistory(record)">历史</a>
-                            </span>
-                          </a-table> -->
                           <commonTable ref="commonTableRef3" :configurationParameter="configurationParameter3"
                             :seeHistory="seeHistory" :announceTask="announceTask">
                           </commonTable>

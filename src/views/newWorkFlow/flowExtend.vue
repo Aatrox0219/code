@@ -14,7 +14,7 @@
                                                 <div class="flowAnnounce">
                                                     <commonTable ref="commonTableRef1"
                                                         :configurationParameter="configurationParameter1" :urge="urge"
-                                                        :startFixedProcess="startFixedProcess">
+                                                        :startFixedProcess="startFixedProcess" :userInfo="userInfo">
                                                     </commonTable>
                                                 </div>
                                             </a-card>
@@ -342,6 +342,7 @@ export default {
             taskTab: {
                 tabKey: '3', // 主 Tab 页的状态
             },
+            selectedProcessId: null
         }
     },
     computed: {
@@ -365,45 +366,15 @@ export default {
     },
     methods: {
         //获取保函变更/延长有效期的流程数据,1867119925569568769是保函变更/延长有效期的流程分类id
-        startFixedProcess(showModal) {
+        startFixedProcess(record) {
+            // 获取当前点击的项目名称和存缴方式
+            this.currentProjectStatus = record ? record.depositWay : ''
+            this.currentRecord = record
             let url = '/process/processList/{categoryId}?categoryId=1867119925569568769&category=1'
             nw_getAction(url)
                 .then((res) => {
                     console.log('更换保函/延长有效期流程数据', res)
                     if (res.success) {
-                        let flowConfigData = res.result
-                        console.log('flowConfigData', flowConfigData)
-
-                        // 去掉name中的“补缴”后缀
-                        flowConfigData = flowConfigData.map((item) => {
-                            return {
-                                ...item,
-                                name: item.name.replace(/更换$/, ''), // 移除后缀
-                            };
-                        });
-
-                        console.log('处理后的flowConfigData', flowConfigData);
-
-                        //是否显示弹窗
-                        if (showModal) {
-                            this.isModalVisible = true
-                        } else {
-                            for (let i = 0; i < res.result.length; i++) {
-                                this.processInstance.push({
-                                    id: res.result[i].processId,
-                                    name: res.result[i].name,
-                                })
-                            }
-                        }
-                        let processCategories = this.processCategories
-                        for (var i = 0; i < flowConfigData.length; i++) {
-                            for (var j = 0; j < processCategories.length; j++) {
-                                if (flowConfigData[i].categoryId == processCategories[j].id) {
-                                    flowConfigData[i].categoryName = processCategories[j].category_name
-                                }
-                            }
-                        }
-                        this.flowConfigData = flowConfigData
                         this.$message.success('加载成功')
                     } else {
                         this.$message.error('查询可开启的流程失败')
@@ -414,47 +385,36 @@ export default {
                     this.$message.error('请求失败')
                 })
         },
-        handleOk() {
-            this.isModalVisible = false // 点击确定后隐藏弹窗
-        },
-        handleCancel() {
-            this.isModalVisible = false // 点击取消后隐藏弹窗
-        },
 
-        //TODO 催缴 发送短信
+        //TODO 预警 发送短信
         urge() {
 
         },
 
         //开启流程
-        startProcess() {
-            this.isModalVisible = false
+        startProcess(record) {
             let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
             axios.defaults.headers.common['userName'] = userData.value.username
             console.log('userData.value.username', userData.value.username)
+            if (record.depositWay === '担保公司保函') {
+                this.selectedProcessId = '';
+            } else if (record.depositWay === '保险公司保函') {
+                this.selectedProcessId = '';
+            } else if (record.depositWay === '银行保函') {
+                this.selectedProcessId = '';
+            } else if (record.depositWay === '银行现金存单') {
+                this.selectedProcessId = '';
+            }
             nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
                 .then((res) => {
                     if (res.success) {
                         this.$message.success('开启流程成功')
                         const { formDesignerId, onlineDataId, onlineTableId, processInstanceId } = res.result.startProcessVO
                         const taskId = res.result.fistTaskId
-                        //在传给annTask组件的时候，将新的存缴方式传过去
-                        const selectedProcess = this.flowConfigData.find(item => item.processId === this.selectedProcessId);
-                        if (selectedProcess) {
-                            // 去掉 "补缴" 后缀
-                            const processName = selectedProcess.name.replace(/更换$/, '');
-                            console.log('processName', processName);
-                            // 将处理后的值赋给 newProjectStatus
-                            this.annTaskData.projectStatus = processName;
-                        }
-                        else {
-                            console.log('未找到匹配的流程配置');
-                        }
                         this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, '补缴', this.currentRecord)
                     } else {
                         this.$message.error('开启流程失败')
                     }
-                    this.selectedProcessId = null
                 })
                 .catch((error) => {
                     console.log(error)

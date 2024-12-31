@@ -54,18 +54,13 @@
       <span slot="flowChangecolumns" slot-scope="text, record, index">
         <a @click="startFixedProcess(true, record)">申请存缴方式变更</a>
       </span>
-      <!-- <span slot="flowBackPaycolumns" slot-scope="text, record, index">
-        <a @click="urge"
-          v-if="userInfo.username.endsWith('cb') || userInfo.username.endsWith('yw') || userInfo.username.endsWith('rs')">催缴</a>
-        <a @click="startFixedProcess(true)"
-          v-if="userInfo.username === 'corporation001' || userInfo.username === 'corporation002' || userInfo.username === 'admin' || userInfo.username === 'ceshi001'">补缴</a>
-      </span> -->
       <span slot="flowBackPaycolumns" slot-scope="text, record, index">
-        <a @click="startFixedProcess(record)">补缴</a>
+        <a @click="urge" v-if="['承办人员', '业务分管', '人社分管'].some(role => userInfo.roleNames.includes(role))">催缴</a>
+        <a @click="startProcess(record)" v-if="['施工企业', '管理员'].some(role => userInfo.roleNames.includes(role))">补缴</a>
       </span>
-
       <span slot="flowExtendcolumns" slot-scope="text, record, index">
-        <a @click="startProcess(record)">更换保函</a>
+        <a @click="urge" v-if="['承办人员', '业务分管', '人社分管'].some(role => userInfo.roleNames.includes(role))">预警</a>
+        <a @click="startProcess(record)" v-if="['施工企业', '管理员'].some(role => userInfo.roleNames.includes(role))">更换保函</a>
       </span>
       <span slot="flowReturncolumns" slot-scope="text, record, index">
         <a @click="startProcess(record)">申请返还</a>
@@ -99,6 +94,10 @@ export default {
     },
     startFixedProcess: {
       type: Function,
+      default: () => { },
+    },
+    userInfo: {
+      type: Object,
       default: () => { },
     },
   },

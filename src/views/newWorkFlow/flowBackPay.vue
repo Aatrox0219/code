@@ -14,7 +14,7 @@
                                                 <div class="flowAnnounce">
                                                     <commonTable ref="commonTableRef1"
                                                         :configurationParameter="configurationParameter1" :urge="urge"
-                                                        :startFixedProcess="startFixedProcess">
+                                                        :startProcess="startProcess" :userInfo="userInfo">
                                                     </commonTable>
                                                 </div>
                                             </a-card>
@@ -61,18 +61,6 @@
                 </div>
             </a-card>
         </div>
-        <a-modal title="保证金补缴" :visible="isModalVisible" @ok="startProcess" @cancel="handleCancel" width="800px">
-            <div class="flowConfig">
-                <div style="padding-top: 20px">
-                    <span>请选择补缴方式：</span>
-                    <a-select v-model="selectedProcessId" placeholder="请选择一个流程" style="width: 300px">
-                        <a-select-option v-for="item in flowConfigData" :key="item.processId" :value="item.processId">
-                            {{ item.name }}
-                        </a-select-option>
-                    </a-select>
-                </div>
-            </div>
-        </a-modal>
         <annTask ref="modalform" :getData="getData" :userInfo="userInfo"> </annTask>
 
         <approve-model ref="approveModel" @close="getData"></approve-model>
@@ -203,7 +191,7 @@ export default {
                 inquire: {
                     //基本信息
                     categoryId: '1860939985686949889', //流程分类
-                    processIdList: ['5131', '15762', '15764', '15766', '15768'], //想要显示的流程信息
+                    processIdList: [], //想要显示的流程信息
                     applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
                 },
                 columnsData: [
@@ -315,7 +303,7 @@ export default {
                 inquire: {
                     //基本信息
                     categoryId: '1860939985686949889', //流程分类
-                    processIdList: ['5131', '15762', '15764', '15766', '15768'], //想要显示的流程信息
+                    processIdList: [], //想要显示的流程信息
                     applyState: ['pending'], //想要查询的流程类型
                 },
                 columnsData: [
@@ -427,6 +415,7 @@ export default {
             taskTab: {
                 tabKey: '3', // 主 Tab 页的状态
             },
+            selectedProcessId: null
         }
     },
     computed: {
@@ -450,45 +439,18 @@ export default {
     },
     methods: {
         //获取保证金补缴的流程数据,1860939985686949889是保证金补缴的流程分类id
-        startFixedProcess(showModal) {
+        startFixedProcess(record) {
+            // 获取当前点击的项目名称和存缴方式
+            this.currentProjectStatus = record ? record.depositWay : ''
+            this.currentRecord = record
+            console.log('currentProjectStatus:', this.currentProjectStatus)
+            console.log('currentRecord:', this.currentRecord)
             let url = '/process/processList/{categoryId}?categoryId=1860939985686949889&category=1'
             nw_getAction(url)
                 .then((res) => {
                     console.log('保证金补缴流程数据', res)
                     if (res.success) {
-                        let flowConfigData = res.result
-                        console.log('flowConfigData', flowConfigData)
-
-                        // 去掉name中的“补缴”后缀
-                        flowConfigData = flowConfigData.map((item) => {
-                            return {
-                                ...item,
-                                name: item.name.replace(/补缴$/, ''), // 移除后缀
-                            };
-                        });
-
-                        console.log('处理后的flowConfigData', flowConfigData);
-
-                        //是否显示弹窗
-                        if (showModal) {
-                            this.isModalVisible = true
-                        } else {
-                            for (let i = 0; i < res.result.length; i++) {
-                                this.processInstance.push({
-                                    id: res.result[i].processId,
-                                    name: res.result[i].name,
-                                })
-                            }
-                        }
-                        let processCategories = this.processCategories
-                        for (var i = 0; i < flowConfigData.length; i++) {
-                            for (var j = 0; j < processCategories.length; j++) {
-                                if (flowConfigData[i].categoryId == processCategories[j].id) {
-                                    flowConfigData[i].categoryName = processCategories[j].category_name
-                                }
-                            }
-                        }
-                        this.flowConfigData = flowConfigData
+                        // this.flowConfigData = flowConfigData
                         this.$message.success('加载成功')
                     } else {
                         this.$message.error('查询可开启的流程失败')
@@ -499,12 +461,6 @@ export default {
                     this.$message.error('请求失败')
                 })
         },
-        handleOk() {
-            this.isModalVisible = false // 点击确定后隐藏弹窗
-        },
-        handleCancel() {
-            this.isModalVisible = false // 点击取消后隐藏弹窗
-        },
 
         //TODO 催缴 发送短信
         urge() {
@@ -512,34 +468,31 @@ export default {
         },
 
         //开启流程
-        startProcess() {
-            this.isModalVisible = false
+        startProcess(record) {
+            console.log('record', record)
             let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
             axios.defaults.headers.common['userName'] = userData.value.username
             console.log('userData.value.username', userData.value.username)
+            console.log('record.depositWay:', record.depositWay)
+            if (record.depositWay === '担保公司保函') {
+                this.selectedProcessId = '';
+            } else if (record.depositWay === '保险公司保函') {
+                this.selectedProcessId = '';
+            } else if (record.depositWay === '银行保函') {
+                this.selectedProcessId = '';
+            } else if (record.depositWay === '银行现金存单') {
+                this.selectedProcessId = '';
+            }
             nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
                 .then((res) => {
                     if (res.success) {
                         this.$message.success('开启流程成功')
                         const { formDesignerId, onlineDataId, onlineTableId, processInstanceId } = res.result.startProcessVO
                         const taskId = res.result.fistTaskId
-                        //在传给annTask组件的时候，将新的存缴方式传过去
-                        const selectedProcess = this.flowConfigData.find(item => item.processId === this.selectedProcessId);
-                        if (selectedProcess) {
-                            // 去掉 "补缴" 后缀
-                            const processName = selectedProcess.name.replace(/补缴$/, '');
-                            console.log('processName', processName);
-                            // 将处理后的值赋给 newProjectStatus
-                            this.annTaskData.projectStatus = processName;
-                        }
-                        else {
-                            console.log('未找到匹配的流程配置');
-                        }
                         this.$refs.modalform.openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, '补缴', this.currentRecord)
                     } else {
                         this.$message.error('开启流程失败')
                     }
-                    this.selectedProcessId = null
                 })
                 .catch((error) => {
                     console.log(error)
