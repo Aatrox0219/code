@@ -48,7 +48,8 @@
     name: 'JImageUpload',
     data(){
       return {
-        uploadAction:window._CONFIG['domianURL']+"/sys/common/upload",
+        // uploadAction:window._CONFIG['domianURL']+"/sys/common/upload",
+        uploadAction:window._CONFIG['DocumentURL']+"/file/upload",
         uploadLoading:false,
         picUrl:false,
         headers:{},
@@ -120,6 +121,7 @@
         this.picUrl = true;
         let fileList = [];
         let arr = paths.split(",")
+        console.log('arr',arr);
         for(var a=0;a<arr.length;a++){
           let url = getFileAccessHttpUrl(arr[a]);
           fileList.push({
@@ -143,6 +145,7 @@
         }
       },
       handleChange(info) {
+        console.log('info',info);
         this.picUrl = false;
         let fileList = info.fileList
         //update-begin-author:wangshuai date:20201022 for:LOWCOD-969 判断number是否大于0和是否多选，返回选定的元素。
@@ -151,11 +154,11 @@
         }
         //update-end-author:wangshuai date:20201022 for:LOWCOD-969 判断number是否大于0和是否多选，返回选定的元素。
         if(info.file.status==='done'){
-          if(info.file.response.success){
+          if(info.file.response && info.file.response.success){
             this.picUrl = true;
             fileList = fileList.map((file) => {
-              if (file.response) {
-                file.url = file.response.message;
+              if (file.response && file.response.result && file.response.result.uplodadFile) {
+                file.url = file.response.result.uplodadFile;
               }
               return file;
             });
@@ -173,6 +176,7 @@
       },
       // 预览
       handlePreview (file) {
+        console.log('file预览',file);
         this.previewImage = file.url || file.thumbUrl
         this.previewVisible = true
       },
@@ -190,12 +194,12 @@
         }
         let arr = [];
         if(!this.isMultiple){
-          arr.push(uploadFiles[uploadFiles.length-1].response.message)
+          arr.push(uploadFiles[uploadFiles.length-1].response.result.uplodadFile)
         }else{
           for(let a=0;a<uploadFiles.length;a++){
             // update-begin-author:taoyan date:20200819 for:【开源问题z】上传图片组件 LOWCOD-783
             if(uploadFiles[a].status === 'done' ) {
-              arr.push(uploadFiles[a].response.message)
+              arr.push(uploadFiles[a].response.result.uplodadFile)
             }else{
               return;
             }
