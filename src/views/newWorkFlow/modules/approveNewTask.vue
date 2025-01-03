@@ -25,7 +25,7 @@
           <a-button type="primary">退回</a-button>
         </a-popover>
         <a-button
-          v-if="nodePowerResult.includes('终止')"
+          v-if="nodePowerResult.includes('拒绝')"
           type="danger"
           @click="handleTest('0')"
           style="margin-left: 200px"
