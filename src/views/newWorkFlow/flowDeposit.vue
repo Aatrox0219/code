@@ -2,8 +2,12 @@
   <div>
     <div>
       <a-card :bordered="false">
-        <a-button v-if="['施工企业', '管理员'].some(role => userInfo.roleNames.includes(role))" type="primary"
-          @click="startFixedProcess(true)" style="margin-right: 10px">
+        <a-button
+          v-if="['施工企业', '管理员'].some((role) => userInfo.roleNames.includes(role))"
+          type="primary"
+          @click="startFixedProcess(true)"
+          style="margin-right: 10px"
+        >
           保证金存缴申请
         </a-button>
         <div id="formContent" style="margin-top: -10px">
@@ -15,8 +19,11 @@
                     <div class="card-table">
                       <a-card :bordered="false">
                         <div class="table-container">
-                          <commonTable ref="commonTableRef1" :configurationParameter="configurationParameter1"
-                            :seeHistory="seeHistory">
+                          <commonTable
+                            ref="commonTableRef1"
+                            :configurationParameter="configurationParameter1"
+                            :seeHistory="seeHistory"
+                          >
                           </commonTable>
                         </div>
                       </a-card>
@@ -33,8 +40,12 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <commonTable ref="commonTableRef2" :configurationParameter="configurationParameter2"
-                            :seeHistory="seeHistory" :announceTask="announceTask">
+                          <commonTable
+                            ref="commonTableRef2"
+                            :configurationParameter="configurationParameter2"
+                            :seeHistory="seeHistory"
+                            :announceTask="announceTask"
+                          >
                           </commonTable>
                         </div>
                       </a-card>
@@ -354,15 +365,15 @@ export default {
     // 更新表格数据
     getData() {
       // 先获取子组件实例
-      const commonTableInstance1 = this.$refs.commonTableRef1;
+      const commonTableInstance1 = this.$refs.commonTableRef1
       if (commonTableInstance1) {
         // 调用子组件的getAllList方法
-        commonTableInstance1.getAllList();
+        commonTableInstance1.getAllList()
       }
 
-      const commonTableInstance2 = this.$refs.commonTableRef2;
+      const commonTableInstance2 = this.$refs.commonTableRef2
       if (commonTableInstance2) {
-        commonTableInstance2.getAllList();
+        commonTableInstance2.getAllList()
       }
       this.getLoadClaim() // 获取未认领流程
     },
@@ -388,15 +399,15 @@ export default {
 
               const projectAddress = this.loadClaimData[i].allData.main_payment.project_address
 
-              //通过当前用户的地址和项目的地址进行匹配来自动认领
-              if (this.userInfo.currentLocation === projectAddress) {
+              //通过用户的部门地址和项目的地址进行匹配来自动认领
+              if (this.userInfo.orgAddress.some((addr) => addr === projectAddress)) {
                 const promise = this.claimTask(this.loadClaimData[i])
                 claimPromises.push(promise)
               }
             }
 
             // 等待所有认领任务完成后更新界面
-            Promise.all(claimPromises).then(() => { })
+            Promise.all(claimPromises).then(() => {})
           }
         })
         .catch((res) => {
