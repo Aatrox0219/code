@@ -93,7 +93,7 @@
           </a-select>
         </a-form-item>
 
-        <a-form-item label="用户所在地" :labelCol="labelCol" :wrapperCol="wrapperCol" v-show="!departDisabled">
+        <!-- <a-form-item label="用户所在地" :labelCol="labelCol" :wrapperCol="wrapperCol" v-show="!departDisabled">
           <a-select
             style="width: 100%"
             placeholder="请选择用户所在地"
@@ -113,7 +113,7 @@
           <a-select-option :value='"黄梅县"'>黄梅县</a-select-option>
           <a-select-option :value='"龙感湖管理区"'>龙感湖管理区</a-select-option>
           </a-select>
-        </a-form-item>
+        </a-form-item> -->
 
 
         <!-- update--begin--autor:wangshuai-----date:20200108------for：新增身份和负责部门------ -->
@@ -275,7 +275,7 @@ export default {
           ],
         },
         realname: { rules: [{ required: true, message: '请输入用户名称!' }] },
-        currentLocation: { rules: [{ required: true, message: '请输入用户所在地!' }] },
+        // currentLocation: { rules: [{ required: true, message: '请输入用户所在地!' }] },
         phone: { rules: [{ validator: this.validatePhone }] },
         email: {
           rules: [
@@ -324,7 +324,7 @@ export default {
       fileList: [],
       tenantList: [],
       currentTenant: [],
-      currentLocation: [],
+      // currentLocation: [],
     }
   },
   created() {
@@ -419,7 +419,7 @@ export default {
             'workNo',
             'telephone',
             'post',
-            'currentLocation'
+            // 'currentLocation'
           )
         )
       })
