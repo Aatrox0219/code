@@ -30,6 +30,14 @@
                     </a-form-item>
                 </template>
 
+                <a-form-item label="用户姓名" :labelCol="labelCol" :wrapperCol="wrapperCol">
+                    <a-input placeholder="请输入用户姓名" v-decorator.trim="['realname', validatorRules.realname]" />
+                </a-form-item>
+
+                <a-form-item label="工号" :labelCol="labelCol" :wrapperCol="wrapperCol">
+                    <a-input placeholder="请输入工号" v-decorator.trim="['workNo', validatorRules.workNo]" />
+                </a-form-item>
+
                 <a-form-item label="角色分配" :labelCol="labelCol" :wrapperCol="wrapperCol" v-show="!roleDisabled">
                     <a-select mode="multiple" :disabled="true" style="width: 100%" placeholder="请选择用户角色"
                         optionFilterProp="children" v-model="selectedRole"
@@ -40,6 +48,8 @@
                         </a-select-option>
                     </a-select>
                 </a-form-item>
+
+                <a-divider dashed />
 
                 <a-form-item label="企业名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
                     <a-input placeholder="请输入企业名称" v-decorator.trim="['companyname', validatorRules.companyname]" />
@@ -54,7 +64,7 @@
                 </a-form-item>
 
                 <a-form-item label="统一社会信用代码" :labelCol="labelCol" :wrapperCol="wrapperCol">
-                    <a-input placeholder="统一社会信用代码" v-decorator.trim="['creditcode', validatorRules.creditcode]" />
+                    <a-input placeholder="请输入统一社会信用代码" v-decorator.trim="['creditcode', validatorRules.creditcode]" />
                 </a-form-item>
 
                 <a-form-item label="法定代表人" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -77,7 +87,17 @@
 
                 <a-form-item label="营业执照副本" :labelCol="labelCol" :wrapperCol="wrapperCol">
                     <j-image-upload class="avatar-uploader" text="上传" v-model="fileList"
-                        v-decorator.trim="['licensecopy', validatorRules.licensecopy]"></j-image-upload>
+                        v-decorator.trim="['file', validatorRules.file]"></j-image-upload>
+                </a-form-item>
+
+                <a-form-item label="负责人签名" :labelCol="labelCol" :wrapperCol="wrapperCol">
+                    <j-image-upload class="avatar-uploader" text="上传" v-model="fileList"
+                        v-decorator.trim="['file', validatorRules.file]"></j-image-upload>
+                </a-form-item>
+
+                <a-form-item label="企业盖章" :labelCol="labelCol" :wrapperCol="wrapperCol">
+                    <j-image-upload class="avatar-uploader" text="上传" v-model="fileList"
+                        v-decorator.trim="['file', validatorRules.file]"></j-image-upload>
                 </a-form-item>
             </a-form>
         </a-spin>
@@ -173,10 +193,9 @@ export default {
                 phone: { rules: [{ required: true, validator: this.validatePhone }] },
                 fax: { rules: [{ required: true, pattern: /^(?:\d{3,4}-)?\d{7,8}(?:-\d{1,6})?$/, message: '请输入正确传真!' }] },
                 licenseno: { rules: [{ required: true, pattern: /(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10}$)|(^\d{15}$)/, message: '请输入正确营业执照编号!' }] },
-                licensecopy: { rules: [{ required: true }] },
+                file: { rules: [{ required: true }] },
                 role: { rules: [{ required: true }] },
-
-
+                realname: { rules: [{ required: true, message: '请输入用户名称!' }] },
                 currentLocation: { rules: [{ required: true, message: '请输入用户所在地!' }] },
 
 

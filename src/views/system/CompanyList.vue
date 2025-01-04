@@ -66,7 +66,7 @@
             <a-table ref="table" bordered size="middle" rowKey="id" :columns="columns" :dataSource="dataSource"
                 :pagination="ipagination" :loading="loading"
                 :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-                @change="handleTableChange">
+                @change="handleTableChange" :scroll="{ x: 1000 }">
 
                 <template slot="avatarslot" slot-scope="text, record, index">
                     <div class="anty-img-wrap">
@@ -163,7 +163,6 @@ export default {
                     align: "center",
                     width: 120,
                     dataIndex: 'company_name',
-                    sorter: true
                 },
                 {
                     title: '通信地址',
@@ -180,15 +179,14 @@ export default {
                 {
                     title: '统一社会信用代码',
                     align: "center",
-                    width: 100,
+                    width: 120,
                     dataIndex: 'credit_code',
                 },
                 {
                     title: '法定代表人',
                     align: "center",
-                    width: 80,
+                    width: 100,
                     dataIndex: 'representative',
-                    sorter: true
                 },
                 {
                     title: '电话',
@@ -214,6 +212,20 @@ export default {
                     width: 120,
                     dataIndex: 'license_copy',
                     scopedSlots: { customRender: "license_copyslot" }
+                },
+                {
+                    title: '负责人签名',
+                    align: "center",
+                    width: 120,
+                    dataIndex: 'signature',
+                    scopedSlots: { customRender: "signatureslot" }
+                },
+                {
+                    title: '企业盖章',
+                    align: "center",
+                    width: 120,
+                    dataIndex: 'stamp',
+                    scopedSlots: { customRender: "stampslot" }
                 },
                 // {
                 //     title: '状态',
