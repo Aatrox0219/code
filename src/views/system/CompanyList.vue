@@ -159,6 +159,13 @@ export default {
             recycleBinVisible: false,
             columns: [
                 {
+                    title: '用户账号',
+                    align: "center",
+                    dataIndex: 'username',
+                    width: 120,
+                    sorter: true
+                },
+                {
                     title: '企业名称',
                     align: "center",
                     width: 120,
@@ -251,7 +258,7 @@ export default {
                 syncCompany: "/act/process/extActProcess/doSyncUser",
                 list: "/sys/user/list",
                 delete: "/sys/user/delete",
-                deleteBatch: "/sys/user/deleteBatch",
+                // deleteBatch: "/sys/user/deleteBatch",
                 // exportXlsUrl: "/sys/user/exportXls",
                 // importExcelUrl: "sys/user/importExcel",
             },
