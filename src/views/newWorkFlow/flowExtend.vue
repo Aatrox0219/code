@@ -220,6 +220,7 @@ export default {
             dataIndex: 'nodeName',
             dataLocation: 'nodeName',
             show: true,
+            filterType: 'select',
           },
           {
             title: '企业名称',
@@ -227,6 +228,7 @@ export default {
             dataIndex: 'companyName',
             dataLocation: 'allData.main_payment.enterprise_name',
             show: true,
+            filterType: 'select',
           },
           {
             title: '项目名称',
@@ -234,6 +236,7 @@ export default {
             dataIndex: 'projectName',
             dataLocation: 'allData.main_payment.project_name',
             show: true,
+            filterType: 'mixedInput',
           },
           {
             title: '所属区县',
@@ -241,6 +244,7 @@ export default {
             dataIndex: 'projectAddress',
             dataLocation: 'allData.main_payment.project_address',
             show: true,
+            filterType: 'mixedInput',
           },
           {
             title: '保证金金额（万元）',
@@ -255,6 +259,7 @@ export default {
             dataIndex: 'responsiblePerson',
             dataLocation: 'allData.main_payment.responsible_person',
             show: true,
+            filterType: 'input',
           },
           {
             title: '联系方式',
@@ -292,6 +297,7 @@ export default {
             dataIndex: 'nodeName',
             dataLocation: 'nodeName',
             show: true,
+            filterType: 'select',
           },
           {
             title: '企业名称',
@@ -299,6 +305,7 @@ export default {
             dataIndex: 'companyName',
             dataLocation: 'allData.main_payment.enterprise_name',
             show: true,
+            filterType: 'select',
           },
           {
             title: '项目名称',
@@ -306,6 +313,7 @@ export default {
             dataIndex: 'projectName',
             dataLocation: 'allData.main_payment.project_name',
             show: true,
+            filterType: 'mixedInput',
           },
           {
             title: '所属区县',
@@ -313,6 +321,7 @@ export default {
             dataIndex: 'projectAddress',
             dataLocation: 'allData.main_payment.project_address',
             show: true,
+            filterType: 'mixedInput',
           },
           {
             title: '保证金金额（万元）',
@@ -327,6 +336,7 @@ export default {
             dataIndex: 'responsiblePerson',
             dataLocation: 'allData.main_payment.responsible_person',
             show: true,
+            filterType: 'input',
           },
           {
             title: '联系方式',

@@ -2,12 +2,8 @@
   <div>
     <div>
       <a-card :bordered="false">
-        <a-button
-          v-if="['施工企业', '管理员'].some((role) => userInfo.roleNames.includes(role))"
-          type="primary"
-          @click="startFixedProcess(true)"
-          style="margin-right: 10px"
-        >
+        <a-button v-if="['施工企业', '管理员'].some((role) => userInfo.roleNames.includes(role))" type="primary"
+          @click="startFixedProcess(true)" style="margin-right: 10px">
           保证金存缴申请
         </a-button>
         <div id="formContent" style="margin-top: -10px">
@@ -19,11 +15,8 @@
                     <div class="card-table">
                       <a-card :bordered="false">
                         <div class="table-container">
-                          <commonTable
-                            ref="commonTableRef1"
-                            :configurationParameter="configurationParameter1"
-                            :seeHistory="seeHistory"
-                          >
+                          <commonTable ref="commonTableRef1" :configurationParameter="configurationParameter1"
+                            :seeHistory="seeHistory">
                           </commonTable>
                         </div>
                       </a-card>
@@ -40,12 +33,8 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <commonTable
-                            ref="commonTableRef2"
-                            :configurationParameter="configurationParameter2"
-                            :seeHistory="seeHistory"
-                            :announceTask="announceTask"
-                          >
+                          <commonTable ref="commonTableRef2" :configurationParameter="configurationParameter2"
+                            :seeHistory="seeHistory" :announceTask="announceTask">
                           </commonTable>
                         </div>
                       </a-card>
@@ -112,6 +101,7 @@ export default {
             dataIndex: 'nodeName',
             dataLocation: 'nodeName',
             show: true,
+            filterType: 'select',
           },
           {
             title: '企业名称',
@@ -119,6 +109,7 @@ export default {
             dataIndex: 'companyName',
             dataLocation: 'allData.main_payment.enterprise_name',
             show: true,
+            filterType: 'select',
           },
           {
             title: '项目名称',
@@ -126,6 +117,7 @@ export default {
             dataIndex: 'projectName',
             dataLocation: 'allData.main_payment.project_name',
             show: true,
+            filterType: 'mixedInput',
           },
           {
             title: '所属区县',
@@ -133,6 +125,7 @@ export default {
             dataIndex: 'projectAddress',
             dataLocation: 'allData.main_payment.project_address',
             show: true,
+            filterType: 'mixedInput',
           },
           {
             title: '合同金额（万元）',
@@ -147,6 +140,7 @@ export default {
             dataIndex: 'responsiblePerson',
             dataLocation: 'allData.main_payment.responsible_person',
             show: true,
+            filterType: 'input',
           },
           {
             title: '联系方式',
@@ -184,6 +178,7 @@ export default {
             dataIndex: 'nodeName',
             dataLocation: 'nodeName',
             show: true,
+            filterType: 'select',
           },
           {
             title: '企业名称',
@@ -191,6 +186,7 @@ export default {
             dataIndex: 'companyName',
             dataLocation: 'allData.main_payment.enterprise_name',
             show: true,
+            filterType: 'select',
           },
           {
             title: '项目名称',
@@ -198,6 +194,7 @@ export default {
             dataIndex: 'projectName',
             dataLocation: 'allData.main_payment.project_name',
             show: true,
+            filterType: 'mixedInput',
           },
           {
             title: '所属区县',
@@ -205,6 +202,7 @@ export default {
             dataIndex: 'projectAddress',
             dataLocation: 'allData.main_payment.project_address',
             show: true,
+            filterType: 'mixedInput',
           },
           {
             title: '合同金额（万元）',
@@ -219,6 +217,7 @@ export default {
             dataIndex: 'responsiblePerson',
             dataLocation: 'allData.main_payment.responsible_person',
             show: true,
+            filterType: 'input',
           },
           {
             title: '联系方式',
@@ -407,7 +406,7 @@ export default {
             }
 
             // 等待所有认领任务完成后更新界面
-            Promise.all(claimPromises).then(() => {})
+            Promise.all(claimPromises).then(() => { })
           }
         })
         .catch((res) => {
