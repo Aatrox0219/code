@@ -30,14 +30,6 @@
                     </a-form-item>
                 </template>
 
-                <a-form-item label="用户姓名" :labelCol="labelCol" :wrapperCol="wrapperCol">
-                    <a-input placeholder="请输入用户姓名" v-decorator.trim="['realname', validatorRules.realname]" />
-                </a-form-item>
-
-                <a-form-item label="工号" :labelCol="labelCol" :wrapperCol="wrapperCol">
-                    <a-input placeholder="请输入工号" v-decorator.trim="['workNo', validatorRules.workNo]" />
-                </a-form-item>
-
                 <a-form-item label="角色分配" :labelCol="labelCol" :wrapperCol="wrapperCol" v-show="!roleDisabled">
                     <a-select mode="multiple" :disabled="true" style="width: 100%" placeholder="请选择用户角色"
                         optionFilterProp="children" v-model="selectedRole"
@@ -81,22 +73,22 @@
                     <a-input placeholder="请输入传真" v-decorator.trim="['fax', validatorRules.fax]" />
                 </a-form-item>
 
-                <a-form-item label="营业执照编号" :labelCol="labelCol" :wrapperCol="wrapperCol">
-                    <a-input placeholder="请输入营业执照编号" v-decorator.trim="['licenseno', validatorRules.licenseno]" />
+                <a-form-item>
+                    <span class="warning-text">注：以下需上传图片，格式为jpg或png。</span>
                 </a-form-item>
 
                 <a-form-item label="营业执照副本" :labelCol="labelCol" :wrapperCol="wrapperCol">
-                    <j-image-upload class="avatar-uploader" text="上传" v-model="fileList"
+                    <j-image-upload class="avatar-uploader" text="上传" v-model="fileListForLicense" dataType="license"
                         v-decorator.trim="['file', validatorRules.file]"></j-image-upload>
                 </a-form-item>
 
                 <a-form-item label="负责人签名" :labelCol="labelCol" :wrapperCol="wrapperCol">
-                    <j-image-upload class="avatar-uploader" text="上传" v-model="fileList"
+                    <j-image-upload class="avatar-uploader" text="上传" v-model="fileListForSignature" dataType="signature"
                         v-decorator.trim="['file', validatorRules.file]"></j-image-upload>
                 </a-form-item>
 
                 <a-form-item label="企业盖章" :labelCol="labelCol" :wrapperCol="wrapperCol">
-                    <j-image-upload class="avatar-uploader" text="上传" v-model="fileList"
+                    <j-image-upload class="avatar-uploader" text="上传" v-model="fileListForStamp" dataType="stamp"
                         v-decorator.trim="['file', validatorRules.file]"></j-image-upload>
                 </a-form-item>
             </a-form>
@@ -187,30 +179,15 @@ export default {
                 },
                 companyname: { rules: [{ required: true, message: '请输入企业名称!' }] },
                 postaladdress: { rules: [{ required: true, message: '请输入通信地址!' }] },
-                postcode: { rules: [{ required: true, pattern: /^[1-9]\d{5}$/, message: '请输入正确邮政编码!' }] },
+                postcode: { rules: [{ pattern: /^[1-9]\d{5}$/, message: '请输入正确邮政编码!' }] },
                 creditcode: { rules: [{ required: true, pattern: /^[0-9A-HJ-NPQRTUWXY]{2}\d{6}[0-9A-HJ-NPQRTUWXY]{10}$/, message: '请输入正确统一社会信用代码!' }] },
                 representative: { rules: [{ required: true, message: '请输入法定代表人!' }] },
-                phone: { rules: [{ required: true, validator: this.validatePhone }] },
-                fax: { rules: [{ required: true, pattern: /^(?:\d{3,4}-)?\d{7,8}(?:-\d{1,6})?$/, message: '请输入正确传真!' }] },
+                phone: { rules: [{ validator: this.validatePhone }] },
+                fax: { rules: [{ pattern: /^(?:\d{3,4}-)?\d{7,8}(?:-\d{1,6})?$/, message: '请输入正确传真!' }] },
                 licenseno: { rules: [{ required: true, pattern: /(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10}$)|(^\d{15}$)/, message: '请输入正确营业执照编号!' }] },
                 file: { rules: [{ required: true }] },
                 role: { rules: [{ required: true }] },
-                realname: { rules: [{ required: true, message: '请输入用户名称!' }] },
-                currentLocation: { rules: [{ required: true, message: '请输入用户所在地!' }] },
-
-
-                // email: {
-                //     rules: [
-                //         {
-                //             validator: this.validateEmail,
-                //         },
-                //     ],
-                // },
                 roles: {},
-                //  sex:{initialValue:((!this.model.sex)?"": (this.model.sex+""))}
-                // workNo: {
-                //     rules: [{ required: true, message: '请输入工号' }, { validator: this.validateWorkNo }],
-                // },
                 telephone: {
                     rules: [{ pattern: /^0\d{2,3}-[1-9]\d{6,7}$/, message: '请输入正确的座机号码' }],
                 },
@@ -243,7 +220,6 @@ export default {
                 queryTenantList: '/sys/tenant/queryList',
             },
             identity: '1',
-            fileList: [],
             tenantList: [],
             currentTenant: [],
             currentLocation: [],
@@ -332,7 +308,9 @@ export default {
             if (record.hasOwnProperty('id')) {
                 that.loadUserRoles(record.id)
                 setTimeout(() => {
-                    this.fileList = record.avatar
+                    this.fileListForLicense = record.license_copy
+                    this.fileListForSignature = record.signature
+                    this.fileListForStamp = record.stamp
                 }, 5)
             }
             that.userId = record.id
@@ -424,7 +402,9 @@ export default {
             this.departIds = []
             this.departIdShow = false
             this.identity = '1'
-            this.fileList = []
+            this.fileListForLicense = []
+            this.fileListForSignature = []
+            this.fileListForStamp = []
         },
         moment,
         handleSubmit() {
@@ -439,10 +419,14 @@ export default {
                         values.birthday = values.birthday.format(this.dateFormat)
                     }
                     let formData = Object.assign(this.model, values)
-                    if (that.fileList != '') {
-                        formData.avatar = that.fileList
-                    } else {
-                        formData.avatar = null
+                    if (that.fileListForLicense) {
+                        formData.license_copy = that.fileListForLicense;
+                    }
+                    if (that.fileListForSignature) {
+                        formData.signature = that.fileListForSignature;
+                    }
+                    if (that.fileListForStamp) {
+                        formData.stamp = that.fileListForStamp;
                     }
 
                     //update-begin-author:taoyan date:2020710 for:多租户配置
@@ -601,7 +585,7 @@ export default {
             if (Array.isArray(e)) {
                 return e
             }
-            return e && e.fileList
+            return e && e.fileListForLicense && e.fileListForSignature && e.fileListForStamp
         },
         beforeUpload: function (file) {
             var fileType = file.type
@@ -712,5 +696,11 @@ export default {
     left: 0;
     background: #fff;
     border-radius: 0 0 2px 2px;
+}
+
+.warning-text {
+    color: red;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 </style>

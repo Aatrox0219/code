@@ -13,6 +13,15 @@
                         </a-form-item>
                     </a-col>
 
+                    <a-col :md="6" :sm="12">
+                        <a-form-item label="注册时间">
+                            <a-date-picker v-model="queryParam.registerTimeRange" :placeholder="['输入注册时间']"
+                                :disabled-date="disabledDate" format="YYYY-MM-DD" style="width: 100%"
+                                @change="handleRegisterTimeChange">
+                            </a-date-picker>
+                        </a-form-item>
+                    </a-col>
+
                     <a-col :md="6" :sm="8">
                         <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
                             <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -31,7 +40,7 @@
 
         <!-- 操作按钮区域 -->
         <div class="table-operator" style="border-top: 5px">
-            <a-button @click="handleAdd" type="primary" icon="plus">添加用户</a-button>
+            <a-button @click="handleAdd" type="primary" icon="plus">添加企业</a-button>
             <a-dropdown v-if="selectedRowKeys.length > 0">
                 <a-menu slot="overlay" @click="handleMenuClick">
                     <a-menu-item key="1">
@@ -76,6 +85,8 @@
 
                 <span slot="action" slot-scope="text, record">
                     <a @click="handleEdit(record)">编辑</a>
+                    <a-divider type="vertical" />
+                    <a href="javascript:;" @click="handleDetail(record)">查看</a>
 
                     <a-divider type="vertical" />
 
@@ -84,9 +95,9 @@
                             更多 <a-icon type="down" />
                         </a>
                         <a-menu slot="overlay">
-                            <a-menu-item>
+                            <!-- <a-menu-item>
                                 <a href="javascript:;" @click="handleDetail(record)">详情</a>
-                            </a-menu-item>
+                            </a-menu-item> -->
 
                             <a-menu-item>
                                 <a href="javascript:;" @click="handleChangePassword(record.username)">密码</a>
@@ -159,7 +170,7 @@ export default {
             recycleBinVisible: false,
             columns: [
                 {
-                    title: '用户账号',
+                    title: '企业账号',
                     align: "center",
                     dataIndex: 'username',
                     width: 120,
@@ -171,22 +182,22 @@ export default {
                     width: 120,
                     dataIndex: 'company_name',
                 },
-                {
-                    title: '通信地址',
-                    align: "center",
-                    width: 100,
-                    dataIndex: 'postal_address',
-                },
-                {
-                    title: '邮编',
-                    align: "center",
-                    width: 100,
-                    dataIndex: 'postcode',
-                },
+                // {
+                //     title: '通信地址',
+                //     align: "center",
+                //     width: 100,
+                //     dataIndex: 'postal_address',
+                // },
+                // {
+                //     title: '邮编',
+                //     align: "center",
+                //     width: 100,
+                //     dataIndex: 'postcode',
+                // },
                 {
                     title: '统一社会信用代码',
                     align: "center",
-                    width: 120,
+                    width: 140,
                     dataIndex: 'credit_code',
                 },
                 {
@@ -195,44 +206,44 @@ export default {
                     width: 100,
                     dataIndex: 'representative',
                 },
+                // {
+                //     title: '电话',
+                //     align: "center",
+                //     width: 100,
+                //     dataIndex: 'representative_phone'
+                // },
+                // {
+                //     title: '传真',
+                //     align: "center",
+                //     width: 100,
+                //     dataIndex: 'fax'
+                // },
+                // {
+                //     title: '营业执照副本',
+                //     align: "center",
+                //     width: 120,
+                //     dataIndex: 'license_copy',
+                //     scopedSlots: { customRender: "license_copyslot" }
+                // },
+                // {
+                //     title: '负责人签名',
+                //     align: "center",
+                //     width: 120,
+                //     dataIndex: 'signature',
+                //     scopedSlots: { customRender: "signatureslot" }
+                // },
+                // {
+                //     title: '企业盖章',
+                //     align: "center",
+                //     width: 120,
+                //     dataIndex: 'stamp',
+                //     scopedSlots: { customRender: "stampslot" }
+                // },
                 {
-                    title: '电话',
+                    title: '注册时间',
                     align: "center",
                     width: 100,
-                    dataIndex: 'representative_phone'
-                },
-                {
-                    title: '传真',
-                    align: "center",
-                    width: 100,
-                    dataIndex: 'fax'
-                },
-                {
-                    title: '营业执照编号',
-                    align: "center",
-                    width: 180,
-                    dataIndex: 'license_no'
-                },
-                {
-                    title: '营业执照副本',
-                    align: "center",
-                    width: 120,
-                    dataIndex: 'license_copy',
-                    scopedSlots: { customRender: "license_copyslot" }
-                },
-                {
-                    title: '负责人签名',
-                    align: "center",
-                    width: 120,
-                    dataIndex: 'signature',
-                    scopedSlots: { customRender: "signatureslot" }
-                },
-                {
-                    title: '企业盖章',
-                    align: "center",
-                    width: 120,
-                    dataIndex: 'stamp',
-                    scopedSlots: { customRender: "stampslot" }
+                    dataIndex: 'create_date',
                 },
                 // {
                 //     title: '状态',
