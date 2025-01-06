@@ -201,25 +201,25 @@ export default {
       if (info.file.status === 'done') {
         if (info.file.response && info.file.response.success) {
           this.picUrl = true;
-          fileList = fileList.map((file) => {
+          fileList = (fileList || []).map((file) => {
             if (file.response && file.response.result && file.response.result.uplodadFile) {
               file.url = file.response.result.uplodadFile;
             }
             return file;
           });
-          fileListForLicense = fileListForLicense.map((file) => {
+          fileListForLicense = (fileListForLicense || []).map((file) => {
             if (file.response && file.response.result && file.response.result.uplodadFile) {
               file.url = file.response.result.uplodadFile;
             }
             return file;
           });
-          fileListForSignature = fileListForSignature.map((file) => {
+          fileListForSignature = (fileListForSignature || []).map((file) => {
             if (file.response && file.response.result && file.response.result.uplodadFile) {
               file.url = file.response.result.uplodadFile;
             }
             return file;
           });
-          fileListForStamp = fileListForStamp.map((file) => {
+          fileListForStamp = (fileListForStamp || []).map((file) => {
             if (file.response && file.response.result && file.response.result.uplodadFile) {
               file.url = file.response.result.uplodadFile;
             }
@@ -232,7 +232,8 @@ export default {
       } else if (info.file.status === 'removed') {
         this.handleDelete(info.file)
       }
-      this.fileList = fileList
+      this.fileList = [...fileList];
+      console.log('this.fileList', this.fileList);
       this.fileListForLicense = fileListForLicense
       this.fileListForSignature = fileListForSignature
       this.fileListForStamp = fileListForStamp
@@ -306,7 +307,7 @@ export default {
       // 根据 dataType 触发对应的自定义事件，传递处理后的路径数据
       switch (this.dataType) {
         case 'avatar':
-          this.$emit('avatarChange', path);
+          this.$emit('change', path);
           break;
         case 'license':
           this.$emit('licenseChange', path);
