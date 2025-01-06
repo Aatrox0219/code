@@ -10,7 +10,7 @@ import { getRSJUser } from '@/api/userList'
 import Vue from 'vue'
 import { ACCESS_TOKEN, TENANT_ID } from '@/store/mutation-types'
 
-export const JeecgListMixinedit = {
+export const JeecgListMixinRSJ = {
   data() {
     return {
       //token header

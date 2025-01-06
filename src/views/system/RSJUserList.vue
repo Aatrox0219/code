@@ -178,7 +178,7 @@ import PasswordModal from './modules/PasswordModal'
 import { putAction, getFileAccessHttpUrl } from '@/api/manage'
 import { getRSJUser } from '@/api/userList'
 import { frozenBatch } from '@/api/api'
-import { JeecgListMixinedit } from '@/mixins/JeecgListMixinedit'
+import { JeecgListMixinRSJ } from '@/mixins/JeecgListMixinRSJ'
 import SysUserAgentModal from './modules/SysUserAgentModal'
 import JInput from '@/components/jeecg/JInput'
 import UserRecycleBinModal from './modules/UserRecycleBinModal'
@@ -186,7 +186,7 @@ import JSuperQuery from '@/components/jeecg/JSuperQuery'
 
 export default {
   name: 'UserList',
-  mixins: [JeecgListMixinedit],
+  mixins: [JeecgListMixinRSJ],
   components: {
     SysUserAgentModal,
     UserModal,
