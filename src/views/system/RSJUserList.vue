@@ -1,12 +1,11 @@
 <template>
   <a-card :bordered="false">
     <!-- 查询区域 -->
-    <div class="table-page-search-wrapper">
+    <!-- <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
           <a-col :md="6" :sm="12">
             <a-form-item label="账号">
-              <!--<a-input placeholder="请输入账号查询" v-model="queryParam.username"></a-input>-->
               <j-input placeholder="输入账号模糊查询" v-model="queryParam.username"></j-input>
             </a-form-item>
           </a-col>
@@ -57,7 +56,7 @@
           </a-col>
         </a-row>
       </a-form>
-    </div>
+    </div> -->
 
     <!-- 操作按钮区域 -->
     <div class="table-operator" style="border-top: 5px">
@@ -73,7 +72,7 @@
       >
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload> -->
-      <a-button type="primary" icon="hdd" @click="recycleBinVisible = true">回收站</a-button>
+      <!-- <a-button type="primary" icon="hdd" @click="recycleBinVisible = true">回收站</a-button> -->
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay" @click="handleMenuClick">
           <a-menu-item key="1">
@@ -94,7 +93,7 @@
           <a-icon type="down" />
         </a-button>
       </a-dropdown>
-      <j-super-query :fieldList="superQueryFieldList" @handleSuperQuery="handleSuperQuery" />
+      <!-- <j-super-query :fieldList="superQueryFieldList" @handleSuperQuery="handleSuperQuery" /> -->
     </div>
 
     <!-- table区域-begin -->
@@ -177,8 +176,9 @@
 import UserModal from './modules/UserModal'
 import PasswordModal from './modules/PasswordModal'
 import { putAction, getFileAccessHttpUrl } from '@/api/manage'
+import { getRSJUser } from '@/api/userList'
 import { frozenBatch } from '@/api/api'
-import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import { JeecgListMixinedit } from '@/mixins/JeecgListMixinedit'
 import SysUserAgentModal from './modules/SysUserAgentModal'
 import JInput from '@/components/jeecg/JInput'
 import UserRecycleBinModal from './modules/UserRecycleBinModal'
@@ -186,7 +186,7 @@ import JSuperQuery from '@/components/jeecg/JSuperQuery'
 
 export default {
   name: 'UserList',
-  mixins: [JeecgListMixin],
+  mixins: [JeecgListMixinedit],
   components: {
     SysUserAgentModal,
     UserModal,
@@ -284,7 +284,7 @@ export default {
       ],
       url: {
         syncUser: '/act/process/extActProcess/doSyncUser',
-        list: '/sys/user/list',
+        // list: '/sys/user/list',
         delete: '/sys/user/delete',
         deleteBatch: '/sys/user/deleteBatch',
         exportXlsUrl: '/sys/user/exportXls',
@@ -367,6 +367,21 @@ export default {
     handleChangePassword(username) {
       this.$refs.passwordmodal.show(username)
     },
+    //获取人社局用户列表
+    getRSJUserList() {
+      // let data = {
+      //   pageNo: this.pagination.currentPage,
+      //   pageSize: this.pagination.pageSize,
+      //   roleIds: ['1876096735837732866', '1872566152285175809', '1872566115782148097', '1872566080680017921'],
+      // }
+      // getRSJUser(data).then((res) => {
+      //   this.dataSource = res.result.records
+      //   this.pagination.total = res.result.total
+      // })
+    },
+  },
+  created() {
+    this.getRSJUserList()
   },
 }
 </script>
