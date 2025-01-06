@@ -88,7 +88,7 @@ export default {
       type: String,
       required: true,
       validator: function (value) {
-        return ['license', 'signature', 'stamp'].includes(value);
+        return ['avatar','license', 'signature', 'stamp'].includes(value);
       }
     }
   },
@@ -140,7 +140,7 @@ export default {
             message: arr[a]
           }
         }),
-          fileListForLicense.push({
+          this.fileListForLicense.push({
             uid: uidGenerator(),
             name: getFileName(arr[a]),
             status: 'done',
@@ -150,7 +150,7 @@ export default {
               message: arr[a]
             }
           })
-        fileListForSignature.push({
+          this.fileListForSignature.push({
           uid: uidGenerator(),
           name: getFileName(arr[a]),
           status: 'done',
@@ -160,7 +160,7 @@ export default {
             message: arr[a]
           }
         })
-        fileListForStamp.push({
+        this.fileListForStamp.push({
           uid: uidGenerator(),
           name: getFileName(arr[a]),
           status: 'done',
