@@ -123,9 +123,9 @@ export default {
       }
       this.picUrl = true;
       let fileList = [];
-      this.fileListForLicense = [];
-      this.fileListForSignature = [];
-      this.fileListForStamp = [];
+      let fileListForLicense = [];
+      let fileListForSignature = [];
+      let fileListForStamp = [];
       let arr = paths.split(",")
       console.log('arr', arr);
       for (var a = 0; a < arr.length; a++) {
@@ -140,7 +140,7 @@ export default {
             message: arr[a]
           }
         }),
-          this.fileListForLicense.push({
+          fileListForLicense.push({
             uid: uidGenerator(),
             name: getFileName(arr[a]),
             status: 'done',
@@ -150,7 +150,7 @@ export default {
               message: arr[a]
             }
           })
-          this.fileListForSignature.push({
+          fileListForSignature.push({
           uid: uidGenerator(),
           name: getFileName(arr[a]),
           status: 'done',
@@ -160,7 +160,7 @@ export default {
             message: arr[a]
           }
         })
-        this.fileListForStamp.push({
+        fileListForStamp.push({
           uid: uidGenerator(),
           name: getFileName(arr[a]),
           status: 'done',
@@ -172,9 +172,9 @@ export default {
         })
       }
       this.fileList = fileList
-      this.fileListForLicense = this.fileListForLicense
-      this.fileListForSignature = this.fileListForSignature
-      this.fileListForStamp = this.fileListForStamp
+      this.fileListForLicense = fileListForLicense
+      this.fileListForSignature = fileListForSignature
+      this.fileListForStamp = fileListForStamp
     },
     beforeUpload: function (file) {
       var fileType = file.type;
@@ -185,11 +185,12 @@ export default {
     },
     handleChange(info) {
       console.log('info', info);
+      console.log('dataType',this.dataType);
       this.picUrl = false;
       let fileList = info.fileList
-      let fileListForLicense = info.fileListForLicense;
-      let fileListForSignature = info.fileListForSignature;
-      let fileListForStamp = info.fileListForStamp;
+      let fileListForLicense = info.fileList;
+      let fileListForSignature = info.fileList;
+      let fileListForStamp = info.fileList;
       //update-begin-author:wangshuai date:20201022 for:LOWCOD-969 判断number是否大于0和是否多选，返回选定的元素。
       if (this.number > 0 && this.isMultiple) {
         fileList = fileList.slice(-this.number);
@@ -201,30 +202,35 @@ export default {
       if (info.file.status === 'done') {
         if (info.file.response && info.file.response.success) {
           this.picUrl = true;
-          fileList = (fileList || []).map((file) => {
+          if(this.dataType === 'avatar'){
+            fileList = (fileList || []).map((file) => {
+              if (file.response && file.response.result && file.response.result.uplodadFile) {
+                file.url = file.response.result.uplodadFile;
+              }
+              return file;
+            });
+          }
+          if(this.dataType === 'license'){fileListForLicense = (fileListForLicense || []).map((file) => {
             if (file.response && file.response.result && file.response.result.uplodadFile) {
               file.url = file.response.result.uplodadFile;
             }
             return file;
-          });
-          fileListForLicense = (fileListForLicense || []).map((file) => {
+          });}
+          
+          if(this.dataType === 'signature'){fileListForSignature = (fileListForSignature || []).map((file) => {
             if (file.response && file.response.result && file.response.result.uplodadFile) {
               file.url = file.response.result.uplodadFile;
             }
             return file;
-          });
-          fileListForSignature = (fileListForSignature || []).map((file) => {
+          });}
+          
+          if(this.dataType === 'stamp'){fileListForStamp = (fileListForStamp || []).map((file) => {
             if (file.response && file.response.result && file.response.result.uplodadFile) {
               file.url = file.response.result.uplodadFile;
             }
             return file;
-          });
-          fileListForStamp = (fileListForStamp || []).map((file) => {
-            if (file.response && file.response.result && file.response.result.uplodadFile) {
-              file.url = file.response.result.uplodadFile;
-            }
-            return file;
-          });
+          });}
+          
         }
         //this.$message.success(`${info.file.name} 上传成功!`);
       } else if (info.file.status === 'error') {
@@ -234,9 +240,12 @@ export default {
       }
       this.fileList = [...fileList];
       console.log('this.fileList', this.fileList);
-      this.fileListForLicense = fileListForLicense
-      this.fileListForSignature = fileListForSignature
-      this.fileListForStamp = fileListForStamp
+      this.fileListForLicense = [...fileListForLicense]
+      console.log('this.fileListForLicense', this.fileListForLicense);
+      this.fileListForSignature = [...fileListForSignature]
+      console.log('this.fileListForSignature', this.fileListForSignature);
+      this.fileListForStamp = [...fileListForStamp]
+      console.log('this.fileListForStamp', this.fileListForStamp);
       if (info.file.status === 'done' || info.file.status === 'removed') {
         this.handlePathChange()
       }
@@ -305,20 +314,21 @@ export default {
       }
 
       // 根据 dataType 触发对应的自定义事件，传递处理后的路径数据
-      switch (this.dataType) {
-        case 'avatar':
-          this.$emit('change', path);
-          break;
-        case 'license':
-          this.$emit('licenseChange', path);
-          break;
-        case 'signature':
-          this.$emit('signatureChange', path);
-          break;
-        case 'stamp':
-          this.$emit('stampChange', path);
-          break;
-      }
+      // switch (this.dataType) {
+      //   case 'avatar':
+      //     this.$emit('change', path);
+      //     break;
+      //   case 'license':
+      //     this.$emit('licenseChange', path);
+      //     break;
+      //   case 'signature':
+      //     this.$emit('signatureChange', path);
+      //     break;
+      //   case 'stamp':
+      //     this.$emit('stampChange', path);
+      //     break;
+      // }
+      this.$emit('change', path);
     },
     handleDelete(file) {
       //如有需要新增 删除逻辑

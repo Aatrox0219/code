@@ -51,9 +51,9 @@
           <a-input placeholder="请输入工号" v-decorator.trim="['workNo', validatorRules.workNo]" />
         </a-form-item>
 
-        <a-form-item label="职务" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <!-- <a-form-item label="职务" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <j-select-position placeholder="请选择职务" :multiple="false" v-decorator="['post', {}]" />
-        </a-form-item>
+        </a-form-item> -->
 
         <a-form-item label="角色分配" :labelCol="labelCol" :wrapperCol="wrapperCol" v-show="!roleDisabled">
           <a-select
@@ -79,7 +79,7 @@
         </a-form-item>
 
         <!--租户分配-->
-        <a-form-item label="租户分配" :labelCol="labelCol" :wrapperCol="wrapperCol" v-show="!departDisabled">
+        <!-- <a-form-item label="租户分配" :labelCol="labelCol" :wrapperCol="wrapperCol" v-show="!departDisabled">
           <a-select
             mode="multiple"
             style="width: 100%"
@@ -91,7 +91,7 @@
               {{ item.name }}
             </a-select-option>
           </a-select>
-        </a-form-item>
+        </a-form-item> -->
 
         <!-- <a-form-item label="用户所在地" :labelCol="labelCol" :wrapperCol="wrapperCol" v-show="!departDisabled">
           <a-select
@@ -117,7 +117,7 @@
 
 
         <!-- update--begin--autor:wangshuai-----date:20200108------for：新增身份和负责部门------ -->
-        <a-form-item label="身份" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <!-- <a-form-item label="身份" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-radio-group v-model="identity" @change="identityChange">
             <a-radio value="1">普通用户</a-radio>
             <a-radio value="2">上级</a-radio>
@@ -137,9 +137,9 @@
               item.title
             }}</a-select-option>
           </a-select>
-        </a-form-item>
+        </a-form-item> -->
         <!-- update--end--autor:wangshuai-----date:20200108------for：新增身份和负责部门------ -->
-        <a-form-item label="头像" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <a-form-item label="用户签名" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <j-image-upload class="avatar-uploader" text="上传" v-model="fileList" dataType="avatar"></j-image-upload>
         </a-form-item>
 

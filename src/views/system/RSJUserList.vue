@@ -176,7 +176,6 @@
 import UserModal from './modules/UserModal'
 import PasswordModal from './modules/PasswordModal'
 import { putAction, getFileAccessHttpUrl } from '@/api/manage'
-import { getRSJUser } from '@/api/userList'
 import { frozenBatch } from '@/api/api'
 import { JeecgListMixinRSJ } from '@/mixins/JeecgListMixinRSJ'
 import SysUserAgentModal from './modules/SysUserAgentModal'
@@ -367,21 +366,6 @@ export default {
     handleChangePassword(username) {
       this.$refs.passwordmodal.show(username)
     },
-    //获取人社局用户列表
-    getRSJUserList() {
-      // let data = {
-      //   pageNo: this.pagination.currentPage,
-      //   pageSize: this.pagination.pageSize,
-      //   roleIds: ['1876096735837732866', '1872566152285175809', '1872566115782148097', '1872566080680017921'],
-      // }
-      // getRSJUser(data).then((res) => {
-      //   this.dataSource = res.result.records
-      //   this.pagination.total = res.result.total
-      // })
-    },
-  },
-  created() {
-    this.getRSJUserList()
   },
 }
 </script>
