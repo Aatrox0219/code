@@ -568,11 +568,6 @@ export default {
       if (!value) {
         callback()
       } else {
-        //编辑时不验证
-        if (this.isEdit) {
-          callback()
-          return
-        }
         //update-begin--Author:kangxiaolin  Date:20190826 for：[05] 手机号不支持199号码段--------------------
         if (new RegExp(/^1[3|4|5|7|8|9][0-9]\d{8}$/).test(value)) {
           //update-end--Author:kangxiaolin  Date:20190826 for：[05] 手机号不支持199号码段--------------------
@@ -587,7 +582,13 @@ export default {
             if (res.success) {
               callback()
             } else {
-              callback('手机号已存在!')
+              //编辑时不验证
+              if (this.isEdit) {
+                callback()
+              }
+              else{
+                callback('手机号已存在!')
+              }
             }
           })
         } else {
