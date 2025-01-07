@@ -15,26 +15,25 @@
       <el-button v-if="showUploadButton" size="small" type="primary">点击上传</el-button>
     </el-upload>
     <template>
-  <!-- <div>
-    <template v-for="item in fileList">
-      <el-tooltip effect="dark" :content="item.name" placement="top-start">
-        <el-link
-          type="info"
-          class="file-download"
-          @click.prevent="handleDownload(item)"
-        >
-          {{ item.name }}
-        </el-link>
-      </el-tooltip>
+      <!-- <div>
+        <template v-for="item in fileList">
+          <el-tooltip effect="dark" :content="item.name" placement="top-start">
+            <el-link
+              type="info"
+              class="file-download"
+              @click.prevent="handleDownload(item)"
+            >
+              {{ item.name }}
+            </el-link>
+          </el-tooltip>
+        </template>
+      </div> -->
     </template>
-  </div> -->
-</template>
-
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
 import Draggable from 'vuedraggable'
 import api from '@/api/index'
 require('viewerjs/dist/viewer.css')
@@ -105,9 +104,20 @@ export default {
     }
   },
   created() {
-    console.log('this.value123123333333', this.value);
-    if (this.value) {
+    console.log('this.value-created', this.value)
+    if (this.value.length) {
       this.getFileList(this.value)
+    } else {
+      this.timer = setTimeout(() => {
+        this.getFileList(this.value)
+      }, 500)
+    }
+  },
+  beforeDestroy() {
+    // 清除定时器，避免内存泄漏
+    if (this.timer) {
+      clearTimeout(this.timer)
+      this.timer = null
     }
   },
   computed: {
@@ -119,18 +129,20 @@ export default {
       }
     },
   },
+
   methods: {
     //:action="`/apiUpload/sonline/common/upload/`"
     getFileList(value) {
-      console.log('value12312312', value)
+      console.log('调用了getFileList', value)
       //将每一个文件信息fileName+dbpath处理成文件上传组件支持的fileList格式即name+url
       if (value.length != 0) {
         //将之前已有的文件格式由fileName+dbpath转换为name+url 并给转换之后的文件排序
         // this.fileList = this.sortFileOfName(this.fileNameToName(JSON.parse(value)))
         this.fileList = this.fileNameToName(value)
-        this.showUploadButton = false;
+        this.showUploadButton = false
       } else {
         this.fileList = []
+        this.showUploadButton = true
       }
     },
     handleSuccess(response, file, fileList) {
@@ -151,6 +163,7 @@ export default {
       // this.fileList = this.sortFileOfName(this.fileNameToName(list))
       this.fileList = this.fileNameToName(list)
       console.log('this.fileList', this.fileList)
+      this.showUploadButton = false
       this.$emit('change', JSON.stringify(list))
     },
     handleRemove(file, fileList) {
@@ -238,6 +251,11 @@ export default {
         newFileList.push(fileListItem)
       }
       console.log('newFileList', newFileList)
+      if (newFileList.length) {
+        this.showUploadButton = false
+      } else {
+        this.showUploadButton = true
+      }
       return newFileList
     },
     // nameToFileName(fileList){//将文件列表name->fileName url->dbpath
