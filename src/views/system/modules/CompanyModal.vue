@@ -365,7 +365,7 @@ export default {
       this.picUrl = ''
       await this.refresh()
       await this.edit({ activitiSync: '1' })
-      this.isEdit = true
+      // this.isEdit = true
     },
     edit(record) {
       console.log('record', record)
@@ -475,6 +475,7 @@ export default {
       this.licenseCopy = []
       this.avatar = []
       this.stamp = []
+      this.isEdit = true
     },
     moment,
     handleSubmit() {
