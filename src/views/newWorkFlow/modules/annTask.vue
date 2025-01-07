@@ -35,6 +35,7 @@ import AntdGenerateForm from '@/components/FormMaking/components/AntdvGenerator/
 import { t_postAction, t_getAction } from '@/api/tempApi.js'
 import { o_postAction, o_getAction } from '@/api/onApi.js'
 import { nw_postAction1, nw_delete } from '@api/newWorkApi'
+import { getSingleQYUser } from '@/api/userList'
 
 export default {
   name: 'AnnTask',
@@ -166,11 +167,32 @@ export default {
             this.$nextTick(() => {
               if (this.$refs.generateForm) {
                 if (category === '存缴') {
-                  //将公司名称默认填写为当前登录用户的公司名称
-                  this.$refs.generateForm.setData({
-                    company_name: this.userInfo.realname, //这里的company_name是表单中的字段标识
-                    deposit_way: data.projectStatus
-                  })
+                  let userData = {}
+                  getSingleQYUser(this.userInfo.id)
+                    .then((res) => {
+                      userData = res.result
+                      console.log('userData', userData)
+                      const licenseCopy = [
+                        {
+                          fileName: userData.licenseCopy.split('/').pop(),
+                          dbpath: userData.licenseCopy,
+                        },
+                      ]
+                      console.log('图片地址开始上传')
+                      //将公司名称默认填写为当前登录用户的公司名称
+                      this.$refs.generateForm.setData({
+                        company_name: userData.companyName, //这里的company_name是表单中的字段标识
+                        deposit_way: data.projectStatus,
+                        postalAddress: userData.postalAddress,
+                        postcode: userData.postcode,
+                        creditCode: userData.creditCode,
+                        licenseCopy: licenseCopy,
+                      })
+                      console.log('图片地址上传成功')
+                    })
+                    .catch((error) => {
+                      console.error('获取用户数据失败', error)
+                    })
                 } else if (category === '使用') {
                   console.log('保证金使用的数据', data)
                   this.$refs.generateForm.setData({

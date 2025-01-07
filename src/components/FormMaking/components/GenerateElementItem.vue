@@ -560,7 +560,7 @@ export default {
       deep: true,
       handler(val) {
         this.$emit('input', val[this.widget.model])
-        console.log('666', this.dataModels);
+        // console.log('666', this.dataModels);
       },
      
     },
