@@ -15,10 +15,9 @@
 
                     <a-col :md="6" :sm="12">
                         <a-form-item label="注册时间">
-                            <a-date-picker v-model="queryParam.registerTimeRange" :placeholder="['输入注册时间']"
-                                :disabled-date="disabledDate" format="YYYY-MM-DD" style="width: 100%"
-                                @change="handleRegisterTimeChange">
-                            </a-date-picker>
+                            <a-range-picker style="width: 250px" format="YYYY-MM-DD" :placeholder="['开始时间', '结束时间']"
+                                @change="onChange" :value="dateStrings">
+                            </a-range-picker>
                         </a-form-item>
                     </a-col>
 
@@ -273,6 +272,12 @@ export default {
                 // exportXlsUrl: "/sys/user/exportXls",
                 // importExcelUrl: "sys/user/importExcel",
             },
+            queryParam: {
+                registerTimeRange: [null, null]
+            },
+            startTime: '',
+            endTime: '',
+            dateStrings: [],
         }
     },
     computed: {
@@ -349,6 +354,12 @@ export default {
         },
         handleChangePassword(username) {
             this.$refs.passwordmodal.show(username);
+        },
+        onChange(dates, dateStrings) {
+            this.dateStrings = dateStrings
+            console.log('From: ', dateStrings[0], ', to: ', dateStrings[1])
+            this.startTime = dateStrings[0]
+            this.endTime = dateStrings[1]
         },
     }
 
