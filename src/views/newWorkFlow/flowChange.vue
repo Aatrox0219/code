@@ -109,7 +109,7 @@ export default {
       configurationParameter1: {
         inquire: {
           categoryId: '1847453055727501313', //流程分类
-          processIdList: ['20214', '20211', '20208', '20205', '20220', '20223', '20226', '20229'], //存缴+变更
+          processIdList: ['20560', '20563', '20566', '20569', '20575', '20578', '20582', '20585'], //存缴+变更
           applyState: ['complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -231,7 +231,7 @@ export default {
       configurationParameter2: {
         inquire: {
           categoryId: '1860602147955077121', //流程分类
-          processIdList: ['20214', '20211', '20208', '20205', '20220', '20223', '20226', '20229'], //想要显示的流程信息
+          processIdList: ['20560', '20563', '20566', '20569', '20575', '20578', '20582', '20585'], //想要显示的流程信息
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -322,7 +322,7 @@ export default {
       configurationParameter3: {
         inquire: {
           categoryId: '1860602147955077121', //流程分类
-          processIdList: ['20214', '20211', '20208', '20205', '20220', '20223', '20226', '20229'], //想要显示的流程信息
+          processIdList: ['20560', '20563', '20566', '20569', '20575', '20578', '20582', '20585'], //想要显示的流程信息
           applyState: ['pending'], //想要查询的流程类型
         },
         columnsData: [
@@ -554,7 +554,7 @@ export default {
     //得到所有未认领的流程
     getLoadClaim() {
       let params = {
-        processIdList: ['20214', '20211', '20208', '20205', '20220', '20223', '20226', '20229'],
+        processIdList: ['20560', '20563', '20566', '20569', '20575', '20578', '20582', '20585'],
         applyState: ['claim'],
         categoryId: '1860602147955077121',
       }
