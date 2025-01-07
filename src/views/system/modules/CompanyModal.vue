@@ -363,14 +363,8 @@ export default {
     },
     async add() {
       this.picUrl = ''
-
-      // 确保 refresh() 执行完再执行后续操作
       await this.refresh()
-
-      // 确保 refresh() 完成后再调用 edit()，并传入 activitiSync: '1'
       await this.edit({ activitiSync: '1' })
-
-      // edit 完成后再将 isEdit 设置为 true
       this.isEdit = true
     },
     edit(record) {
@@ -380,17 +374,6 @@ export default {
       that.initialRoleList()
       that.checkedDepartNameString = ''
       that.form.resetFields()
-
-      // that.form.setFieldsValue({
-      //   companyName: record.companyName, // 设置企业名称
-      //   postcode: record.postcode,
-      //   postalAddress: record.postalAddress,
-      //   creditCode: record.creditCode,
-      //   representative: record.representative,
-      //   fax: record.fax,
-      //   phone: record.phone,
-      //   // 你还可以添加其他需要初始化的字段
-      // })
 
       if (record.hasOwnProperty('id')) {
         that.loadUserRoles(record.id)
@@ -500,11 +483,11 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           that.confirmLoading = true
-          if (!values.birthday) {
-            values.birthday = ''
-          } else {
-            values.birthday = values.birthday.format(this.dateFormat)
-          }
+          // if (!values.birthday) {
+          //   values.birthday = ''
+          // } else {
+          //   values.birthday = values.birthday.format(this.dateFormat)
+          // }
           let formData = Object.assign(this.model, values)
           console.log('formData', formData)
           if (that.licenseCopy) {
@@ -534,6 +517,7 @@ export default {
           let obj
           if (!this.model.id) {
             formData.id = this.userId
+            formData.realname = formData.companyName
             obj = addQYUser(formData)
           } else {
             obj = editQYUser(formData)
