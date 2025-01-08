@@ -1,6 +1,5 @@
 import { axios } from '@/utils/request'
 import api from './index'
-import { depositList } from './processId'
 import { nw_getAction, nw_getAllData } from '@api/newWorkApi'
 
 //人社局员工列表获取
@@ -104,7 +103,7 @@ function claimTask(record) {
 
 
 //登录用户自动认领流程接口
-export function AutoClaim(processIdList, categoryId) {
+export function AutoClaim(processIdList, categoryId, userInfo) {
     let params = {
         processIdList: processIdList,
         applyState: ['claim'],
@@ -123,9 +122,9 @@ export function AutoClaim(processIdList, categoryId) {
                     loadClaimData[i].state = '待领取'
 
                     const projectAddress = loadClaimData[i].allData.main_payment.project_address
-
+                    console.log('项目地址:', userInfo);
                     //通过用户的部门地址和项目的地址进行匹配来自动认领
-                    if (this.userInfo.orgAddress.some((addr) => addr === projectAddress)) {
+                    if (userInfo.orgAddress.some((addr) => addr === projectAddress)) {
                         const promise = claimTask(loadClaimData[i])
                         claimPromises.push(promise)
                     }
