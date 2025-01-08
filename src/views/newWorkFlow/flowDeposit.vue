@@ -91,7 +91,7 @@ export default {
       configurationParameter1: {
         inquire: {
           categoryId: '1847453055727501313', //流程分类
-          processIdList: ['20560', '20563', '20566', '20569'], //存缴
+          processIdList: ['5', '7', '9', '11'], //存缴
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -168,7 +168,7 @@ export default {
       configurationParameter2: {
         inquire: {
           categoryId: '1847453055727501313', //流程分类
-          processIdList: ['20560', '20563', '20566', '20569'], //存缴
+          processIdList: ['5', '7', '9', '11'], //存缴
           applyState: ['pending'], //想要查询的流程类型
         },
         columnsData: [
@@ -380,7 +380,7 @@ export default {
     //得到所有未认领的流程
     getLoadClaim() {
       let params = {
-        processIdList: ['20560', '20563', '20566', '20569'],
+        processIdList: ['5', '7', '9', '11'],
         applyState: ['claim'],
         pageSize: 1000,
         pageNum: 1,
