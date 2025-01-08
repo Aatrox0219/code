@@ -389,61 +389,8 @@ export default {
       if (commonTableInstance2) {
         commonTableInstance2.getAllList()
       }
-      // this.getLoadClaim() // 获取未认领流程
     },
 
-    //得到所有未认领的流程
-    getLoadClaim() {
-      let params = {
-        processIdList: depositList,
-        applyState: ['claim'],
-        pageSize: 1000,
-        pageNum: 1,
-        categoryId: depositCategoryId,
-      }
-      nw_getAllData(`/generalList/getAllList`, params)
-        .then((res) => {
-          console.log('获取未认领的返回数据:', res.result.dataList)
-          this.loadClaimData = res.result.dataList
-          if (this.loadClaimData.length > 0) {
-            const claimPromises = [] // 用于存储所有认领任务的 Promise
-
-            for (var i = 0; i < this.loadClaimData.length; i++) {
-              this.loadClaimData[i].state = '待领取'
-
-              const projectAddress = this.loadClaimData[i].allData.main_payment.project_address
-
-              //通过用户的部门地址和项目的地址进行匹配来自动认领
-              if (this.userInfo.orgAddress.some((addr) => addr === projectAddress)) {
-                const promise = this.claimTask(this.loadClaimData[i])
-                claimPromises.push(promise)
-              }
-            }
-
-            // 等待所有认领任务完成后更新界面
-            Promise.all(claimPromises).then(() => {})
-          }
-        })
-        .catch((res) => {
-          console.log(res)
-        })
-    },
-    claimTask(reocrd) {
-      return nw_getAction(`/task/claimTask/` + reocrd.taskId)
-        .then((res) => {
-          if (res.result) {
-            console.log('认领成功', reocrd)
-            return true // 认领成功返回 true
-          } else {
-            console.error('认领失败')
-            return false // 认领失败返回 false
-          }
-        })
-        .catch((error) => {
-          console.log(error)
-          return false // 出现错误时返回 false
-        })
-    },
     //处理该任务
     announceTask(record) {
       console.log('record1', record)
