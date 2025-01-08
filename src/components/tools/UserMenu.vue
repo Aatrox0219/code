@@ -44,7 +44,7 @@
     </component>
     <div style="position: relative; display: inline-block; margin-right: 30px;">
       <span style="font-size: 16px;">保证金存缴待处理</span>
-      <a-badge :count="depositTotal" :style="badgeStyle" />
+      <a-badge :count="depositTotal" :style="badgeStyle" show-zero/>
     </div>
     <a-divider type="vertical" />
     <a-dropdown>
