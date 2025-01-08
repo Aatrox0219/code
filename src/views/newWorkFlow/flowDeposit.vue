@@ -2,8 +2,12 @@
   <div>
     <div>
       <a-card :bordered="false">
-        <a-button v-if="['施工企业', '管理员'].some((role) => userInfo.roleNames.includes(role))" type="primary"
-          @click="startFixedProcess(true)" style="margin-right: 10px">
+        <a-button
+          v-if="['施工企业', '管理员'].some((role) => userInfo.roleNames.includes(role))"
+          type="primary"
+          @click="startFixedProcess(true)"
+          style="margin-right: 10px"
+        >
           保证金存缴申请
         </a-button>
         <div id="formContent" style="margin-top: -10px">
@@ -15,8 +19,11 @@
                     <div class="card-table">
                       <a-card :bordered="false">
                         <div class="table-container">
-                          <commonTable ref="commonTableRef1" :configurationParameter="configurationParameter1"
-                            :seeHistory="seeHistory">
+                          <commonTable
+                            ref="commonTableRef1"
+                            :configurationParameter="configurationParameter1"
+                            :seeHistory="seeHistory"
+                          >
                           </commonTable>
                         </div>
                       </a-card>
@@ -33,8 +40,12 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <commonTable ref="commonTableRef2" :configurationParameter="configurationParameter2"
-                            :seeHistory="seeHistory" :announceTask="announceTask">
+                          <commonTable
+                            ref="commonTableRef2"
+                            :configurationParameter="configurationParameter2"
+                            :seeHistory="seeHistory"
+                            :announceTask="announceTask"
+                          >
                           </commonTable>
                         </div>
                       </a-card>
@@ -81,6 +92,8 @@ import { USER_NAME, USER_INFO } from '@/store/mutation-types'
 import Vue from 'vue'
 import { mapState } from 'vuex'
 import { taskStateMapping } from './taskStateMapping'
+import { depositList, depositCategoryId } from '@/api/processId'
+import { AutoClaim } from '@/api/userList'
 import commonTable from './modules/commonTable.vue'
 
 export default {
@@ -88,10 +101,11 @@ export default {
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory, commonTable },
   data() {
     return {
+      intervalIds: [], // 存储多个定时器ID
       configurationParameter1: {
         inquire: {
-          categoryId: '1847453055727501313', //流程分类
-          processIdList: ['5', '7', '9', '11'], //存缴
+          categoryId: depositCategoryId, //流程分类
+          processIdList: depositList, //存缴
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -167,8 +181,8 @@ export default {
       },
       configurationParameter2: {
         inquire: {
-          categoryId: '1847453055727501313', //流程分类
-          processIdList: ['5', '7', '9', '11'], //存缴
+          categoryId: depositCategoryId, //流程分类
+          processIdList: depositList, //存缴
           applyState: ['pending'], //想要查询的流程类型
         },
         columnsData: [
@@ -264,6 +278,7 @@ export default {
   mounted() {
     this.startFixedProcess(false)
     this.getData()
+    this.timerOpen()
     console.log('当前用户信息', this.userInfo)
   },
   methods: {
@@ -374,17 +389,17 @@ export default {
       if (commonTableInstance2) {
         commonTableInstance2.getAllList()
       }
-      this.getLoadClaim() // 获取未认领流程
+      // this.getLoadClaim() // 获取未认领流程
     },
 
     //得到所有未认领的流程
     getLoadClaim() {
       let params = {
-        processIdList: ['5', '7', '9', '11'],
+        processIdList: depositList,
         applyState: ['claim'],
         pageSize: 1000,
         pageNum: 1,
-        categoryId: '1847453055727501313',
+        categoryId: depositCategoryId,
       }
       nw_getAllData(`/generalList/getAllList`, params)
         .then((res) => {
@@ -406,7 +421,7 @@ export default {
             }
 
             // 等待所有认领任务完成后更新界面
-            Promise.all(claimPromises).then(() => { })
+            Promise.all(claimPromises).then(() => {})
           }
         })
         .catch((res) => {
@@ -438,6 +453,23 @@ export default {
         this.$refs.approveModel.announceTask(record)
       }
     },
+    timerOpen() {
+      // 自动认领该用户的保证金存缴的流程
+      AutoClaim(depositList, depositCategoryId)
+      // 每5分钟调用一次 AutoClaim
+      const intervalId1 = setInterval(() => {
+        AutoClaim(depositList)
+      }, 5 * 60 * 1000)
+      console.log('开启保证金存缴的自动认领');
+      this.intervalIds.push(intervalId1)
+    },
+  },
+  beforeDestroy() {
+    // 清除所有定时器
+    this.intervalIds.forEach((intervalId) => {
+      clearInterval(intervalId)
+      console.log('清除定时器')
+    })
   },
 }
 </script>
