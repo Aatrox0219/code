@@ -242,7 +242,11 @@ export default {
       return newFileList
     },
     fileNameToName(fileList) {
+      console.log('fileList 的类型是:', typeof fileList);
       //将文件列表fileName->name dbpath->url
+      if (typeof fileList === 'string') {
+        fileList = JSON.parse(fileList)
+      }
       var newFileList = []
       for (let i = 0; i < fileList.length; i++) {
         let fileListItem = {}

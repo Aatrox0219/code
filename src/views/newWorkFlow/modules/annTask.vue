@@ -172,12 +172,12 @@ export default {
                     .then((res) => {
                       userData = res.result
                       console.log('userData', userData)
-                      const licenseCopy = [
+                      const licenseCopy = JSON.stringify([
                         {
                           fileName: userData.licenseCopy.split('/').pop(),
                           dbpath: userData.licenseCopy,
                         },
-                      ]
+                      ])
                       console.log('图片地址开始上传')
                       //将公司名称默认填写为当前登录用户的公司名称
                       this.$refs.generateForm.setData({
