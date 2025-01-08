@@ -103,11 +103,12 @@ import DepartSelect from './DepartSelect'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import { mixinDevice } from '@/utils/mixin.js'
 import { getFileAccessHttpUrl, getAction } from '@/api/manage'
+import { USER_INFO } from '@/store/mutation-types'
 import Vue from 'vue'
 import { USER_ID } from '@/store/mutation-types'
 import { UI_CACHE_DB_DICT_DATA } from '@/store/mutation-types'
 import api from '@/api/index'
-import { getPendingTotal } from '@/api/userList'
+import { getPendingTotal, AutoClaim } from '@/api/userList'
 import { depositList, depositCategoryId } from '@/api/processId'
 
 export default {
@@ -158,6 +159,9 @@ export default {
       // 后台菜单
       permissionMenuList: (state) => state.user.permissionList,
     }),
+    getUserInfo() {
+      return Vue.ls.get(USER_INFO) || {}
+    },
     badgeStyle() {
       return {
         position: 'absolute',
@@ -193,8 +197,11 @@ export default {
         })
     },
     startInterval() {
+      AutoClaim(depositList, depositCategoryId, this.getUserInfo)   // 自动认领该用户的保证金存缴的流程
+      console.log('开启保证金存缴的自动认领');
       this.getTotal()
       this.intervalId = setInterval(() => {
+        AutoClaim(depositList, depositCategoryId)
         this.getTotal()
       }, 180000)
     },

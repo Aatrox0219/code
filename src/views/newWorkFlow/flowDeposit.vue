@@ -93,7 +93,6 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 import { taskStateMapping } from './taskStateMapping'
 import { depositList, depositCategoryId } from '@/api/processId'
-import { AutoClaim } from '@/api/userList'
 import commonTable from './modules/commonTable.vue'
 
 export default {
@@ -101,7 +100,6 @@ export default {
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory, commonTable },
   data() {
     return {
-      intervalId: null,
       configurationParameter1: {
         inquire: {
           categoryId: depositCategoryId, //流程分类
@@ -278,7 +276,6 @@ export default {
   mounted() {
     this.startFixedProcess(false)
     this.getData()
-    this.timerOpen()
     console.log('当前用户信息', this.userInfo)
   },
   methods: {
@@ -400,20 +397,6 @@ export default {
         this.$refs.approveModel.announceTask(record)
       }
     },
-    timerOpen() {
-      // 自动认领该用户的保证金存缴的流程
-      AutoClaim(depositList, depositCategoryId)
-      // 每5分钟调用一次 AutoClaim
-      this.intervalId = setInterval(() => {
-        AutoClaim(depositList)
-      }, 5 * 60 * 1000)
-      console.log('开启保证金存缴的自动认领');
-    },
-  },
-  beforeDestroy() {
-    // 清除所有定时器
-    clearInterval(this.intervalId)
-    console.log('关闭保证金存缴的自动认领');
   },
 }
 </script>
