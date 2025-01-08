@@ -132,7 +132,6 @@ export default {
       }
       try {
         const res = await nw_getAllData('generalList/getAllList', params)
-        console.log('接口返回数据：', res)
 
         // 过滤掉 allData 为空的脏数据
         const validDataList = res.result.dataList.filter((dataItem) => {

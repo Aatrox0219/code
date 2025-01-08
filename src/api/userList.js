@@ -139,3 +139,26 @@ export function AutoClaim(processIdList, categoryId) {
             console.log(res)
         })
 }
+
+//获取代办事项数量
+export function getPendingTotal(processIdList, categoryId) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            processIdList: processIdList,
+            applyState: ['pending'],
+            categoryId: categoryId,
+        }
+        nw_getAllData('generalList/getAllList', params)
+            .then((res) => {
+                const validDataList = res.result.dataList.filter((dataItem) => {
+                    return dataItem.allData && Object.keys(dataItem.allData).length > 0;
+                })
+                const total = validDataList.length;
+                resolve(total);
+            })
+            .catch((err) => {
+                console.log(err);
+                reject(err);
+            });
+    });
+}

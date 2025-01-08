@@ -42,15 +42,11 @@
         }}</a-select-option>
       </a-select>
     </component>
-    <!-- update-end author:sunjianlei date:20200219 for: 菜单搜索改为动态组件，在手机端呈现出弹出框 -->
-    <!-- update-end author:sunjianlei date:20191220 for: 解决全局样式冲突的问题 -->
-    <!-- update_end  author:zhaoxin date:20191129 for: 做头部菜单栏导航 -->
-    <!-- <span class="action">
-      <a class="logout_title" target="_blank" href="http://doc.jeecg.com">
-        <a-icon type="question-circle-o"></a-icon>
-      </a>
-    </span> -->
-    <!-- <header-notice class="action" /> -->
+    <div style="position: relative; display: inline-block; margin-right: 30px;">
+      <span style="font-size: 16px;">保证金存缴待处理</span>
+      <a-badge :count="depositTotal" :style="badgeStyle" />
+    </div>
+    <a-divider type="vertical" />
     <a-dropdown>
       <span class="action action-full ant-dropdown-link user-dropdown-menu">
         <!-- <a-avatar class="avatar" size="small" :src="getAvatar()" /> -->
@@ -111,12 +107,16 @@ import Vue from 'vue'
 import { USER_ID } from '@/store/mutation-types'
 import { UI_CACHE_DB_DICT_DATA } from '@/store/mutation-types'
 import api from '@/api/index'
+import { getPendingTotal } from '@/api/userList'
+import { depositList, depositCategoryId } from '@/api/processId'
 
 export default {
   name: 'UserMenu',
   mixins: [mixinDevice],
   data() {
     return {
+      depositTotal: 0,
+      intervalId: null,
       // update-begin author:sunjianlei date:20200219 for: 头部菜单搜索规范命名 --------------
       searchMenuOptions: [],
       searchMenuComp: 'span',
@@ -144,6 +144,7 @@ export default {
     this.searchMenuOptions = [...lists]
   },
   mounted() {
+    this.startInterval()
     //如果是单点登录模式
     if (process.env.VUE_APP_SSO == 'true') {
       let depart = this.userInfo().orgCode
@@ -157,6 +158,15 @@ export default {
       // 后台菜单
       permissionMenuList: (state) => state.user.permissionList,
     }),
+    badgeStyle() {
+      return {
+        position: 'absolute',
+        top: '5px',
+        right: '-10px',
+        // backgroundColor: '#f5222d',  // 红色背景
+        color: '#fff',
+      }
+    },
   },
   /* update_end author:zhaoxin date:20191129 for: 做头部菜单栏导航*/
   watch: {
@@ -171,6 +181,24 @@ export default {
     // update-end author:sunjianlei date:20200219 for: 菜单搜索改为动态组件，在手机端呈现出弹出框
   },
   methods: {
+    getTotal() {
+      // 获取保证金存缴代办事项总数
+      getPendingTotal(depositList, depositCategoryId)
+        .then((total) => {
+          this.depositTotal = total
+          console.log('depositTotal', this.depositTotal)
+        })
+        .catch((error) => {
+          console.error('获取代办事项总数失败:', error)
+        })
+    },
+    startInterval() {
+      this.getTotal()
+      this.intervalId = setInterval(() => {
+        this.getTotal()
+      }, 180000)
+    },
+
     /* update_begin author:zhaoxin date:20191129 for: 做头部菜单栏导航*/
     showClick() {
       this.searchMenuVisible = true
@@ -184,37 +212,6 @@ export default {
     getAvatar() {
       return getFileAccessHttpUrl(this.avatar())
     },
-    // handleLogout() {
-    //   console.log("123456")
-    //   const that = this
-
-    //   this.$confirm({
-    //     title: '提示',
-
-    //     content: '真的要注销登录吗 ?',
-
-    //     onOk() {
-    //       console.log("冲冲冲")
-    //       return that.Logout({}).then(() => {
-    //         // update-begin author:wangshuai date:20200601 for: 退出登录跳转登录页面
-    //         that.$router.push({ path: '/user/login' });
-    //         // update-end author:wangshuai date:20200601 for: 退出登录跳转登录页面
-    //         //window.location.reload()
-    //       }).catch(err => {
-    //         that.$message.error({
-    //           title: '错误',
-    //           description: err.message
-    //         })
-    //       })
-    //     },
-    //     onCancel() {
-    //       console.log("冲冲冲2")
-    //     },
-    //   }).catch((err) =>{
-    //     console.log('err')
-    //     console.log(err)
-    //   });
-    // },
     handleLogout() {
       const that = this
       this.$elementConfirm('真的要注销登录吗 ?', '提示', {
@@ -296,36 +293,10 @@ export default {
           console.log('刷新失败', e)
         })
     },
-
-    // 跳转到生态项目大屏
-    handleJumpEcologyBigScreen() {
-      //跳转到大屏
-      let usrobj = JSON.parse(localStorage.getItem('login_information'))
-      console.log('跳转生态大屏信息', usrobj)
-      //对rul参数加密
-      var encodeParams = window.btoa(window.encodeURIComponent('usrn=' + usrobj.username + '&pwd=' + usrobj.password)) //编码
-      // var decodeParams = window.decodeURIComponent(window.atob(encodeParams))//解码。
-      let bs_url = 'http://localhost:9528/#/index?' + encodeParams
-      console.log('路由信息', bs_url)
-      window.open(bs_url, 'AJ-Report-' + usrobj.username)
-    },
-
-    // 跳转到标识解析大屏
-    /*update_end author:liushaoqian date:20200507 for: 刷新缓存*/
-    handleJump() {
-      window.open(api.server_url+'/displayserver/')
-      console.log('name', Vue.ls.get(USER_ID))
-      window.localStorage.setItem(
-        'userInfo1',
-        JSON.stringify({
-          userId: Vue.ls.get(USER_ID),
-        })
-      )
-    },
-    handleJumpGateway() {
-      // window.location.href = api.server_url
-      window.open(api.server_url)
-    },
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId)
+    console.log('关闭获取代办事项数量的定时器');
   },
 }
 </script>

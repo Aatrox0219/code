@@ -101,7 +101,7 @@ export default {
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory, commonTable },
   data() {
     return {
-      intervalIds: [], // 存储多个定时器ID
+      intervalId: null,
       configurationParameter1: {
         inquire: {
           categoryId: depositCategoryId, //流程分类
@@ -404,19 +404,16 @@ export default {
       // 自动认领该用户的保证金存缴的流程
       AutoClaim(depositList, depositCategoryId)
       // 每5分钟调用一次 AutoClaim
-      const intervalId1 = setInterval(() => {
+      this.intervalId = setInterval(() => {
         AutoClaim(depositList)
       }, 5 * 60 * 1000)
       console.log('开启保证金存缴的自动认领');
-      this.intervalIds.push(intervalId1)
     },
   },
   beforeDestroy() {
     // 清除所有定时器
-    this.intervalIds.forEach((intervalId) => {
-      clearInterval(intervalId)
-      console.log('清除定时器')
-    })
+    clearInterval(this.intervalId)
+    console.log('关闭保证金存缴的自动认领');
   },
 }
 </script>
