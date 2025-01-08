@@ -67,7 +67,7 @@ const asyncRouterMap = [
     name: 'index',
     component: BasicLayout,
     meta: { title: '首页' },
-    redirect: '/dashboard/analysis',
+    redirect: '/newWorkFlow/flowDeposit',
     children: [
       {
         path: '/dashboard',
@@ -77,9 +77,9 @@ const asyncRouterMap = [
         meta: {title: '仪表盘', icon: 'dashboard', permission: ['dashboard']},
         children: [
           {
-            path: '/dashboard/analysis',
+            path: '/newWorkFlow/flowDeposit',
             name: 'Analysis',
-            component: () => import('@/views/dashboard/Analysis'),
+            component: () => import('@/views/newWorkFlow/flowDeposit'),
             meta: {title: '分析页', permission: ['dashboard']}
           },
           {

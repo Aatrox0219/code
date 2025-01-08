@@ -525,7 +525,7 @@ export default {
           const roleNames = userInfo.roleNames || {}
           // 假设通过判断角色名称里是否包含特定字符串来确定是否为施工企业角色，这里示例字符串为"construction_enterprise"，需根据实际调整
           const isCompany = roleNames.some((roleName) => roleName.includes('施工企业'))
-          const targetPath = isCompany ? '/newWorkFlow/flowDeposit' : '/dashboard/analysis'
+          const targetPath = isCompany ? '/newWorkFlow/flowDeposit' : '/newWorkFlow/flowDeposit'
           this.$router.push({ path: targetPath }).catch(() => {
             console.log('登录跳转首页出错')
           })

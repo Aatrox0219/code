@@ -1,5 +1,5 @@
 <template>
-  <global-layout @dynamicRouterShow="dynamicRouterShow" @clearPageList="closeOthers('/dashboard/analysis')">
+  <global-layout @dynamicRouterShow="dynamicRouterShow" @clearPageList="closeOthers('/newWorkFlow/flowDeposit')">
     <!-- update-begin- author:sunjianlei --- date:20191009 --- for: 提升右键菜单的层级 -->
     <contextmenu :itemList="menuItemList" :visible.sync="menuVisible" style="z-index: 9999" @select="onMenuSelect" />
     <!-- update-end- author:sunjianlei --- date:20191009 --- for: 提升右键菜单的层级 -->
@@ -42,7 +42,7 @@ import GlobalLayout from '@/components/page/GlobalLayout'
 import Contextmenu from '@/components/menu/Contextmenu'
 import { mixin, mixinDevice } from '@/utils/mixin.js'
 import { triggerWindowResizeEvent } from '@/utils/util'
-const indexKey = '/dashboard/analysis'
+const indexKey = '/newWorkFlow/flowDeposit'
 import Vue from 'vue'
 import { CACHE_INCLUDED_ROUTES } from '@/store/mutation-types'
 
