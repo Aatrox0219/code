@@ -42,9 +42,9 @@
         }}</a-select-option>
       </a-select>
     </component>
-    <div style="position: relative; display: inline-block; margin-right: 30px;">
-      <span style="font-size: 16px;">保证金存缴待处理</span>
-      <a-badge :count="depositTotal" :style="badgeStyle" show-zero/>
+    <div style="position: relative; display: inline-block; margin-right: 30px">
+      <span style="font-size: 16px">保证金存缴待处理</span>
+      <a-badge :count="depositTotal" :style="badgeStyle" show-zero />
     </div>
     <a-divider type="vertical" />
     <a-dropdown>
@@ -185,6 +185,7 @@ export default {
     // update-end author:sunjianlei date:20200219 for: 菜单搜索改为动态组件，在手机端呈现出弹出框
   },
   methods: {
+    // 获取所有办事项的总数
     getTotal() {
       // 获取保证金存缴代办事项总数
       getPendingTotal(depositList, depositCategoryId)
@@ -196,12 +197,14 @@ export default {
           console.error('获取代办事项总数失败:', error)
         })
     },
-    startInterval() {
-      AutoClaim(depositList, depositCategoryId, this.getUserInfo)   // 自动认领该用户的保证金存缴的流程
-      console.log('开启保证金存缴的自动认领');
+
+    // 开启定时器
+    async startInterval() {
+      await AutoClaim(depositList, depositCategoryId, this.getUserInfo) // 自动认领该用户的保证金存缴的流程
+      console.log('开启保证金存缴的自动认领')
       this.getTotal()
-      this.intervalId = setInterval(() => {
-        AutoClaim(depositList, depositCategoryId)
+      this.intervalId = setInterval(async () => {
+        await AutoClaim(depositList, depositCategoryId)
         this.getTotal()
       }, 180000)
     },
@@ -303,7 +306,7 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.intervalId)
-    console.log('关闭获取代办事项数量的定时器');
+    console.log('关闭获取代办事项数量的定时器')
   },
 }
 </script>
