@@ -123,7 +123,7 @@ export default {
         })
     },
     commitToDatabase(commitdata) {
-      console.log('commitdata', commitdata);
+      console.log('commitdata', commitdata)
       var _this = this
       var onlineId = this.dataForm.config.tableId
       let datajson = {}
@@ -154,6 +154,14 @@ export default {
             array.push(datajson1)
           }
           datajson[this.dataForm.list[i].schedule.toString()] = array
+        } else if (this.dataForm.list[i].type == 'fileupload') {
+          let model = this.dataForm.list[i].model
+          let tableCol = this.dataForm.list[i].tableCol
+          if (commitdata[model] && commitdata[model].length > 0) {
+            datajson[tableCol.toString()] = JSON.stringify(commitdata[model]);
+          } else {
+            datajson[tableCol.toString()] = '[]';
+          }
         } else {
           let model = this.dataForm.list[i].model
           let tableCol = this.dataForm.list[i].tableCol
@@ -163,7 +171,6 @@ export default {
       o_postAction('/cgform/api/form/' + onlineId, datajson)
         .then((res) => {
           this.completeTask(onlineId, res.result)
-          // this.saveMarginData(onlineId, res.result)
         })
         .catch((err) => {
           console.log(err)
@@ -175,7 +182,7 @@ export default {
         taskId: this.taskId,
         onlineTableId: onlineId,
         onlineDataId: dataId,
-        depositWay : this.processName,
+        depositWay: this.processName,
         isWithdraw: 1,
       })
         .then((res) => {
@@ -189,26 +196,6 @@ export default {
         })
     },
 
-    //保存数据的接口
-    // saveMarginData(onlineId, dataId) {
-    //   let params = {
-    //     taskId: this.taskId,
-    //     onlineTableId: onlineId,
-    //     onlineDataId: dataId,
-        
-    //   }
-    //   nw_postAction1('/margin/saveMarginData', params)
-    //     .then((res) => {
-    //       console.log('保存数据的接口返回值', res)
-    //       let mainId = res.result.mainId
-    //       this.$nextTick(() => {
-    //         this.completeTask(onlineId, dataId, mainId)
-    //       })
-    //     })
-    //     .catch((err) => {
-    //       console.log(err)
-    //     })
-    // },
   },
   mounted() {
     this.getForm()
