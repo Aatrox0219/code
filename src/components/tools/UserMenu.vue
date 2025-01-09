@@ -146,6 +146,12 @@ export default {
   },
   mounted() {
     this.startInterval()
+
+    //使用事件总线监听事件
+    this.$bus.$on('callGetTotal', () => {
+      this.getTotal()
+    })
+
     //如果是单点登录模式
     if (process.env.VUE_APP_SSO == 'true') {
       let depart = this.userInfo().orgCode
@@ -307,6 +313,8 @@ export default {
   beforeDestroy() {
     clearInterval(this.intervalId)
     console.log('关闭获取代办事项数量的定时器')
+    this.$bus.$off('callGetTotal');
+    console.log('关闭事件总线监听');
   },
 }
 </script>

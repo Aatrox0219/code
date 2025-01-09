@@ -149,6 +149,7 @@ export default {
           if (res.result.result) {
             _this.$message.success('通过成功')
             _this.$emit('close-approveTask')
+            this.$bus.$emit('callGetTotal');
           } else {
             _this.$message.error('通过失败')
           }

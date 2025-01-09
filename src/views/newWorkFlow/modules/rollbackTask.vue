@@ -189,6 +189,7 @@ export default {
           console.log(res)
           _this.$message.success('提交成功')
           _this.$emit('close-approveRollTask')
+          this.$bus.$emit('callGetTotal');
         })
         .catch((err) => {
           _this.$message.error('提交失败')

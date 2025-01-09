@@ -70,17 +70,27 @@ export function editQYUser(data) {
 }
 
 
-//图片预览接口
-export function previewPicture(url) {
+//下载文书接口
+export function downloadDocument(record) {
+    console.log('下载文书参数:', record);
     return axios({
-        url: `/file/static${url}`,
+        url: `/file/static${record.export_path}`,
+        // url: '/file/static/opt/export/pdfs/1876948644514078721-output.pdf',
         method: 'get',
         baseURL: api.server_url + api.global_course_baseURL,
-        data: data,
-        // headers: {
-        //   'userId': Vue.ls.get(USER_ID),
-        // },
-    })
+        responseType: 'blob',
+    }).then(response => {
+        // 创建一个下载链接
+        const blob = response.data;
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = '文件名.pdf';  // 设置下载文件名
+        document.body.appendChild(link); // 将链接添加到DOM中
+        link.click();  // 模拟点击下载
+        document.body.removeChild(link);  // 下载完成后移除链接
+    }).catch(error => {
+        console.error('文件下载失败:', error);
+    });
 }
 
 //认领接口
@@ -103,41 +113,40 @@ function claimTask(record) {
 
 
 //登录用户自动认领流程接口
-export function AutoClaim(processIdList, categoryId, userInfo) {
+export async function AutoClaim(processIdList, categoryId, userInfo) {
     let params = {
         processIdList: processIdList,
         applyState: ['claim'],
         pageSize: 1000,
         pageNum: 1,
         categoryId: categoryId,
-    }
-    nw_getAllData(`/generalList/getAllList`, params)
-        .then((res) => {
-            console.log('获取未认领的返回数据:', res.result.dataList)
-            const loadClaimData = res.result.dataList
-            if (loadClaimData.length > 0) {
-                const claimPromises = [] // 用于存储所有认领任务的 Promise
+    };
 
-                for (var i = 0; i < loadClaimData.length; i++) {
-                    loadClaimData[i].state = '待领取'
+    try {
+        const res = await nw_getAllData(`/generalList/getAllList`, params);
+        console.log('获取未认领的返回数据:', res.result.dataList);
+        const loadClaimData = res.result.dataList;
 
-                    const projectAddress = loadClaimData[i].allData.main_payment.project_address
-                    console.log('项目地址:', userInfo);
-                    //通过用户的部门地址和项目的地址进行匹配来自动认领
-                    if (userInfo.orgAddress.some((addr) => addr === projectAddress)) {
-                        const promise = claimTask(loadClaimData[i])
-                        claimPromises.push(promise)
-                    }
+        if (loadClaimData.length > 0) {
+            const claimPromises = []; // 用于存储所有认领任务的 Promise
+            for (let i = 0; i < loadClaimData.length; i++) {
+                const projectAddress = loadClaimData[i].allData.main_payment.project_address;
+                console.log('项目地址:', userInfo);
+                // 通过用户的部门地址和项目的地址进行匹配来自动认领
+                if (userInfo.orgAddress.some((addr) => addr === projectAddress)) {
+                    const promise = claimTask(loadClaimData[i]);
+                    claimPromises.push(promise);
                 }
-
-                // 等待所有认领任务完成后更新界面
-                Promise.all(claimPromises).then(() => { })
             }
-        })
-        .catch((res) => {
-            console.log(res)
-        })
+            // 等待所有认领任务完成后再继续
+            await Promise.all(claimPromises);
+            console.log('所有认领任务完成');
+        }
+    } catch (error) {
+        console.error('AutoClaim 失败:', error);
+    }
 }
+
 
 //获取代办事项数量
 export function getPendingTotal(processIdList, categoryId) {
@@ -154,8 +163,7 @@ export function getPendingTotal(processIdList, categoryId) {
                 })
                 const total = validDataList.length;
                 resolve(total);
-            })
-            .catch((err) => {
+            }).catch((err) => {
                 console.log(err);
                 reject(err);
             });

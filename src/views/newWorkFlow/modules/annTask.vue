@@ -282,6 +282,7 @@ export default {
             _this.$message.success('通过成功')
             this.$nextTick(() => {
               this.getData()
+              this.$bus.$emit('callGetTotal');
             })
           } else {
             _this.$message.error('通过失败')
