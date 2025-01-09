@@ -23,6 +23,7 @@
                             ref="commonTableRef1"
                             :configurationParameter="configurationParameter1"
                             :seeHistory="seeHistory"
+                            :download="download"
                           >
                           </commonTable>
                         </div>
@@ -94,6 +95,7 @@ import { mapState } from 'vuex'
 import { taskStateMapping } from './taskStateMapping'
 import { depositList, depositCategoryId } from '@/api/processId'
 import commonTable from './modules/commonTable.vue'
+import { downloadDocument } from '@/api/userList'
 
 export default {
   name: 'flowDeposit',
@@ -167,6 +169,16 @@ export default {
             dataIndex: 'createDate',
             dataLocation: 'allData.main_payment.create_time',
             show: true,
+          },
+          {
+            dataIndex: 'is_export',
+            dataLocation: 'allData.main_payment.is_export',
+            show: false,
+          },
+          {
+            dataIndex: 'export_path',
+            dataLocation: 'allData.main_payment.export_path',
+            show: false,
           },
           {
             title: '详情',
@@ -309,6 +321,10 @@ export default {
           console.log(error)
           this.$message.error('请求失败')
         })
+    },
+    download(record) {
+      console.log('downloadrecord', record);
+      downloadDocument(record)
     },
     handleOk() {
       this.isModalVisible = false // 点击确定后隐藏弹窗

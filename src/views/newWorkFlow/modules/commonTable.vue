@@ -47,6 +47,8 @@
       </span>
       <span slot="flowHistoryaction" slot-scope="text, record, index">
         <a @click="seeHistory(record)">历史</a>
+        <a-divider v-if="record.is_export === 'true'" type="vertical" />
+        <a v-if="record.is_export === 'true'" @click="download(record)">下载文书</a>
       </span>
       <span slot="flowUseMoneycolumns" slot-scope="text, record, index">
         <a @click="startProcess(record)">申请使用</a>
@@ -93,6 +95,10 @@ export default {
       default: () => { },
     },
     startFixedProcess: {
+      type: Function,
+      default: () => { },
+    },
+    download: {
       type: Function,
       default: () => { },
     },
