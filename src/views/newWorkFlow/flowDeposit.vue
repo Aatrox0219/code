@@ -284,7 +284,13 @@ export default {
       return Vue.ls.get(USER_INFO) || {}
     },
   },
-
+  // created() {
+  //   // 获取路由的查询参数，并根据参数设置选中的标签页
+  //   const tab = this.$route.query.tab;
+  //   if (tab !== undefined) {
+  //     this.taskTab.tabKey = tab; // 如果传入了tab参数，设置activeTab
+  //   }
+  // },
   mounted() {
     this.startFixedProcess(false)
     this.getData()
@@ -380,15 +386,7 @@ export default {
     seeHistory(record) {
       this.$refs.flowHistory.openModal(record)
     },
-    changeTab1() {
-      // this.getData()
-      // 根据 taskTab.tabKey 的变化处理子标签的状态
-      if (this.taskTab.tabKey === '1') {
-        this.subTaskTab.tabKey = '1' // 切换到待办事项下的默认状态
-      } else if (this.taskTab.tabKey === '2') {
-        this.subHistoryTab.tabKey = '5' // 切换到历史下的进行中
-      }
-    },
+    
     // 更新表格数据
     getData() {
       // 先获取子组件实例

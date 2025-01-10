@@ -43,7 +43,12 @@
       </a-select>
     </component>
     <div style="position: relative; display: inline-block; margin-right: 30px">
-      <span style="font-size: 16px">保证金存缴待处理</span>
+      <!-- <router-link
+        :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }"
+        style="font-size: 16px"
+        >保证金存缴待处理</router-link
+      > -->
+      <router-link to="/newWorkFlow/flowDeposit" style="font-size: 16px; color: #fff;">保证金存缴待处理</router-link>
       <a-badge :count="depositTotal" :style="badgeStyle" show-zero />
     </div>
     <a-divider type="vertical" />
@@ -313,8 +318,8 @@ export default {
   beforeDestroy() {
     clearInterval(this.intervalId)
     console.log('关闭获取代办事项数量的定时器')
-    this.$bus.$off('callGetTotal');
-    console.log('关闭事件总线监听');
+    this.$bus.$off('callGetTotal')
+    console.log('关闭事件总线监听')
   },
 }
 </script>
