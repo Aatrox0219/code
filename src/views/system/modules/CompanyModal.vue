@@ -84,9 +84,9 @@
           />
         </a-form-item>
 
-        <a-form-item label="电话" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <a-form-item label="手机号码" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input
-            placeholder="请输入电话"
+            placeholder="请输入手机号码"
             :disabled="isDisabledAuth('user:form:phone')"
             v-decorator="['phone', validatorRules.phone]"
           />
@@ -242,7 +242,7 @@ export default {
           ],
         },
         representative: { rules: [{ required: true, message: '请输入法定代表人!' }] },
-        phone: { rules: [{ validator: this.validatePhone }] },
+        phone: { rules: [{ required: true, message: '请输入手机号码!' },{ validator: this.validatePhone }] },
         fax: { rules: [{ pattern: /^(?:\d{3,4}-)?\d{7,8}(?:-\d{1,6})?$/, message: '请输入正确传真!' }] },
         licenseno: {
           rules: [
@@ -359,13 +359,11 @@ export default {
       this.departId = []
       this.departIdShow = false
       this.currentTenant = []
-      this.isEdit = false
     },
     async add() {
       this.picUrl = ''
       await this.refresh()
       await this.edit({ activitiSync: '1' })
-      // this.isEdit = true
     },
     edit(record) {
       console.log('record', record)
