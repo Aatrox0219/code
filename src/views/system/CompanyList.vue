@@ -1,26 +1,20 @@
 <template>
   <a-card :bordered="false">
     <!-- 查询区域 -->
-    <!-- <div class="table-page-search-wrapper">
+    <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
           <a-col :md="6" :sm="12">
-            <a-form-item label="账号">
-              <j-input placeholder="输入账号模糊查询" v-model="queryParam.username"></j-input>
+            <a-form-item label="企业名称/通信地址">
+              <a-input placeholder="输入企业名称/通信地址模糊查询" v-model="queryParam.postalAddressorcompanyName"></a-input>
             </a-form-item>
           </a-col>
 
           <a-col :md="6" :sm="12">
             <a-form-item label="注册时间">
-              <a-date-picker
-                v-model="queryParam.registerTimeRange"
-                :placeholder="['输入注册时间']"
-                :disabled-date="disabledDate"
-                format="YYYY-MM-DD"
-                style="width: 100%"
-                @change="handleRegisterTimeChange"
-              >
-              </a-date-picker>
+              <a-range-picker style="width: 250px" format="YYYY-MM-DD HH:mm:ss" :placeholder="['开始时间', '结束时间']"
+                @change="onChange" :value="dateStrings" :showTime="true">
+              </a-range-picker>
             </a-form-item>
           </a-col>
 
@@ -32,7 +26,7 @@
           </a-col>
         </a-row>
       </a-form>
-    </div> -->
+    </div>
 
     <!-- 操作按钮区域 -->
     <div class="table-operator" style="border-top: 5px">
@@ -65,24 +59,14 @@
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px">
         <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a style="font-weight: 600">{{
           selectedRowKeys.length
-        }}</a
-        >项&nbsp;&nbsp;
+        }}</a>项&nbsp;&nbsp;
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
-      <a-table
-        ref="table"
-        bordered
-        size="middle"
-        rowKey="id"
-        :columns="columns"
-        :dataSource="dataSource"
-        :pagination="ipagination"
-        :loading="loading"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        @change="handleTableChange"
-        :scroll="{ x: 1000 }"
-      >
+      <a-table ref="table" bordered size="middle" rowKey="id" :columns="columns" :dataSource="dataSource"
+        :pagination="ipagination" :loading="loading"
+        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" @change="handleTableChange"
+        :scroll="{ x: 1000 }">
         <template slot="avatarslot" slot-scope="text, record, index">
           <div class="anty-img-wrap">
             <a-avatar shape="square" :src="getAvatarView(record.avatar)" icon="user" />
@@ -164,7 +148,12 @@ export default {
   data() {
     return {
       description: '这是施工企业管理页面',
-      queryParam: {},
+      queryParam: {
+        postalAddressorcompanyName: '',
+        startTime: '',
+        endTime: ''
+      },
+      dateStrings: [],
       recycleBinVisible: false,
       columns: [
         {
@@ -278,6 +267,12 @@ export default {
     // }
   },
   methods: {
+    onChange(dates, dateStrings) {
+      this.dateStrings = dateStrings
+      console.log('From: ', dateStrings[0], ', to: ', dateStrings[1])
+      this.queryParam.startTime = dateStrings[0] || ''
+      this.queryParam.endTime = dateStrings[1] || ''
+    },
     getAvatarView: function (avatar) {
       return getFileAccessHttpUrl(avatar)
     },
