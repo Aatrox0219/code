@@ -1,26 +1,40 @@
 <template>
   <a-card :bordered="false">
     <!-- 查询区域 -->
-    <!-- <div class="table-page-search-wrapper">
+    <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
-          <a-col :md="6" :sm="12">
-            <a-form-item label="账号">
-              <j-input placeholder="输入账号模糊查询" v-model="queryParam.username"></j-input>
-            </a-form-item>
-          </a-col>
 
           <a-col :md="6" :sm="8">
-            <a-form-item label="性别">
-              <a-select v-model="queryParam.sex" placeholder="请选择性别">
-                <a-select-option value="">请选择</a-select-option>
-                <a-select-option value="1">男性</a-select-option>
-                <a-select-option value="2">女性</a-select-option>
+            <a-form-item label="角色">
+              <a-select v-model="queryParam.roleIds" mode="multiple" placeholder="请选择角色">
+                <a-select-option value="1872566080680017921">承办人员</a-select-option>
+                <a-select-option value="1872566115782148097">业务分管</a-select-option>
+                <a-select-option value="1872566152285175809">人社分管</a-select-option>
+                <a-select-option value="1876096735837732866">人社局管理员</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
 
-          <template v-if="toggleSearchStatus">
+          <a-col :md="6" :sm="8">
+            <a-form-item label="部门">
+              <a-select v-model="queryParam.departName" placeholder="请选择部门">
+                <a-select-option value="黄州区人社局">黄州区</a-select-option>
+                <a-select-option value="团风县人社局">团风县</a-select-option>
+                <a-select-option value="红安县人社局">红安县</a-select-option>
+                <a-select-option value="罗田县人社局">罗田县</a-select-option>
+                <a-select-option value="英山县人社局">英山县</a-select-option>
+                <a-select-option value="浠水县人社局">浠水县</a-select-option>
+                <a-select-option value="蕲春县人社局">蕲春县</a-select-option>
+                <a-select-option value="黄梅县人社局">黄梅县</a-select-option>
+                <a-select-option value="龙感湖管理区人社局">龙感湖管理区</a-select-option>
+                <a-select-option value="麻城市人社局">麻城市</a-select-option>
+                <a-select-option value="武穴市人社局">武穴市</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+
+          <!-- <template v-if="toggleSearchStatus">
             <a-col :md="6" :sm="8">
               <a-form-item label="真实名字">
                 <a-input placeholder="请输入真实名字" v-model="queryParam.realname"></a-input>
@@ -42,21 +56,17 @@
                 </a-select>
               </a-form-item>
             </a-col>
-          </template>
+          </template> -->
 
           <a-col :md="6" :sm="8">
             <span style="float: left; overflow: hidden" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-              <a @click="handleToggleSearch" style="margin-left: 8px">
-                {{ toggleSearchStatus ? '收起' : '展开' }}
-                <a-icon :type="toggleSearchStatus ? 'up' : 'down'" />
-              </a>
             </span>
           </a-col>
         </a-row>
       </a-form>
-    </div> -->
+    </div>
 
     <!-- 操作按钮区域 -->
     <div class="table-operator" style="border-top: 5px">
@@ -101,23 +111,13 @@
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px">
         <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a style="font-weight: 600">{{
           selectedRowKeys.length
-        }}</a
-        >项&nbsp;&nbsp;
+        }}</a>项&nbsp;&nbsp;
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
-      <a-table
-        ref="table"
-        bordered
-        size="middle"
-        rowKey="id"
-        :columns="columns"
-        :dataSource="dataSource"
-        :pagination="ipagination"
-        :loading="loading"
-        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        @change="handleTableChange"
-      >
+      <a-table ref="table" bordered size="middle" rowKey="id" :columns="columns" :dataSource="dataSource"
+        :pagination="ipagination" :loading="loading"
+        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" @change="handleTableChange">
         <template slot="avatarslot" slot-scope="text, record, index">
           <div class="anty-img-wrap">
             <a-avatar shape="square" :src="getAvatarView(record.avatar)" icon="user" />
@@ -169,8 +169,8 @@
     <user-recycle-bin-modal :visible.sync="recycleBinVisible" @ok="modalFormOk" />
   </a-card>
 </template>
-  
-  <script>
+
+<script>
 import UserModal from './modules/UserModal'
 import PasswordModal from './modules/PasswordModal'
 import { putAction, getFileAccessHttpUrl } from '@/api/manage'
@@ -180,6 +180,7 @@ import SysUserAgentModal from './modules/SysUserAgentModal'
 import JInput from '@/components/jeecg/JInput'
 import UserRecycleBinModal from './modules/UserRecycleBinModal'
 import JSuperQuery from '@/components/jeecg/JSuperQuery'
+import { getAction } from '@/api/manage'
 
 export default {
   name: 'UserList',
@@ -195,7 +196,10 @@ export default {
   data() {
     return {
       description: '这是用户管理页面',
-      queryParam: {},
+      queryParam: {
+        roleIds: [],
+        departName: undefined
+      },
       recycleBinVisible: false,
       columns: [
         /*{
@@ -209,14 +213,14 @@ export default {
               }
             },*/
         {
-          title: '用户账号',
+          title: '员工账号',
           align: 'center',
           dataIndex: 'username',
           width: 120,
           sorter: true,
         },
         {
-          title: '用户姓名',
+          title: '员工姓名',
           align: 'center',
           width: 100,
           dataIndex: 'realname',
@@ -252,7 +256,7 @@ export default {
           title: '部门',
           align: 'center',
           width: 180,
-          dataIndex: 'orgCodeTxt',
+          dataIndex: 'departName',
         },
         // {
         //   title: '负责部门',
@@ -364,9 +368,28 @@ export default {
     handleChangePassword(username) {
       this.$refs.passwordmodal.show(username)
     },
+    // fetchAllRoles() {
+    //   const queryall = (params) => getAction("/sys/role/queryall", params);
+    //   queryall({})
+    //     .then(response => {
+    //       const roles = response.result; // 从response的result属性获取角色数据数组
+    //       if (roles && Array.isArray(roles)) {
+    //         this.roleOptions = roles.map(role => ({
+    //           id: role.id,
+    //           name: role.roleName // 使用roleName字段作为下拉框显示的角色名称
+    //         }));
+    //       } else {
+    //         console.warn('接口返回角色数据为空或者格式不正确');
+    //         this.roleOptions = [];
+    //       }
+    //     })
+    //     .catch(error => {
+    //       console.error('获取角色列表失败', error);
+    //     });
+    // }
   },
 }
 </script>
-  <style scoped>
+<style scoped>
 @import '~@assets/less/common.less';
 </style>

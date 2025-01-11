@@ -63,12 +63,17 @@ export const JeecgListMixinQiYe = {
     }
   },
   methods: {
-    loadData() {
+    loadData(pageNo, searchobj, ischildtable, isonlineUrl) {
       this.loading = true
       let data = {
-        pageNo: this.ipagination.current,
+        pageNo: pageNo || this.ipagination.current,
         pageSize: this.ipagination.pageSize,
+        postalAddressorcompanyName: this.queryParam.postalAddressorcompanyName,
+        startTime: this.queryParam.startTime,
+        endTime: this.queryParam.endTime,
+        ...searchobj, // 其余查询条件
       }
+      console.log('请求参数:', data);
       getQYUser(data).then((res) => {
         this.dataSource = res.result.records
         this.ipagination.total = res.result.total
@@ -189,7 +194,7 @@ export const JeecgListMixinQiYe = {
       console.log('username', isonlineUrl)
       console.log('username', searchobj)
       console.log('username', ischildtable)
-      console.log('username', this.queryParam.username)
+      console.log('模糊搜索:', this.queryParam.postalAddressorcompanyName);
       // if (isonlineUrl && this.queryParam.username == undefined) {
       //   //高级查询，online查询
       //   this.superQueryFlag = true
@@ -205,6 +210,7 @@ export const JeecgListMixinQiYe = {
       //   this.superQueryFlag = true
       // }
       this.queryParam = {}
+      this.dateStrings = null; // 重置日期范围
       this.loadData(1, searchobj, ischildtable, isonlineUrl)
     },
     batchDel: function () {

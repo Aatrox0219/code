@@ -63,18 +63,24 @@ export const JeecgListMixinRSJ = {
     }
   },
   methods: {
-    loadData() {
-      this.loading = true
+    loadData(pageNo, searchobj, ischildtable, isonlineUrl) {
+      this.loading = true;
       let data = {
-        pageNo: this.ipagination.current,
+        pageNo: pageNo || this.ipagination.current,
         pageSize: this.ipagination.pageSize,
-        roleIds: ['1876096735837732866', '1872566152285175809', '1872566115782148097', '1872566080680017921'],
-      }
+        roleIds: this.queryParam.roleIds?.length
+          ? this.queryParam.roleIds
+          : ['1876096735837732866', '1872566152285175809', '1872566115782148097', '1872566080680017921'],
+        departName: this.queryParam.departName,
+        ...searchobj, // 其余查询条件
+      };
+      console.log('请求参数:', data);
       getRSJUser(data).then((res) => {
-        this.dataSource = res.result.records
-        this.ipagination.total = res.result.total
-        this.loading = false
-      })
+        console.log('返回数据:', res);
+        this.dataSource = res.result.records;
+        this.ipagination.total = res.result.total;
+        this.loading = false;
+      });
     },
     initDictConfig() {
       // console.log("--这是一个假的方法!")
@@ -186,15 +192,12 @@ export const JeecgListMixinRSJ = {
       this.selectionRows = []
     },
     searchQuery(isonlineUrl, searchobj, ischildtable) {
-      console.log('username', isonlineUrl)
-      console.log('username', searchobj)
-      console.log('username', ischildtable)
-      console.log('username', this.queryParam.username)
-      // if (isonlineUrl && this.queryParam.username == undefined) {
-      //   //高级查询，online查询
-      //   this.superQueryFlag = true
-      // }
-      this.loadData(1, searchobj, ischildtable, isonlineUrl)
+      console.log('username', isonlineUrl);
+      console.log('username', searchobj);
+      console.log('username', ischildtable);
+      console.log('当前选中的角色:', this.queryParam.roleIds);
+      console.log('当前选中的部门:', this.queryParam.departName);
+      this.loadData(1, searchobj, ischildtable, isonlineUrl); // 传递查询条件
     },
     superQuery() {
       this.$refs.superQueryModal.show()
