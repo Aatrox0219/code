@@ -265,11 +265,13 @@ export const JeecgListMixinQiYe = {
       })
     },
     handleEdit: function (record) {
+      this.$refs.modalForm.isEdit = true
       this.$refs.modalForm.edit(record)
       this.$refs.modalForm.title = '编辑'
       this.$refs.modalForm.disableSubmit = false
     },
     handleAdd: function () {
+      this.$refs.modalForm.isEdit = false
       this.$refs.modalForm.add()
       this.$refs.modalForm.title = '新增'
       this.$refs.modalForm.disableSubmit = false
@@ -299,6 +301,7 @@ export const JeecgListMixinQiYe = {
       this.loadData()
     },
     handleDetail: function (record) {
+      this.$refs.modalForm.isEdit = false
       this.$refs.modalForm.edit(record, true, true)
       this.$refs.modalForm.title = '详情'
       this.$refs.modalForm.disableSubmit = true
