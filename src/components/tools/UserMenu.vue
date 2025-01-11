@@ -48,7 +48,7 @@
         style="font-size: 16px"
         >保证金存缴待处理</router-link
       > -->
-      <router-link to="/newWorkFlow/flowDeposit" style="font-size: 16px; color: #fff;">保证金存缴待处理</router-link>
+      <a href="#/newWorkFlow/flowDeposit" style="font-size: 16px; color: #fff;">保证金存缴待处理</a>
       <a-badge :count="depositTotal" :style="badgeStyle" show-zero />
     </div>
     <a-divider type="vertical" />

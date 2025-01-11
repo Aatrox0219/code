@@ -15,8 +15,12 @@
       @change="handleChange"
       @preview="handlePreview"
       :class="!isMultiple ? 'imgupload' : ''"
+      :openFileDialogOnClick="isEdit || isAdd"
     >
-      <div :style="{ width: !isMultiple ? '104px' : 'auto', height: !isMultiple ? '104px' : 'auto' }">
+      <div
+        :style="{ width: !isMultiple ? '104px' : 'auto', height: !isMultiple ? '104px' : 'auto' }"
+        @click="handleClick"
+      >
         <img v-if="!isMultiple && picUrl" :src="getAvatarView()" style="width: 100%; height: 100%" />
         <div v-else class="iconp">
           <a-icon :type="uploadLoading ? 'loading' : 'plus'" />
@@ -92,6 +96,16 @@ export default {
       default: 0,
     },
     //update-end-author:wangshuai date:20201021 for:LOWCOD-969 新增number属性，用于判断上传数量
+    isEdit: {
+      type: Boolean,
+      required: false,
+      default: true, // 默认值为 true，表示编辑状态
+    },
+    isAdd: {
+      type: Boolean,
+      required: false,
+      default: true, // 默认值为 true，表示新增状态
+    },
   },
   watch: {
     value: {
@@ -114,6 +128,16 @@ export default {
     this.headers = { 'X-Access-Token': token }
   },
   methods: {
+    handleClick(event) {
+      // 只有当既不是编辑也不是新增状态时，才显示预览
+      if (!this.isEdit && !this.isAdd) {
+        event.stopPropagation()
+        if (this.fileList.length > 0) {
+          this.previewImage = this.fileList[0].url
+          this.previewVisible = true
+        }
+      }
+    },
     initFileList(paths) {
       if (!paths || paths.length == 0) {
         this.fileList = []
@@ -177,9 +201,11 @@ export default {
     },
     // 预览
     handlePreview(file) {
-      console.log('file预览', file)
-      this.previewImage = file.url || file.thumbUrl
-      this.previewVisible = true
+      // 如果是编辑状态，直接执行上传功能
+      if (!this.isEdit && !this.isAdd) {
+        this.previewImage = file.url || file.thumbUrl
+        this.previewVisible = true
+      }
     },
     getAvatarView() {
       if (this.fileList.length > 0) {

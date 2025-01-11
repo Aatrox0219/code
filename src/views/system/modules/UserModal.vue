@@ -147,7 +147,7 @@
         </a-form-item> -->
         <!-- update--end--autor:wangshuai-----date:20200108------for：新增身份和负责部门------ -->
         <a-form-item label="用户签名" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <j-image-upload class="avatar-uploader" text="上传" v-model="fileList" dataType="avatar"></j-image-upload>
+          <j-image-upload :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传" v-model="fileList"></j-image-upload>
         </a-form-item>
 
         <a-form-item label="生日" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -223,6 +223,8 @@ export default {
   },
   data() {
     return {
+      isAdd: false,
+      isEdit: true,
       departDisabled: false, //是否是我的部门调用该页面
       roleDisabled: false, //是否是角色维护调用该页面
       modalWidth: 800,

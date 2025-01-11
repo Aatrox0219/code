@@ -108,7 +108,7 @@
             dataType="license"
             v-decorator.trim="['fileListForLicense', validatorRules.fileListForLicense]"
           ></j-image-upload> -->
-          <j-image-upload-one class="avatar-uploader" text="上传" v-model="licenseCopy"></j-image-upload-one>
+          <j-image-upload-one :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传" v-model="licenseCopy"></j-image-upload-one>
         </a-form-item>
 
         <a-form-item label="负责人签名" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -119,7 +119,7 @@
             dataType="signature"
             v-decorator.trim="['avatar', validatorRules.avatar]"
           ></j-image-upload> -->
-          <j-image-upload-two class="avatar-uploader" text="上传" v-model="avatar"></j-image-upload-two>
+          <j-image-upload-two :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传" v-model="avatar"></j-image-upload-two>
         </a-form-item>
 
         <a-form-item label="企业盖章" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -130,7 +130,7 @@
             dataType="stamp"
             v-decorator.trim="['stamp', validatorRules.stamp]"
           ></j-image-upload> -->
-          <j-image-upload-three class="avatar-uploader" text="上传" v-model="stamp"></j-image-upload-three>
+          <j-image-upload-three :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传" v-model="stamp"></j-image-upload-three>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -179,6 +179,7 @@ export default {
       avatar: [],
       stamp: [],
       isEdit: true,
+      isAdd: false,
       departDisabled: false, //是否是我的部门调用该页面
       roleDisabled: false, //是否是角色维护调用该页面
       modalWidth: 800,
