@@ -42,16 +42,16 @@
         }}</a-select-option>
       </a-select>
     </component>
-    <div style="position: relative; display: inline-block; margin-right: 30px">
+    <div v-if="showDeposit" style="position: relative; display: inline-block; margin-right: 30px">
       <!-- <router-link
         :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }"
         style="font-size: 16px"
         >保证金存缴待处理</router-link
       > -->
-      <a href="#/newWorkFlow/flowDeposit" style="font-size: 16px; color: #fff;">保证金存缴待处理</a>
+      <a href="#/newWorkFlow/flowDeposit" style="font-size: 16px; color: #fff">保证金存缴待处理</a>
       <a-badge :count="depositTotal" :style="badgeStyle" show-zero />
     </div>
-    <a-divider type="vertical" />
+    <a-divider v-if="showDeposit" type="vertical" />
     <a-dropdown>
       <span class="action action-full ant-dropdown-link user-dropdown-menu">
         <!-- <a-avatar class="avatar" size="small" :src="getAvatar()" /> -->
@@ -121,7 +121,8 @@ export default {
   mixins: [mixinDevice],
   data() {
     return {
-      depositTotal: 0,
+      showDeposit: false,// 是否显示保证金存缴待处理
+      depositTotal: 0,    // 保证金存缴待处理数量
       intervalId: null,
       // update-begin author:sunjianlei date:20200219 for: 头部菜单搜索规范命名 --------------
       searchMenuOptions: [],
@@ -147,11 +148,12 @@ export default {
   created() {
     let lists = []
     this.searchMenus(lists, this.permissionMenuList)
+    console.log('this.permissionMenuList', this.permissionMenuList)
     this.searchMenuOptions = [...lists]
   },
   mounted() {
     this.startInterval()
-
+    this.getPermission()
     //使用事件总线监听事件
     this.$bus.$on('callGetTotal', () => {
       this.getTotal()
@@ -196,6 +198,16 @@ export default {
     // update-end author:sunjianlei date:20200219 for: 菜单搜索改为动态组件，在手机端呈现出弹出框
   },
   methods: {
+    // 获取菜单权限判断是否展示待处理数量
+    getPermission() {
+      let permission = this.permissionMenuList
+      permission.forEach((item) => {
+        if (item.component === 'newWorkFlow/flowReturn') {
+          this.showDeposit = true
+          return
+        }
+      })
+    },
     // 获取所有办事项的总数
     getTotal() {
       // 获取保证金存缴代办事项总数
