@@ -202,7 +202,7 @@ export default {
     getPermission() {
       let permission = this.permissionMenuList
       permission.forEach((item) => {
-        if (item.component === 'newWorkFlow/flowReturn') {
+        if (item.component === 'newWorkFlow/flowDeposit') {
           this.showDeposit = true
           return
         }
