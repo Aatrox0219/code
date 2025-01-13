@@ -1,26 +1,11 @@
 <template>
   <div class="img">
-    <a-upload
-      name="file"
-      listType="picture-card"
-      :multiple="isMultiple"
-      :action="uploadAction"
-      :headers="headers"
-      :data="{ biz: bizPath }"
-      :fileList="fileList"
-      :beforeUpload="beforeUpload"
-      :disabled="disabled"
-      :isMultiple="isMultiple"
-      :showUploadList="isMultiple"
-      @change="handleChange"
-      @preview="handlePreview"
-      :class="!isMultiple ? 'imgupload' : ''"
-      :openFileDialogOnClick="isEdit || isAdd"
-    >
-      <div
-        :style="{ width: !isMultiple ? '104px' : 'auto', height: !isMultiple ? '104px' : 'auto' }"
-        @click="handleClick"
-      >
+    <a-upload name="file" listType="picture-card" :multiple="isMultiple" :action="uploadAction" :headers="headers"
+      :data="{ biz: bizPath }" :fileList="fileList" :beforeUpload="beforeUpload" :disabled="disabled"
+      :isMultiple="isMultiple" :showUploadList="isMultiple" @change="handleChange" @preview="handlePreview"
+      :class="!isMultiple ? 'imgupload' : ''" :openFileDialogOnClick="isEdit || isAdd">
+      <div :style="{ width: !isMultiple ? '104px' : 'auto', height: !isMultiple ? '104px' : 'auto' }"
+        @click="handleClick">
         <img v-if="!isMultiple && picUrl" :src="getAvatarView()" style="width: 100%; height: 100%" />
         <div v-else class="iconp">
           <a-icon :type="uploadLoading ? 'loading' : 'plus'" />
@@ -38,6 +23,7 @@
 import Vue from 'vue'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { getFileAccessHttpUrl } from '@/api/manage'
+import Viewer from 'viewerjs'
 
 const uidGenerator = () => {
   return '-' + parseInt(Math.random() * 10000 + 1, 10)
@@ -133,8 +119,25 @@ export default {
       if (!this.isEdit && !this.isAdd) {
         event.stopPropagation()
         if (this.fileList.length > 0) {
-          this.previewImage = this.fileList[0].url
-          this.previewVisible = true
+          // this.previewImage = this.fileList[0].url
+          // this.previewVisible = true
+          const imageElement = document.createElement('img');
+          imageElement.src = this.fileList[0].url;
+          const viewer = new Viewer(imageElement, {
+            // 可配置相关参数，比如显示导航栏、工具栏等，以下是一些常见配置示例
+            inline: false, // 是否启用 inline 模式（这里设置为 false 表示弹出窗口查看）
+            button: true, // 是否显示右上角的缩放按钮等操作按钮
+            navbar: true, // 是否显示底部导航栏
+            title: false, // 是否显示图片标题
+            toolbar: true, // 是否显示顶部工具栏
+            tooltip: true, // 是否显示提示信息
+            movable: true, // 是否可以拖动图片
+            zoomable: true, // 是否可以缩放图片
+            rotatable: true, // 是否可以旋转图片
+            scalable: true, // 是否可以通过鼠标滚轮缩放图片
+            transition: true, // 是否启用过渡动画
+          });
+          viewer.show(); // 显示图片查看器
         }
       }
     },
@@ -203,8 +206,23 @@ export default {
     handlePreview(file) {
       // 如果是编辑状态，直接执行上传功能
       if (!this.isEdit && !this.isAdd) {
-        this.previewImage = file.url || file.thumbUrl
-        this.previewVisible = true
+        // this.previewImage = file.url || file.thumbUrl
+        // this.previewVisible = true
+        const viewer = new Viewer(imageElement, {
+          // 配置参数同上述handleClick方法中的示例，可根据实际需求调整
+          inline: false,
+          button: true,
+          navbar: true,
+          title: false,
+          toolbar: true,
+          tooltip: true,
+          movable: true,
+          zoomable: true,
+          rotatable: true,
+          scalable: true,
+          transition: true,
+        });
+        viewer.show();
       }
     },
     getAvatarView() {
@@ -246,7 +264,7 @@ export default {
       this.close()
       this.previewVisible = false
     },
-    close() {},
+    close() { },
   },
   model: {
     prop: 'value',
@@ -263,12 +281,15 @@ export default {
 ::v-deep .imgupload .ant-upload-select {
   display: block;
 }
+
 ::v-deep .imgupload .ant-upload.ant-upload-select-picture-card {
   width: 120px;
   height: 120px;
 }
+
 ::v-deep .imgupload .iconp {
   padding: 32px;
 }
+
 /* update--end--autor:lvdandan-----date:20201016------for：j-image-upload图片组件单张图片详情回显空白*/
 </style>
