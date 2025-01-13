@@ -11,7 +11,7 @@ const api = {
     // server_url: 'https://ii2.wust.edu.cn',
     // server_url: 'https://etraining.5gii.com.cn:10001',
     // server_url: 'https://scene.iiirsc.cn:10001',
-    server_url: 'http://111.229.140.21',
+    server_url: 'http://139.199.159.36',
     // server_url: 'https://ii1.wust.edu.cn',
     // server_url: 'https://10.162.32.225:8012',
     // server_url: 'http://14.55.6.35:37192',
@@ -32,7 +32,7 @@ const api = {
     global_edu_baseURL: ':8012',
     global_workflow_baseURL: ':35367',/* 工作流接口公共url */
     // global_online_baseURL: '/stj-boot/stj/online',/* online表单接口公共url */
-    global_online_baseURL: 'http://111.229.140.21:35367/stj/online',/* online表单接口公共url */
+    global_online_baseURL: 'http://139.199.159.36:35367/stj/online',/* online表单接口公共url */
     // global_online_baseURL: 'http://14.55.6.35:8082/stj/online/',/* online表单接口公共url */
     global_erp_baseURL: '/erp',/* online表单接口公共url */
     global_ada_online_baseURL: '/Ada/online', /*报表配置接口*/
@@ -40,7 +40,7 @@ const api = {
     global_order_baseURL: '/order',/* 采购订单 */
     global_crm_baseURL: '/crm',/* 客户关系 */
     // global_fmaking_baseURL: 'http://14.55.6.35:38072',/* 表单设计器接口公共url */
-    global_fmaking_baseURL: 'http://111.229.140.21:8025',/* 表单设计器接口公共url */
+    global_fmaking_baseURL: 'http://139.199.159.36:8025',/* 表单设计器接口公共url */
 
     global_workapij_baseURL: '/workflow',/* 工作流接口公共url */
     global_wmsapij_baseURL: '/wms',/* 工作流接口公共url */

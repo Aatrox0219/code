@@ -2,7 +2,7 @@
   <div class="fm-upload-file">
     <el-upload
       class="upload-demo"
-      action="http://111.229.140.21:37192/file/upload"
+      action="http://139.199.159.36:37192/file/upload"
       name="file"
       :file-list="fileList"
       :on-preview="handlePreview"
@@ -291,7 +291,7 @@ export default {
     handleDownload(file) {
       axios({
         method: 'post',
-        url: `http://111.229.140.21:37192/file/download?filePath=${file.url}`, // 后端文件下载的接口
+        url: `http://139.199.159.36:37192/file/download?filePath=${file.url}`, // 后端文件下载的接口
         responseType: 'blob', // 返回文件的二进制数据
         data: {
           filePath: file.url, // 将文件的路径作为请求体传递
