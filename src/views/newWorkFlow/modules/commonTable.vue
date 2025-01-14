@@ -212,8 +212,14 @@ export default {
 
     // 获取 select 下拉选项的方法
     getSelectOptions(dataIndex) {
-      const uniqueValues = new Set(this.dataSourceList.map((item) => item[dataIndex]))
-      return Array.from(uniqueValues).filter((value) => value !== undefined && value !== null)
+      const column = this.columnsList.find(col => col.dataIndex === dataIndex);
+      // 如果列标题是“状态”，返回固定选项
+      if (column && column.title === '状态') {
+        return ['全部', '进行中', '已完成', '已终止'];
+      }
+      // 否则动态生成选项
+      const uniqueValues = new Set(this.dataSourceList.map((item) => item[dataIndex]));
+      return Array.from(uniqueValues).filter((value) => value !== undefined && value !== null);
     },
 
     // 筛选方法
@@ -233,7 +239,19 @@ export default {
               // 输入框模糊匹配
               return itemValue && itemValue.toString().includes(filterValue.toString())
             } else if (column.filterType === 'select') {
-              // 下拉框完全匹配
+              // 当列标题为状态时特殊处理
+              if (column.title && column.title === '状态') {
+                if (filterValue === '已完成') {
+                  return itemValue === '已完成';
+                } else if (filterValue === '已终止') {
+                  return itemValue === '已终止';
+                } else if (filterValue === '全部') {
+                  return true;
+                } else if (filterValue === '进行中') {
+                  return itemValue !== '已完成' && itemValue !== '已终止';
+                }
+              }
+              // 下拉框完全匹配（非状态列的处理）
               return itemValue === filterValue
             } else if (column.filterType === 'date') {
               // 日期范围筛选
@@ -261,7 +279,6 @@ export default {
         console.error('获取数据失败：', error)
       }
     },
-
     // 清空筛选条件
     clearFilters() {
       this.filterConditions = {}
