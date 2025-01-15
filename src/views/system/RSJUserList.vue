@@ -9,8 +9,8 @@
             <a-form-item label="角色">
               <a-select v-model="queryParam.roleIds" mode="multiple" placeholder="请选择角色">
                 <a-select-option value="1872566080680017921">承办人员</a-select-option>
-                <a-select-option value="1872566115782148097">业务分管</a-select-option>
-                <a-select-option value="1872566152285175809">人社分管</a-select-option>
+                <a-select-option value="1872566115782148097">业务分管领导</a-select-option>
+                <a-select-option value="1872566152285175809">人社分管领导</a-select-option>
                 <a-select-option value="1876096735837732866">人社局管理员</a-select-option>
               </a-select>
             </a-form-item>
@@ -144,11 +144,11 @@
                 </a-popconfirm>
               </a-menu-item>
 
-              <a-menu-item v-if="record.status == 1">
+              <!-- <a-menu-item v-if="record.status == 1">
                 <a-popconfirm title="确定冻结吗?" @confirm="() => handleFrozen(record.id, 2, record.username)">
                   <a>冻结</a>
                 </a-popconfirm>
-              </a-menu-item>
+              </a-menu-item> -->
 
               <a-menu-item v-if="record.status == 2">
                 <a-popconfirm title="确定解冻吗?" @confirm="() => handleFrozen(record.id, 1, record.username)">

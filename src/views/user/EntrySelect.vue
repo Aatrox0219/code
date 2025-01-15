@@ -20,7 +20,7 @@
                 <div class="icon">
                     <img src="@/assets/yinhang.png" alt="icon" class="icon-img" />
                 </div>
-                <div class="text">银行入口</div>
+                <div class="text">经纪公司入口</div>
             </div>
         </div>
 
