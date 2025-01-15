@@ -4,21 +4,21 @@
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
-          <a-col :md="6" :sm="12">
+          <a-col :md="9" :xxl="6">
             <a-form-item label="企业名称/通信地址">
               <a-input placeholder="输入企业名称/通信地址模糊查询" v-model="queryParam.postalAddressorcompanyName"></a-input>
             </a-form-item>
           </a-col>
 
-          <a-col :md="6" :sm="12">
+          <a-col :md="10" :xxl="6">
             <a-form-item label="注册时间">
-              <a-range-picker style="width: 250px" format="YYYY-MM-DD HH:mm:ss" :placeholder="['开始时间', '结束时间']"
+              <a-range-picker style="width: 320px" format="YYYY-MM-DD HH:mm:ss" :placeholder="['开始时间', '结束时间']"
                 @change="onChange" :value="dateStrings" :showTime="true">
               </a-range-picker>
             </a-form-item>
           </a-col>
 
-          <a-col :md="6" :sm="8">
+          <a-col :md="3" :xxl="6">
             <span style="float: left; overflow: hidden" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
