@@ -3,13 +3,13 @@
     <!-- 筛选部分 -->
     <a-row v-if="hasFilterOptions" :gutter="24" style="margin-bottom: 20px">
       <!-- 普通筛选控件 -->
-      <a-col v-for="column in configurationParameter.columnsData" :key="column.dataIndex" :span="5"
+      <a-col v-for="column in configurationParameter.columnsData" :key="column.dataIndex" :md="8" :xxl="5"  
         v-if="column.filterType && column.filterType !== 'mixedInput'" style="display: flex; align-items: center">
         <!-- 控件的左侧标签 -->
         <span style="width: 100px; text-align: right; margin-right: 8px; font-weight: bold">{{ column.title }}：</span>
 
         <!-- 根据 filterType 渲染不同的筛选控件,目前支持 input、select和日期选择器 -->
-        <a-input v-if="column.filterType === 'input'" v-model="filterConditions[column.dataIndex]"
+        <a-input v-if="column.filterType === 'input'" v-model="filterConditions[column.dataIndex]" 
           :placeholder="`请输入${column.title}`" style="flex: 1; max-width: 200px" allowClear />
 
         <a-select v-if="column.filterType === 'select'" v-model="filterConditions[column.dataIndex]"
@@ -24,7 +24,7 @@
       </a-col>
 
       <!-- 混合筛选控件 -->
-      <a-col :span="6" v-if="mixedFilterColumns.length" style="display: flex; align-items: center">
+      <a-col v-if="mixedFilterColumns.length" style="display: flex; align-items: center" :md="8" :xxl="5" >
         <span style="width: 150px; text-align: right; margin-right: 8px;  font-weight: bold">
           {{ mixedFilterTitles }}：
         </span>
@@ -32,7 +32,7 @@
       </a-col>
 
       <!-- 筛选按钮和清空按钮 -->
-      <div v-if="hasFilterOptions" style="margin-bottom: 20px">
+      <div v-if="hasFilterOptions" style="margin-bottom: 20px" :md="4" :xxl="5" >
         <a-button type="primary" @click="handleFilter" style="margin-right: 8px">筛选</a-button>
         <a-button @click="clearFilters">清空筛选</a-button>
       </div>
