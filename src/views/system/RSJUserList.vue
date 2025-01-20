@@ -162,7 +162,7 @@
     </div>
     <!-- table区域-end -->
 
-    <user-modal ref="modalForm" @ok="modalFormOk"></user-modal>
+    <RSJModal ref="modalForm" @ok="modalFormOk"></RSJModal>
     <password-modal ref="passwordmodal"></password-modal>
 
     <!-- 用户回收站 -->
@@ -171,7 +171,7 @@
 </template>
 
 <script>
-import UserModal from './modules/UserModal'
+import RSJModal from './modules/RSJModal' 
 import PasswordModal from './modules/PasswordModal'
 import { putAction, getFileAccessHttpUrl } from '@/api/manage'
 import { frozenBatch } from '@/api/api'
@@ -187,7 +187,7 @@ export default {
   mixins: [JeecgListMixinRSJ],
   components: {
     SysUserAgentModal,
-    UserModal,
+    RSJModal,
     PasswordModal,
     JInput,
     UserRecycleBinModal,
