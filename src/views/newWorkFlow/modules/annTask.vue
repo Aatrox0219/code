@@ -1,14 +1,7 @@
 <template>
   <div>
-    <a-modal
-      :visible="visible"
-      :footer="null"
-      width="95%"
-      :zIndex="100"
-      :closable="false"
-      :destroyOnClose="true"
-      :centered="true"
-    >
+    <a-modal :visible="visible" :footer="null" width="1100px" :zIndex="100" :closable="false" :destroyOnClose="true"
+      :centered="true">
       <div>
         <div id="formContent">
           <div class="formbody">
@@ -26,6 +19,9 @@
           </div>
         </div>
       </div>
+      <!-- 自定义关闭按钮 -->
+      <a @click="close" class="custom-close-btn"
+        style="position: absolute; right: 10px; top: 5px; font-size: 20px;color: black;">x</a>
     </a-modal>
   </div>
 </template>
@@ -93,8 +89,8 @@ export default {
       },
     }
   },
-  updated() {},
-  mounted() {},
+  updated() { },
+  mounted() { },
   methods: {
     openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, category, data) {
       console.log('category:', category)
@@ -138,7 +134,7 @@ export default {
           }
           _this.visible = false
         })
-        .catch(() => {})
+        .catch(() => { })
     },
 
     //如果点击了返回，则需要将该流程删除
