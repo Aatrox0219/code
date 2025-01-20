@@ -103,7 +103,7 @@
           :loading="loginBtn"
           @click.stop.prevent="handleSubmit"
           :disabled="loginBtn"
-          >确定
+          >登录
         </a-button>
 
         <a v-if="department === 'qiye'" @click="" style="margin-left: 10px"> 注册账户 </a>
@@ -351,9 +351,11 @@ export default {
                 })
                 .catch((err) => {
                   that.requestFailed(err)
+                  that.handleChangeCheckCode()
                 })
             } else {
               that.loginBtn = false
+              that.handleChangeCheckCode()
             }
           }
         )
