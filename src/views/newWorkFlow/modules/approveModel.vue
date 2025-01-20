@@ -1,57 +1,36 @@
 <template>
-  <a-modal
-    :visible="visible"
-    :centered="true"
-    :footer="null"
-    width="95%"
-    :zIndex="100"
-    :dialog-style="{ top: '20px' }"
-    :closable="false"
-    :destroyOnClose="true"
-  >
+  <a-modal :visible="visible" :centered="true" :footer="null" width="1300px" :zIndex="100"
+    :dialog-style="{ top: '20px' }" :closable="false" :destroyOnClose="true">
     <div class="buttonstyle"><a-button class="xbutton" type="dashed" @click="close()">X</a-button></div>
     <div style="margin-top:27px"></div>
     <div v-if="approve1">
       <div v-for="(item, index) in formList" :key="index">
-        <approve-task
-          :formId="item.prevForm_designer_id"
-          :tableId="item.prevOnline_table_id"
-          :dataId="item.prevOnline_data_id"
-        ></approve-task>
+        <approve-task :formId="item.prevForm_designer_id" :tableId="item.prevOnline_table_id"
+          :dataId="item.prevOnline_data_id"></approve-task>
       </div>
       <div style="margin-top: 20px">
-        <approve-new-task @close-approveTask="close" :formId="nowformId" :taskId="taskId" :record="currentRecord"> </approve-new-task>
+        <approve-new-task @close-approveTask="close" :formId="nowformId" :taskId="taskId" :record="currentRecord">
+        </approve-new-task>
       </div>
     </div>
 
     <div v-if="approve2">
       <div v-for="(item, index) in rollFormList" :key="index">
-        <approve-task
-          :formId="item.prevForm_designer_id"
-          :tableId="item.prevOnline_table_id"
-          :dataId="item.prevOnline_data_id"
-        ></approve-task>
+        <approve-task :formId="item.prevForm_designer_id" :tableId="item.prevOnline_table_id"
+          :dataId="item.prevOnline_data_id"></approve-task>
       </div>
       <div style="margin-top: 20px" v-model="rollbackForm">
-        <rollback-task
-          @close-approveRollTask="close"
-          :formId="rollbackForm.prevForm_designer_id"
-          :tableId="rollbackForm.prevOnline_table_id"
-          :dataId="rollbackForm.prevOnline_data_id"
-          :taskId="taskId"
-          :processName="processName"
-        ></rollback-task>
+        <rollback-task @close-approveRollTask="close" :formId="rollbackForm.prevForm_designer_id"
+          :tableId="rollbackForm.prevOnline_table_id" :dataId="rollbackForm.prevOnline_data_id" :taskId="taskId"
+          :processName="processName"></rollback-task>
       </div>
       <div style="margin-top: 20px" v-model="lastForm">
-        <approve-task
-          :formId="lastForm.prevForm_designer_id"
-          :tableId="lastForm.prevOnline_table_id"
-          :dataId="lastForm.prevOnline_data_id"
-        ></approve-task>
+        <approve-task :formId="lastForm.prevForm_designer_id" :tableId="lastForm.prevOnline_table_id"
+          :dataId="lastForm.prevOnline_data_id"></approve-task>
       </div>
     </div>
   </a-modal>
-  
+
 </template>
 <script>
 import { nw_postAction, nw_postAction1, nw_getAction } from '@api/newWorkApi'
@@ -77,19 +56,19 @@ export default {
       currentRecord: null,
     }
   },
-  mounted() {},
-  created() {},
+  mounted() { },
+  created() { },
   methods: {
     close() {
       this.visible = false
-      this.approve1=false
-      this.approve2=false
+      this.approve1 = false
+      this.approve2 = false
       this.currentRecord = null
       this.$emit('close')
     },
     //处理非退回任务
     announceTask(record) {
-      console.log('处理',record);
+      console.log('处理', record);
       this.taskId = record.taskId
       this.currentRecord = record
       nw_postAction1(`/task/handleTask`, { taskId: record.taskId, processInstanceId: record.processInstanceId })
@@ -100,7 +79,7 @@ export default {
           console.log(res.result.oldIdsList)
           var oldIdsList = res.result.oldIdsList
           var arrayForm = new Array()
-          for (var i = oldIdsList.length-1; i >=0; i--) {
+          for (var i = oldIdsList.length - 1; i >= 0; i--) {
             var formObj = {}
             formObj['prevForm_designer_id'] = oldIdsList[i].substring(0, 32)
             formObj['prevOnline_table_id'] = oldIdsList[i].substring(33, 65)
@@ -119,7 +98,7 @@ export default {
     //处理退回任务
     announceRollTask(record) {
       console.log('退回')
-      console.log('record',record);
+      console.log('record', record);
       this.taskId = record.taskId
       this.processName = record.processName
       nw_postAction1(`/task/handleTask`, { taskId: record.taskId, processInstanceId: record.processInstanceId })
@@ -127,8 +106,8 @@ export default {
           var oldIdsList = res.result.oldIdsList
           var arrayForm = new Array() //展示的
           var rollForm = {} //不仅展示还要修改
-          var lastForm={}
-          for (var i = oldIdsList.length-1; i >=0; i--) {
+          var lastForm = {}
+          for (var i = oldIdsList.length - 1; i >= 0; i--) {
             if (i > 1) {
               var formObj = {}
               formObj['prevForm_designer_id'] = oldIdsList[i].substring(0, 32)
@@ -158,11 +137,11 @@ export default {
   },
 }
 </script>
-<style  lang="scss" scoped>
+<style lang="scss" scoped>
 .buttonstyle {
   position: absolute;
-  top:0;
-  right:0;
-  margin:10px;
+  top: 0;
+  right: 0;
+  margin: 10px;
 }
 </style>

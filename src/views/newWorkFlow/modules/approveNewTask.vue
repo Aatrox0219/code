@@ -11,26 +11,16 @@
         </generate-form>
       </div>
       <div class="submitBtn">
-        <a-button
-          v-if="nodePowerResult.includes('通过')"
-          type="primary"
-          @click="handleTest('1')"
-          style="margin-right: 20px"
-          >通过</a-button
-        >
+        <a-button v-if="nodePowerResult.includes('通过')" type="primary" @click="handleTest('1')"
+          style="margin-right: 20px">通过</a-button>
         <a-popover v-if="nodePowerResult.includes('退回')" title="请选择退回到哪一个节点">
           <template slot="content">
             <a-button type="dashed" @click="handleTest('2')" style="margin-left: 10px"> 上一个节点 </a-button>
           </template>
           <a-button type="primary">退回</a-button>
         </a-popover>
-        <a-button
-          v-if="nodePowerResult.includes('拒绝')"
-          type="danger"
-          @click="handleTest('0')"
-          style="margin-left: 200px"
-          >终止</a-button
-        >
+        <a-button v-if="nodePowerResult.includes('拒绝')" type="danger" @click="handleTest('0')"
+          style="margin-left: 200px">终止</a-button>
       </div>
     </div>
   </div>
@@ -77,7 +67,7 @@ export default {
       },
     }
   },
-  updated() {},
+  updated() { },
   mounted() {
     this.getNowFrom()
     this.checkNodePower()
@@ -114,7 +104,7 @@ export default {
         .then(() => {
           _this.$emit('close-approveTask')
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     //得到一个现在节点的表单
 
@@ -144,7 +134,7 @@ export default {
         params.frontId = this.frontId
       }
       var _this = this
-      nw_postAction1('/task/complete',params )
+      nw_postAction1('/task/complete', params)
         .then((res) => {
           if (res.result.result) {
             _this.$message.success('通过成功')
@@ -161,7 +151,7 @@ export default {
 
     //保存数据的接口
     // saveMarginData(onlineId, dataId) {
-      
+
     //   nw_postAction1('/margin/saveMarginData', params)
     //     .then((res) => {
     //       console.log('保存数据的接口返回值', res)
@@ -287,7 +277,7 @@ export default {
 </script>
 <style scoped>
 #newformContent {
-  /* width:80%; */
+  width: 1250px;
   display: flex;
   justify-content: center;
   padding: 5px;
@@ -296,15 +286,18 @@ export default {
   border-radius: 5px;
   margin: 20px auto;
 }
+
 .formbody {
   margin-top: 20px;
-  width: 100%;
+  width: 1250px;
 }
+
 .submitBtn {
   margin-top: 20px;
   /* display: flex; */
   /* justify-content: space-between; */
 }
+
 .submitBtn button {
   margin: 20px auto;
   left: 40%;

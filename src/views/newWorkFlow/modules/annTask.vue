@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal :visible="visible" :footer="null" width="1100px" :zIndex="100" :closable="false" :destroyOnClose="true"
+    <a-modal :visible="visible" :footer="null" width="1300px" :zIndex="100" :closable="false" :destroyOnClose="true"
       :centered="true">
       <div>
         <div id="formContent">

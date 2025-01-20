@@ -214,7 +214,7 @@ export default {
   margin: 0 auto;
 }
 .formTable {
-  width: 90%;
+  width: 1250px;
   border: 1px solid #000000;
   margin: 0 auto;
 }
@@ -225,7 +225,7 @@ export default {
 }
 .formbody {
   margin-top: 20px;
-  width: 100%;
+  width: 1250px;
 }
 .submitBtn {
   margin-top: 20px;
