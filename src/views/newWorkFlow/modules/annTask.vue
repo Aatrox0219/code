@@ -443,7 +443,7 @@ export default {
 }
 
 .formbody {
-  margin-top: 50px;
+  margin-top: 25px;
   width: 97%;
 }
 
