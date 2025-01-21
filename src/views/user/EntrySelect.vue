@@ -87,6 +87,7 @@ export default {
     align-items: center;
     text-align: center;
     cursor: pointer;
+    margin-bottom: 90px;
 }
 
 .card1 {

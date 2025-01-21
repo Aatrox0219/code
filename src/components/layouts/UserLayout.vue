@@ -15,6 +15,10 @@
 
       <route-view :class="routeClass"></route-view>
 
+      <div class="footer-placeholder">
+        <div class="footer-text">主办单位：黄冈市人力资源和社会保障局</div>
+        <div class="footer-text">技术支持：金诚国际保险经纪有限公司黄冈分公司</div>
+      </div>
       <div class="footer">
         <!-- <div class="links">
           <a href="http://doc.jeecg.com" target="_blank">帮助</a>
@@ -24,12 +28,13 @@
         <div class="copyright">
           Copyright &copy; 2020 <a>仿真实训平台</a>
         </div> -->
-        <div class="footer-text">
+        <!-- <div class="footer-text">
           主办单位：黄冈市人力资源和社会保障局
         </div>
         <div class="footer-text">
           技术支持：金诚国际保险经纪有限公司黄冈分公司
-        </div>
+        </div> -->
+        <!-- 底部白色区域 -->
       </div>
     </div>
   </div>
@@ -108,8 +113,9 @@ export default {
     width: 100%;
     min-height: 100%;
     // background: #f0f2f5 url(~@/assets/background.svg) no-repeat 50%;
-    background: url('~@/assets/background.png') no-repeat center center;
-    background-size: 100%;
+    // background: url('~@/assets/background.png') no-repeat center center;
+    // background-size: 100%;
+    background-color: #007bFF;
     padding: 110px 0 144px;
     position: relative;
 
@@ -218,25 +224,42 @@ export default {
       transform: translateX(-50.5%);
     }
 
-    .footer {
-      position: absolute;
-      bottom: 50px;
+    .footer-placeholder {
       width: 100%;
+      background-color: white;
+      // padding: 10px 0;
       text-align: center;
-      color: #478FCA;
-      font-size: 30px;
-      font-family: 'Arial', sans-serif;
-      text-shadow:
-        -1px -1px 0 #fff,
-        1px -1px 0 #fff,
-        -1px 1px 0 #fff,
-        1px 1px 0 #fff;
+      position: absolute;
+      bottom: 0;
+      z-index: 2;
 
       .footer-text {
-        margin-top: 10px;
+        font-size: 24px;
+        color: #1890FF;
         font-weight: 500;
       }
     }
+
+
+    // .footer {
+    //   position: absolute;
+    //   bottom: 50px;
+    //   width: 100%;
+    //   text-align: center;
+    //   color: #478FCA;
+    //   font-size: 30px;
+    //   font-family: 'Arial', sans-serif;
+    //   text-shadow:
+    //     -1px -1px 0 #fff,
+    //     1px -1px 0 #fff,
+    //     -1px 1px 0 #fff,
+    //     1px 1px 0 #fff;
+
+    //   .footer-text {
+    //     margin-top: 10px;
+    //     font-weight: 500;
+    //   }
+    // }
   }
 }
 </style>
