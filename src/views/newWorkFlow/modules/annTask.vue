@@ -20,8 +20,9 @@
         </div>
       </div>
       <!-- 自定义关闭按钮 -->
-      <a @click="close" class="custom-close-btn"
-        style="position: absolute; right: 10px; top: 5px; font-size: 20px;color: black;">x</a>
+      <!-- <a @click="close" class="custom-close-btn"
+        style="position: absolute; right: 10px; top: 5px; font-size: 20px;color: black;">x</a> -->
+      <div class="buttonstyle"><a-button class="xbutton" type="dashed" @click="close()">X</a-button></div>
     </a-modal>
   </div>
 </template>
@@ -425,9 +426,9 @@ export default {
 #formContent {
   padding: 5px;
   background-color: #fff;
-  border: 1px solid;
+  border: 1px solid #dcdcdc;
   border-radius: 5px;
-  margin: 0 auto;
+  margin: 26px 0 auto;
 }
 
 .formTable {
@@ -454,5 +455,12 @@ export default {
 .submitBtn button {
   margin: 20px auto;
   left: 45%;
+}
+
+.buttonstyle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 10px;
 }
 </style>
