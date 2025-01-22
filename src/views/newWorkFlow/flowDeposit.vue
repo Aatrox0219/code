@@ -2,12 +2,8 @@
   <div>
     <div>
       <a-card :bordered="false">
-        <a-button
-          v-if="['施工企业', '管理员'].some((role) => userInfo.roleNames.includes(role))"
-          type="primary"
-          @click="startFixedProcess(true)"
-          style="margin-right: 10px"
-        >
+        <a-button v-if="['施工企业', '管理员'].some((role) => userInfo.roleNames.includes(role))" type="primary"
+          @click="startFixedProcess(true)" style="margin-right: 10px">
           保证金存缴申请
         </a-button>
         <div id="formContent" style="margin-top: -10px">
@@ -19,12 +15,8 @@
                     <div class="card-table">
                       <a-card :bordered="false">
                         <div class="table-container">
-                          <commonTable
-                            ref="commonTableRef1"
-                            :configurationParameter="configurationParameter1"
-                            :seeHistory="seeHistory"
-                            :download="download"
-                          >
+                          <commonTable ref="commonTableRef1" :configurationParameter="configurationParameter1"
+                            :seeHistory="seeHistory" :download="download">
                           </commonTable>
                         </div>
                       </a-card>
@@ -41,12 +33,8 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <commonTable
-                            ref="commonTableRef2"
-                            :configurationParameter="configurationParameter2"
-                            :seeHistory="seeHistory"
-                            :announceTask="announceTask"
-                          >
+                          <commonTable ref="commonTableRef2" :configurationParameter="configurationParameter2"
+                            :seeHistory="seeHistory" :announceTask="announceTask">
                           </commonTable>
                         </div>
                       </a-card>
@@ -386,7 +374,7 @@ export default {
     seeHistory(record) {
       this.$refs.flowHistory.openModal(record)
     },
-    
+
     // 更新表格数据
     getData() {
       // 先获取子组件实例
@@ -417,6 +405,7 @@ export default {
 <style scoped>
 .card-table {
   background-color: white;
+  height: 650px;
 }
 
 .table-container {

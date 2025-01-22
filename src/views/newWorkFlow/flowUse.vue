@@ -186,7 +186,7 @@ export default {
       configurationParameter2: {
         inquire: {
           categoryId: '1847453556447707137', //流程分类
-          processIdList: ['20560', '20563', '20566', '20569','20572'], //存缴+使用
+          processIdList: ['20560', '20563', '20566', '20569', '20572'], //存缴+使用
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -277,7 +277,7 @@ export default {
       configurationParameter3: {
         inquire: {
           categoryId: '1847453556447707137', //流程分类
-          processIdList: ['20560', '20563', '20566', '20569','20572'], //存缴+使用
+          processIdList: ['20560', '20563', '20566', '20569', '20572'], //存缴+使用
           applyState: ['pending'], //想要查询的流程类型
         },
         columnsData: [
@@ -462,7 +462,7 @@ export default {
     //得到所有未认领的流程
     getLoadClaim() {
       let params = {
-        processIdList: ['20560', '20563', '20566', '20569','20572'],
+        processIdList: ['20560', '20563', '20566', '20569', '20572'],
         applyState: ['claim'],
         categoryId: '1847453556447707137',
       }
@@ -525,6 +525,7 @@ export default {
 <style scoped>
 .card-table {
   background-color: white;
+  height: 650px;
 }
 
 .table-container {
