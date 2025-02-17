@@ -6,6 +6,10 @@
           @click="startFixedProcess(true)" style="margin-right: 10px">
           保证金存缴申请
         </a-button>
+        <a-button v-if="['施工企业', '管理员'].some((role) => userInfo.roleNames.includes(role))" type="primary"
+          @click="downloadTemplate" style="margin-right: 10px">
+          下载存款协议书样本
+        </a-button>
         <div id="formContent" style="margin-top: -10px">
           <div id="taskList">
             <div>
@@ -399,6 +403,33 @@ export default {
         this.$refs.approveModel.announceTask(record)
       }
     },
+
+    downloadTemplate() {
+      const downloadTemplateApi = 'http://139.199.159.36:37192/file/download'; 
+
+      // 将 filePath 作为查询参数传递
+      const filePath = '/opt/temps/附件2：农民工工资保证金存款协议书（样本）.docx';
+
+      axios.post(downloadTemplateApi, null, {
+        params: {
+          filePath: filePath, // 将 filePath 作为查询参数
+        },
+        responseType: 'blob', // 设置响应类型为 blob，用于处理文件下载
+      })
+        .then((response) => {
+          const blob = new Blob([response.data]);
+          const downloadLink = document.createElement('a');
+          const url = window.URL.createObjectURL(blob);
+          downloadLink.href = url;
+          downloadLink.download = '存款协议书样本.docx';
+          downloadLink.click();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+          console.error('下载存款协议书样本失败:', error);
+          this.$message.error('下载存款协议书样本失败');
+        });
+    }
   },
 }
 </script>
