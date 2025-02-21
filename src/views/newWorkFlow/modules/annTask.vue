@@ -32,7 +32,7 @@ import AntdGenerateForm from '@/components/FormMaking/components/AntdvGenerator/
 import { t_postAction, t_getAction } from '@/api/tempApi.js'
 import { o_postAction, o_getAction } from '@/api/onApi.js'
 import { nw_postAction1, nw_delete } from '@api/newWorkApi'
-import { getSingleQYUser } from '@/api/userList'
+import { getSingleQYUser, getBusinessByCompanyName } from '@/api/userList'
 
 export default {
   name: 'AnnTask',
@@ -180,9 +180,9 @@ export default {
                       this.$refs.generateForm.setData({
                         company_name: userData.companyName, //这里的company_name是表单中的字段标识
                         deposit_way: data.projectStatus,
-                        postalAddress: userData.postalAddress,
-                        postcode: userData.postcode,
-                        creditCode: userData.creditCode,
+                        // postalAddress: userData.postalAddress,
+                        // postcode: userData.postcode,
+                        // creditCode: userData.creditCode,
                         licenseCopy: licenseCopy,
                       })
                       console.log('图片地址上传成功')
@@ -192,17 +192,29 @@ export default {
                     })
                 } else if (category === '使用') {
                   console.log('保证金使用的数据', data)
-                  this.$refs.generateForm.setData({
-                    company_name: data.companyName,
-                    credit_code: data.creditCode,
-                    company_address: data.companyAddress,
-                    postal_code: data.postalCode,
-                    project_name: data.projectName,
-                    project_address: data.projectAddress,
-                    address_detail: data.addressDetail,
-                    project_contact: data.responsiblePerson,
-                    project_mobile: data.mobile,
-                  })
+                  let userData = {}
+                  getBusinessByCompanyName(data.companyName)
+                    .then((res) => {
+                      userData = res.result
+                      console.log('使用的userData', userData)
+                      this.$refs.generateForm.setData({
+                        company_name: data.companyName,
+                        credit_code: userData.creditCode,
+                        postal_address: userData.postalAddress,
+                        post_code: userData.postcode,
+                        project_contact: data.responsiblePerson,
+                        project_mobile: data.mobile,
+                        project_name: data.projectName,
+                        project_address: data.projectAddress,
+                        address_detail: data.addressDetail,
+                        representative: userData.representative,
+                        phone: userData.phone,
+                        agency: data.agency
+                      })
+                    })
+                    .catch((error) => {
+                      console.error('获取用户数据失败', error)
+                    })
                 } else if (category === '变更') {
                   console.log('保证金变更的数据', data)
                   this.$refs.generateForm.setData({

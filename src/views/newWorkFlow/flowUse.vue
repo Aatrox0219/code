@@ -26,7 +26,7 @@
                       <a-card :bordered="false">
                         <div class="table-container">
                           <commonTable ref="commonTableRef2" :configurationParameter="configurationParameter2"
-                            :seeHistory="seeHistory">
+                            :seeHistory="seeHistory" :download="download">
                           </commonTable>
                         </div>
                       </a-card>
@@ -80,6 +80,8 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 import { taskStateMapping } from './taskStateMapping'
 import commonTable from './modules/commonTable.vue'
+import { useList, useCategoryId, depositList, depositCategoryId } from '@/api/processId'
+import { downloadDocument } from '@/api/userList'
 
 export default {
   name: 'flowUse',
@@ -88,8 +90,8 @@ export default {
     return {
       configurationParameter1: {
         inquire: {
-          categoryId: '1847453055727501313', //流程分类
-          processIdList: ['20560', '20563', '20566', '20569'], //存缴
+          categoryId: depositCategoryId, //流程分类
+          processIdList: depositList, //存缴
           applyState: ['complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -160,18 +162,13 @@ export default {
             show: false,
           },
           {
-            dataIndex: 'companyAddress',
-            dataLocation: 'allData.main_payment.company_address',
-            show: false,
-          },
-          {
-            dataIndex: 'postalCode',
-            dataLocation: 'allData.main_payment.postal_code',
-            show: false,
-          },
-          {
             dataIndex: 'addressDetail',
             dataLocation: 'allData.main_payment.address_detail',
+            show: false,
+          },
+          {
+            dataIndex: 'agency',
+            dataLocation: 'allData.main_payment.handl_company',
             show: false,
           },
           {
@@ -185,8 +182,8 @@ export default {
       },
       configurationParameter2: {
         inquire: {
-          categoryId: '1847453556447707137', //流程分类
-          processIdList: ['20560', '20563', '20566', '20569', '20572'], //存缴+使用
+          categoryId: useCategoryId, //流程分类
+          processIdList: useList, //存缴+使用
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -266,6 +263,16 @@ export default {
             show: true,
           },
           {
+            dataIndex: 'is_export',
+            dataLocation: 'allData.main_use.is_export',
+            show: false,
+          },
+          {
+            dataIndex: 'export_path',
+            dataLocation: 'allData.main_use.export_path',
+            show: false,
+          },
+          {
             title: '详情',
             align: 'center',
             dataIndex: 'flowHistoryaction',
@@ -276,8 +283,8 @@ export default {
       },
       configurationParameter3: {
         inquire: {
-          categoryId: '1847453556447707137', //流程分类
-          processIdList: ['20560', '20563', '20566', '20569', '20572'], //存缴+使用
+          categoryId: useCategoryId, //流程分类
+          processIdList: useList, //存缴+使用
           applyState: ['pending'], //想要查询的流程类型
         },
         columnsData: [
@@ -441,6 +448,10 @@ export default {
     //查看历史
     seeHistory(record) {
       this.$refs.flowHistory.openModal(record)
+    },
+    download(record) {
+      console.log('downloadrecord', record);
+      downloadDocument(record)
     },
     // 更新表格数据
     getData() {
