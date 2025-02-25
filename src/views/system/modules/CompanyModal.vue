@@ -1,14 +1,6 @@
 <template>
-  <a-drawer
-    :title="title"
-    :maskClosable="true"
-    :width="drawerWidth"
-    placement="right"
-    :closable="true"
-    @close="handleCancel"
-    :visible="visible"
-    style="height: 100%; overflow: auto; padding-bottom: 53px"
-  >
+  <a-drawer :title="title" :maskClosable="true" :width="drawerWidth" placement="right" :closable="true"
+    @close="handleCancel" :visible="visible" style="height: 100%; overflow: auto; padding-bottom: 53px">
     <template slot="title">
       <div style="width: 100%">
         <span>{{ title }}</span>
@@ -21,11 +13,8 @@
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
         <a-form-item label="用户账号" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input
-            placeholder="请输入用户账号"
-            v-decorator.trim="['username', validatorRules.username]"
-            :readOnly="!!model.id"
-          />
+          <a-input placeholder="请输入用户账号" v-decorator.trim="['username', validatorRules.username]"
+            :readOnly="!!model.id" />
         </a-form-item>
 
         <template v-if="!model.id">
@@ -34,25 +23,14 @@
           </a-form-item>
 
           <a-form-item label="确认密码" :labelCol="labelCol" :wrapperCol="wrapperCol">
-            <a-input
-              type="password"
-              @blur="handleConfirmBlur"
-              placeholder="请重新输入登录密码"
-              v-decorator="['confirmpassword', validatorRules.confirmpassword]"
-            />
+            <a-input type="password" @blur="handleConfirmBlur" placeholder="请重新输入登录密码"
+              v-decorator="['confirmpassword', validatorRules.confirmpassword]" />
           </a-form-item>
         </template>
 
         <a-form-item label="角色分配" :labelCol="labelCol" :wrapperCol="wrapperCol" v-show="!roleDisabled">
-          <a-select
-            mode="multiple"
-            :disabled="true"
-            style="width: 100%"
-            placeholder="请选择用户角色"
-            optionFilterProp="children"
-            v-model="selectedRole"
-            :getPopupContainer="(target) => target.parentNode"
-          >
+          <a-select mode="multiple" :disabled="true" style="width: 100%" placeholder="请选择用户角色"
+            optionFilterProp="children" v-model="selectedRole" :getPopupContainer="(target) => target.parentNode">
             <a-select-option v-for="(role, roleindex) in roleList" :key="roleindex.toString()" :value="role.id">
               {{ role.roleName }}
             </a-select-option>
@@ -78,18 +56,12 @@
         </a-form-item>
 
         <a-form-item label="法定代表人" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input
-            placeholder="请输入法定代表人"
-            v-decorator.trim="['representative', validatorRules.representative]"
-          />
+          <a-input placeholder="请输入法定代表人" v-decorator.trim="['representative', validatorRules.representative]" />
         </a-form-item>
 
         <a-form-item label="手机号码" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input
-            placeholder="请输入手机号码"
-            :disabled="isDisabledAuth('user:form:phone')"
-            v-decorator="['phone', validatorRules.phone]"
-          />
+          <a-input placeholder="请输入手机号码" :disabled="isDisabledAuth('user:form:phone')"
+            v-decorator="['phone', validatorRules.phone]" />
         </a-form-item>
 
         <a-form-item label="传真" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -108,7 +80,8 @@
             dataType="license"
             v-decorator.trim="['fileListForLicense', validatorRules.fileListForLicense]"
           ></j-image-upload> -->
-          <j-image-upload-one :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传" v-model="licenseCopy"></j-image-upload-one>
+          <j-image-upload-one :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传"
+            v-model="licenseCopy"></j-image-upload-one>
         </a-form-item>
 
         <a-form-item label="负责人签名" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -119,7 +92,8 @@
             dataType="signature"
             v-decorator.trim="['avatar', validatorRules.avatar]"
           ></j-image-upload> -->
-          <j-image-upload-two :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传" v-model="avatar"></j-image-upload-two>
+          <j-image-upload-two :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传"
+            v-model="avatar"></j-image-upload-two>
         </a-form-item>
 
         <a-form-item label="企业盖章" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -130,7 +104,8 @@
             dataType="stamp"
             v-decorator.trim="['stamp', validatorRules.stamp]"
           ></j-image-upload> -->
-          <j-image-upload-three :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传" v-model="stamp"></j-image-upload-three>
+          <j-image-upload-three :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传"
+            v-model="stamp"></j-image-upload-three>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -232,7 +207,7 @@ export default {
         },
         companyName: { rules: [{ required: true, message: '请输入企业名称!' }] },
         postalAddress: { rules: [{ required: true, message: '请输入通信地址!' }] },
-        postcode: { rules: [{ pattern: /^[1-9]\d{5}$/, message: '请输入正确邮政编码!' }] },
+        postcode: { rules: [{ required: true, pattern: /^[1-9]\d{5}$/, message: '请输入正确邮政编码!' }] },
         creditCode: {
           rules: [
             {
@@ -243,7 +218,7 @@ export default {
           ],
         },
         representative: { rules: [{ required: true, message: '请输入法定代表人!' }] },
-        phone: { rules: [{ required: true, message: '请输入手机号码!' },{ validator: this.validatePhone }] },
+        phone: { rules: [{ required: true, message: '请输入手机号码!' }, { validator: this.validatePhone }] },
         fax: { rules: [{ pattern: /^(?:\d{3,4}-)?\d{7,8}(?:-\d{1,6})?$/, message: '请输入正确传真!' }] },
         licenseno: {
           rules: [
@@ -585,7 +560,7 @@ export default {
               if (this.isEdit) {
                 callback()
               }
-              else{
+              else {
                 callback('手机号已存在!')
               }
             }
@@ -749,7 +724,7 @@ export default {
 </script>
 
 <style scoped>
-.avatar-uploader > .ant-upload {
+.avatar-uploader>.ant-upload {
   width: 104px;
   height: 104px;
 }
