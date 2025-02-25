@@ -129,11 +129,16 @@ export default {
         type: 'warning',
       })
         .then(async () => {
-          await this.deleteFlow(this.processInstanceId)
-          if (!this.isOriginal) {
-            this.getData() //直接关闭流程后刷新数据
-          }
           _this.visible = false
+          this.deleteFlow(this.processInstanceId)
+            .then(() => {
+              if (!this.isOriginal && this.getData) {
+                this.getData() // 刷新父组件数据
+              }
+            })
+            .catch(error => {
+              console.error('删除流程失败:', error)
+            })
         })
         .catch(() => { })
     },
@@ -239,17 +244,29 @@ export default {
                     ensure_money: data.Money,
                   })
                 } else if (category === '补缴') {
-                  console.log('保证的数据', data)
-                  this.$refs.generateForm.setData({
-                    company_name: data.companyName,
-                    company_address: data.companyAddress,
-                    postal_code: data.postalCode,
-                    credit_code: data.creditCode,
-                    project_name: data.projectName,
-                    project_address: data.projectAddress,
-                    address_detail: data.addressDetail,
-                    ensure_money: data.ensureMoney,
-                  })
+                  console.log('保证金补缴的数据', data)
+                  let userData = {}
+                  getSingleQYUser(this.userInfo.id)
+                    .then((res) => {
+                      userData = res.result
+                      console.log('userData', userData)
+                      this.$refs.generateForm.setData({
+                        company_name: userData.companyName,
+                        credit_code: userData.creditCode,
+                        postal_address: userData.postalAddress,
+                        post_code: userData.postcode,
+                        project_contact: data.responsiblePerson,
+                        project_mobile: data.mobile,
+                        project_name: data.projectName,
+                        project_address: data.projectAddress,
+                        address_detail: data.addressDetail,
+                        money: data.Money,
+                        remaining_amount: data.remainingAmount
+                      })
+                    })
+                    .catch((error) => {
+                      console.error('获取用户数据失败', error)
+                    })
                 }
               }
             })
