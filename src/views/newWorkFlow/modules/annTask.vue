@@ -60,6 +60,10 @@ export default {
       taskId: '',
       processInstanceId: '',
       visible: false,
+      useMoney: null,
+      remainingAmount: null,
+      totalMoney: null,
+      supplementary: null,
       formJson: {},
       func1: {
         //获得所有的库存地址
@@ -196,6 +200,7 @@ export default {
                       console.error('获取用户数据失败', error)
                     })
                 } else if (category === '使用') {
+                  this.remainingAmount = data.remainingAmount
                   console.log('保证金使用的数据', data)
                   let userData = {}
                   getBusinessByCompanyName(data.companyName)
@@ -245,6 +250,8 @@ export default {
                   })
                 } else if (category === '补缴') {
                   console.log('保证金补缴的数据', data)
+                  this.totalMoney = data.Money
+                  this.remainingAmount = data.remainingAmount
                   let userData = {}
                   getSingleQYUser(this.userInfo.id)
                     .then((res) => {
@@ -282,7 +289,21 @@ export default {
       $form
         .getData()
         .then((data) => {
-          this.commitToDatabase(data) //将数据存储到online数据库中
+          this.useMoney = data.use_money;
+          this.supplementary = data.supplementary;
+          // 新增校验逻辑：在提交前检查金额
+          if (Number(this.useMoney) > Number(this.remainingAmount)) {
+            this.$message.error("使用金额不能大于剩余金额");
+            return; // 直接返回，不执行后续操作
+          }
+          console.log('补缴金额:', this.supplementary)
+          console.log('剩余金额:', this.remainingAmount)
+          console.log('总金额:', this.totalMoney)
+          if ((Number(this.supplementary) + (Number(this.remainingAmount))) > Number(this.totalMoney)) {
+            this.$message.error("补缴后金额不能大于保证金金额");
+            return; // 直接返回，不执行后续操作
+          }
+          this.commitToDatabase(data); //将数据存储到online数据库中
         })
         .catch((e) => {
           this.$message.error(e)
