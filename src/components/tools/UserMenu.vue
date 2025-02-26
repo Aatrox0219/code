@@ -26,11 +26,8 @@
       </a-select>
     </component>
     <div v-if="showDeposit" style="position: relative; display: inline-block; margin-right: 10px">
-      <!-- <router-link
-        :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }"
-        style="font-size: 16px"
-        >保证金存缴待处理</router-link
-      > -->
+      <!-- <router-link :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }"
+        style="font-size: 16px;color:#fff">保证金存缴待处理</router-link> -->
       <a href="#/newWorkFlow/flowDeposit" style="font-size: 16px; color: #fff">保证金存缴待处理</a>
       <a-badge :count="depositTotal" :style="badgeStyle" show-zero />
     </div>
@@ -40,6 +37,11 @@
       <a-badge :count="useTotal" :style="badgeStyle" show-zero />
     </div>
     <a-divider v-if="showUse" type="vertical" />
+    <div v-if="showBackpay" style="position: relative; display: inline-block; margin-right: 10px">
+      <a href="#/newWorkFlow/flowBackPay" style="font-size: 16px; color: #fff">保证金补缴待处理</a>
+      <a-badge :count="backpayTotal" :style="badgeStyle" show-zero />
+    </div>
+    <a-divider v-if="showBackpay" type="vertical" />
     <a-dropdown>
       <span class="action action-full ant-dropdown-link user-dropdown-menu">
         <!-- <a-avatar class="avatar" size="small" :src="getAvatar()" /> -->
@@ -102,7 +104,7 @@ import { USER_ID } from '@/store/mutation-types'
 import { UI_CACHE_DB_DICT_DATA } from '@/store/mutation-types'
 import api from '@/api/index'
 import { getPendingTotal, AutoClaim } from '@/api/userList'
-import { depositList, depositCategoryId, useList, useCategoryId } from '@/api/processId'
+import { depositList, depositCategoryId, useList, useCategoryId, backpayList, backpayCategoryId } from '@/api/processId'
 export default {
   name: 'UserMenu',
   mixins: [mixinDevice],
@@ -110,8 +112,10 @@ export default {
     return {
       showDeposit: false,// 是否显示保证金存缴待处理
       showUse: false,// 是否显示保证金使用待处理
+      showBackpay: false,// 是否显示保证金补缴待处理
       depositTotal: 0,    // 保证金存缴待处理数量
       useTotal: 0,    // 保证金使用待处理数量
+      backpayTotal: 0, //保证金补缴待处理数量
       intervalId: null,
       // update-begin author:sunjianlei date:20200219 for: 头部菜单搜索规范命名 --------------
       searchMenuOptions: [],
@@ -189,54 +193,71 @@ export default {
   methods: {
     // 获取菜单权限判断是否展示待处理数量
     getPermission() {
-      let permission = this.permissionMenuList
-      console.log('菜单权限', permission)
+      let permission = this.permissionMenuList;
+      console.log('菜单权限', permission);
       permission.forEach((item) => {
         if (item.component === 'newWorkFlow/flowDeposit') {
-          this.showDeposit = true
-          return
+          this.showDeposit = true;
+          return; // 继续检查其他项
         }
-        // 递归检查子节点
-        if (item.children && item.children.length > 0) {
+        // 检查保证金使用
+        if (item.children && item.children.length > 0 && !this.showUse) {
           this.checkChildren(item.children, 'newWorkFlow/flowUse', (found) => {
-            if (found) this.showUse = true
+            this.showUse = found;
           });
         }
-      })
+        // 检查保证金补缴
+        if (item.children && item.children.length > 0 && !this.showBackpay) {
+          this.checkChildren(item.children, 'newWorkFlow/flowBackPay', (found) => {
+            this.showBackpay = found;
+          });
+        }
+      });
     },
 
     // 新增递归函数
     checkChildren(children, targetComponent, callback) {
-      children.forEach(child => {
+      for (const child of children) {
         if (child.component === targetComponent) {
-          callback(true); // 找到目标组件
-          return;       // 可选：提前终止
+          callback(true);
+          console.log('找到目标组件：', child.component);
+          return true; // 终止递归
         }
-        // 继续递归子节点
         if (child.children && child.children.length > 0) {
-          this.checkChildren(child.children, targetComponent, callback);
+          const found = this.checkChildren(child.children, targetComponent, callback);
+          if (found) return true; // 子节点找到后终止上层递归
         }
-      });
+      }
+      return false;
     },
     // 获取所有办事项的总数
     getTotal() {
-      // 获取保证金存缴代办事项总数
+      // 获取保证金存缴待办事项总数
       getPendingTotal(depositList, depositCategoryId)
         .then((total) => {
           this.depositTotal = total
           console.log('depositTotal', this.depositTotal)
         })
         .catch((error) => {
-          console.error('获取代办事项总数失败:', error)
+          console.error('获取待办事项总数失败:', error)
         })
-      // 获取保证金使用代办事项总数
+      // 获取保证金使用待办事项总数
       getPendingTotal(useList, useCategoryId)
         .then((total) => {
           this.useTotal = total
           console.log('useTotal', this.useTotal)
         })
         .catch((error) => {
-          console.error('获取代办事项总数失败:', error)
+          console.error('获取待办事项总数失败:', error)
+        })
+      // 获取保证金补缴待办事项总数
+      getPendingTotal(backpayList, backpayCategoryId)
+        .then((total) => {
+          this.backpayTotal = total
+          console.log('backpayTotal', this.backpayTotal)
+        })
+        .catch((error) => {
+          console.error('获取待办事项总数失败:', error)
         })
     },
 
@@ -244,6 +265,7 @@ export default {
     async startInterval() {
       await AutoClaim(depositList, depositCategoryId, this.getUserInfo) // 自动认领该用户的保证金存缴的流程
       await AutoClaim(useList, useCategoryId, this.getUserInfo) // 自动认领该用户的保证金使用的流程
+      await AutoClaim(backpayList, backpayCategoryId, this.getUserInfo) // 自动认领该用户的保证金补缴的流程
       console.log('开启保证金存缴的自动认领')
       this.getTotal()
       this.intervalId = setInterval(async () => {
@@ -252,6 +274,10 @@ export default {
       }, 180000)
       this.intervalId = setInterval(async () => {
         await AutoClaim(useList, useCategoryId)
+        this.getTotal()
+      }, 180000)
+      this.intervalId = setInterval(async () => {
+        await AutoClaim(backpayList, backpayCategoryId)
         this.getTotal()
       }, 180000)
     },
@@ -353,7 +379,7 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.intervalId)
-    console.log('关闭获取代办事项数量的定时器')
+    console.log('关闭获取待办事项数量的定时器')
     this.$bus.$off('callGetTotal')
     console.log('关闭事件总线监听')
   },
