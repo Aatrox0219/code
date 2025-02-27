@@ -80,6 +80,7 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 import { taskStateMapping } from './taskStateMapping'
 import commonTable from './modules/commonTable.vue'
+import { backpayList, backpayCategoryId, depositList, depositCategoryId } from '@/api/processId'
 export default {
   name: 'flowBackPay',
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory, commonTable },
@@ -88,8 +89,8 @@ export default {
       configurationParameter1: {
         inquire: {
           //基本信息
-          categoryId: '1847453556447707137', //流程分类
-          processIdList: ['20010', '20013', '20016', '20019', '20022'], //想要显示的流程信息
+          categoryId: depositCategoryId, //流程分类
+          processIdList: depositList, //想要显示的流程信息
           applyState: ['complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -150,7 +151,7 @@ export default {
             title: '使用完成时间',
             align: 'center',
             dataIndex: 'createDate',
-            dataLocation: 'allData.main_use.create_time',
+            dataLocation: 'allData.main_payment.use_complete_time',
             show: true,
             filterType: 'date',
           },
@@ -187,12 +188,20 @@ export default {
             show: true,
           },
         ],
+        filterFunction: function (dataList) {
+          return dataList.filter(item => {
+            // 直接使用已提取到顶层的属性
+            const remaining = parseFloat(item.remainingAmount || 0) // 对应 dataLocation 提取后的值
+            const money = parseFloat(item.Money || 0)               // 对应 dataLocation 提取后的值
+            return remaining < money
+          })
+        }
       },
       configurationParameter2: {
         inquire: {
           //基本信息
-          categoryId: '1860939985686949889', //流程分类
-          processIdList: [], //想要显示的流程信息
+          categoryId: backpayCategoryId, //流程分类
+          processIdList: backpayList, //想要显示的流程信息
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -200,7 +209,7 @@ export default {
             title: '状态',
             align: 'center',
             dataIndex: 'nodeName',
-            // dataLocation: 'nodeName',
+            dataLocation: 'nodeName',
             show: true,
             filterType: 'select',
           },
@@ -243,7 +252,7 @@ export default {
             show: true,
           },
           {
-            title: '补缴金额（万元）',
+            title: '本次补缴金额（万元）',
             align: 'center',
             dataIndex: 'supplementary',
             dataLocation: 'allData.main_backpay.supplementary',
@@ -308,8 +317,8 @@ export default {
       configurationParameter3: {
         inquire: {
           //基本信息
-          categoryId: '1860939985686949889', //流程分类
-          processIdList: [], //想要显示的流程信息
+          categoryId: backpayCategoryId, //流程分类
+          processIdList: backpayList, //想要显示的流程信息
           applyState: ['pending'], //想要查询的流程类型
         },
         columnsData: [
@@ -317,7 +326,7 @@ export default {
             title: '状态',
             align: 'center',
             dataIndex: 'nodeName',
-            // dataLocation: 'nodeName',
+            dataLocation: 'nodeName',
             show: true,
             filterType: 'select',
           },
@@ -360,7 +369,7 @@ export default {
             show: true,
           },
           {
-            title: '补缴金额（万元）',
+            title: '本次补缴金额（万元）',
             align: 'center',
             dataIndex: 'supplementary',
             dataLocation: 'allData.main_backpay.supplementary',
@@ -473,8 +482,31 @@ export default {
         })
     },
 
-    //TODO 催缴 发送短信
-    urge() { },
+    //催缴 发送短信
+    urge(record) {
+      console.log('催缴record', record)
+      const params = {
+        companyName: record.companyName,
+        projectName: record.projectName,
+        Money: record.Money,
+        remainingAmount: record.remainingAmount,
+        responsiblePerson: record.responsiblePerson,
+        mobile: record.mobile
+      };
+
+      axios.post('/urge', params)
+        .then(response => {
+          if (response.data.success) {
+            this.$message.success('催缴信息发送成功');
+          } else {
+            this.$message.error(response.data.msg || '请求失败');
+          }
+        })
+        .catch(error => {
+          console.error('催缴请求异常:', error);
+          this.$message.error('服务器错误，请稍后重试');
+        });
+    },
 
     //开启流程
     startProcess(record) {
@@ -484,13 +516,13 @@ export default {
       console.log('userData.value.username', userData.value.username)
       console.log('record.depositWay:', record.depositWay)
       if (record.depositWay === '担保公司保函') {
-        this.selectedProcessId = ''
+        this.selectedProcessId = '40066'
       } else if (record.depositWay === '保险公司保函') {
-        this.selectedProcessId = ''
+        this.selectedProcessId = '40062'
       } else if (record.depositWay === '银行保函') {
-        this.selectedProcessId = ''
+        this.selectedProcessId = '40064'
       } else if (record.depositWay === '银行现金存单') {
-        this.selectedProcessId = ''
+        this.selectedProcessId = '40060'
       }
       nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
         .then((res) => {
@@ -505,7 +537,7 @@ export default {
               taskId,
               processInstanceId,
               '补缴',
-              this.currentRecord
+              record
             )
           } else {
             this.$message.error('开启流程失败')
@@ -533,60 +565,60 @@ export default {
       if (commonTableInstance3) {
         commonTableInstance3.getAllList()
       }
-      this.getLoadClaim() // 获取未认领流程
+      // this.getLoadClaim() // 获取未认领流程
     },
-    //得到所有未认领的流程
-    getLoadClaim() {
-      let params = {
-        processIdList: ['5131'],
-        applyState: ['claim'],
-        pageSize: 1000,
-        pageNum: 1,
-        categoryId: '1860939985686949889',
-      }
-      nw_postAction1(`/generalList/getAllList`, params)
-        .then((res) => {
-          console.log('获取未认领的返回数据:', res.result.dataList)
-          this.loadClaimData = res.result.dataList
-          if (this.loadClaimData.length > 0) {
-            const claimPromises = [] // 用于存储所有认领任务的 Promise
+    // //得到所有未认领的流程
+    // getLoadClaim() {
+    //   let params = {
+    //     processIdList: ['5131'],
+    //     applyState: ['claim'],
+    //     pageSize: 1000,
+    //     pageNum: 1,
+    //     categoryId: '1860939985686949889',
+    //   }
+    //   nw_postAction1(`/generalList/getAllList`, params)
+    //     .then((res) => {
+    //       console.log('获取未认领的返回数据:', res.result.dataList)
+    //       this.loadClaimData = res.result.dataList
+    //       if (this.loadClaimData.length > 0) {
+    //         const claimPromises = [] // 用于存储所有认领任务的 Promise
 
-            for (var i = 0; i < this.loadClaimData.length; i++) {
-              this.loadClaimData[i].state = '待领取'
+    //         for (var i = 0; i < this.loadClaimData.length; i++) {
+    //           this.loadClaimData[i].state = '待领取'
 
-              const projectAddress = this.loadClaimData[i].allData.main_payment.project_address
+    //           const projectAddress = this.loadClaimData[i].allData.main_payment.project_address
 
-              //通过用户的部门地址和项目的地址进行匹配来自动认领
-              if (this.userInfo.orgAddress.some((addr) => addr === projectAddress)) {
-                const promise = this.claimTask(this.loadClaimData[i])
-                claimPromises.push(promise)
-              }
-            }
+    //           //通过用户的部门地址和项目的地址进行匹配来自动认领
+    //           if (this.userInfo.orgAddress.some((addr) => addr === projectAddress)) {
+    //             const promise = this.claimTask(this.loadClaimData[i])
+    //             claimPromises.push(promise)
+    //           }
+    //         }
 
-            // 等待所有认领任务完成后更新界面
-            Promise.all(claimPromises).then(() => { })
-          }
-        })
-        .catch((res) => {
-          console.log(res)
-        })
-    },
-    claimTask(reocrd) {
-      return nw_getAction(`/task/claimTask/` + reocrd.taskId)
-        .then((res) => {
-          if (res.result) {
-            console.log('认领成功', reocrd)
-            return true // 认领成功返回 true
-          } else {
-            console.error('认领失败')
-            return false // 认领失败返回 false
-          }
-        })
-        .catch((error) => {
-          console.log(error)
-          return false // 出现错误时返回 false
-        })
-    },
+    //         // 等待所有认领任务完成后更新界面
+    //         Promise.all(claimPromises).then(() => { })
+    //       }
+    //     })
+    //     .catch((res) => {
+    //       console.log(res)
+    //     })
+    // },
+    // claimTask(reocrd) {
+    //   return nw_getAction(`/task/claimTask/` + reocrd.taskId)
+    //     .then((res) => {
+    //       if (res.result) {
+    //         console.log('认领成功', reocrd)
+    //         return true // 认领成功返回 true
+    //       } else {
+    //         console.error('认领失败')
+    //         return false // 认领失败返回 false
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.log(error)
+    //       return false // 出现错误时返回 false
+    //     })
+    // },
     //处理该任务
     announceTask(record) {
       console.log('record1', record)

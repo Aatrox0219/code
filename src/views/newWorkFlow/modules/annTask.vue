@@ -291,6 +291,9 @@ export default {
         .then((data) => {
           this.useMoney = data.use_money;
           this.supplementary = data.supplementary;
+          console.log('使用金额:', this.useMoney)
+          console.log('剩余金额:', this.remainingAmount)
+          console.log('总金额:', this.totalMoney)
           // 新增校验逻辑：在提交前检查金额
           if (Number(this.useMoney) > Number(this.remainingAmount)) {
             this.$message.error("使用金额不能大于剩余金额");
