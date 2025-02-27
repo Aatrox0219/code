@@ -468,7 +468,6 @@ export default {
       if (commonTableInstance3) {
         commonTableInstance3.getAllList()
       }
-      this.getLoadClaim() // 获取未认领流程
     },
     //处理该任务
     announceTask(record) {
