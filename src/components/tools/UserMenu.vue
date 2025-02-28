@@ -28,20 +28,25 @@
     <div v-if="showDeposit" style="position: relative; display: inline-block; margin-right: 10px">
       <!-- <router-link :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }"
         style="font-size: 16px;color:#fff">保证金存缴待处理</router-link> -->
-      <a href="#/newWorkFlow/flowDeposit" style="font-size: 16px; color: #fff">保证金存缴待处理</a>
+      <a href="#/newWorkFlow/flowDeposit" style="font-size: 16px; color: #fff">存缴待处理</a>
       <a-badge :count="depositTotal" :style="badgeStyle" show-zero />
     </div>
     <a-divider v-if="showDeposit" type="vertical" />
     <div v-if="showUse" style="position: relative; display: inline-block; margin-right: 10px">
-      <a href="#/newWorkFlow/flowUse" style="font-size: 16px; color: #fff">保证金使用待处理</a>
+      <a href="#/newWorkFlow/flowUse" style="font-size: 16px; color: #fff">使用待处理</a>
       <a-badge :count="useTotal" :style="badgeStyle" show-zero />
     </div>
     <a-divider v-if="showUse" type="vertical" />
     <div v-if="showBackpay" style="position: relative; display: inline-block; margin-right: 10px">
-      <a href="#/newWorkFlow/flowBackPay" style="font-size: 16px; color: #fff">保证金补缴待处理</a>
+      <a href="#/newWorkFlow/flowBackPay" style="font-size: 16px; color: #fff">补缴待处理</a>
       <a-badge :count="backpayTotal" :style="badgeStyle" show-zero />
     </div>
     <a-divider v-if="showBackpay" type="vertical" />
+    <div v-if="showChange" style="position: relative; display: inline-block; margin-right: 10px">
+      <a href="#/newWorkFlow/flowChange" style="font-size: 16px; color: #fff">保证金存缴方式变更待处理</a>
+      <a-badge :count="changeTotal" :style="badgeStyle" show-zero />
+    </div>
+    <a-divider v-if="showChange" type="vertical" />
     <a-dropdown>
       <span class="action action-full ant-dropdown-link user-dropdown-menu">
         <!-- <a-avatar class="avatar" size="small" :src="getAvatar()" /> -->
@@ -104,7 +109,7 @@ import { USER_ID } from '@/store/mutation-types'
 import { UI_CACHE_DB_DICT_DATA } from '@/store/mutation-types'
 import api from '@/api/index'
 import { getPendingTotal, AutoClaim } from '@/api/userList'
-import { depositList, depositCategoryId, useList, useCategoryId, backpayList, backpayCategoryId } from '@/api/processId'
+import { depositList, depositCategoryId, useList, useCategoryId, backpayList, backpayCategoryId, changeList, changeCategoryId } from '@/api/processId'
 export default {
   name: 'UserMenu',
   mixins: [mixinDevice],
@@ -113,9 +118,11 @@ export default {
       showDeposit: false,// 是否显示保证金存缴待处理
       showUse: false,// 是否显示保证金使用待处理
       showBackpay: false,// 是否显示保证金补缴待处理
+      showChange: false,// 是否显示保证金补缴待处理
       depositTotal: 0,    // 保证金存缴待处理数量
       useTotal: 0,    // 保证金使用待处理数量
       backpayTotal: 0, //保证金补缴待处理数量
+      changeTotal: 0,    // 保证金存缴方式变更待处理数量
       intervalId: null,
       // update-begin author:sunjianlei date:20200219 for: 头部菜单搜索规范命名 --------------
       searchMenuOptions: [],
@@ -212,6 +219,10 @@ export default {
             this.showBackpay = found;
           });
         }
+        if (item.component === 'newWorkFlow/flowChange') {
+          this.showChange = true;
+          return;
+        }
       });
     },
 
@@ -259,6 +270,15 @@ export default {
         .catch((error) => {
           console.error('获取待办事项总数失败:', error)
         })
+        // 获取保证金方式变更待办事项总数
+      getPendingTotal(changeList, changeCategoryId)
+        .then((total) => {
+          this.changeTotal = total
+          console.log('changeTotal', this.changeTotal)
+        })
+        .catch((error) => {
+          console.error('获取待办事项总数失败:', error)
+        })
     },
 
     // 开启定时器
@@ -266,6 +286,7 @@ export default {
       await AutoClaim(depositList, depositCategoryId, this.getUserInfo) // 自动认领该用户的保证金存缴的流程
       await AutoClaim(useList, useCategoryId, this.getUserInfo) // 自动认领该用户的保证金使用的流程
       await AutoClaim(backpayList, backpayCategoryId, this.getUserInfo) // 自动认领该用户的保证金补缴的流程
+      await AutoClaim(changeList, changeCategoryId, this.getUserInfo) // 自动认领该用户的保证金存缴方式变更的流程
       console.log('开启保证金存缴的自动认领')
       this.getTotal()
       this.intervalId = setInterval(async () => {
@@ -278,6 +299,10 @@ export default {
       }, 180000)
       this.intervalId = setInterval(async () => {
         await AutoClaim(backpayList, backpayCategoryId)
+        this.getTotal()
+      }, 180000)
+      this.intervalId = setInterval(async () => {
+        await AutoClaim(changeList, changeCategoryId)
         this.getTotal()
       }, 180000)
     },
