@@ -494,16 +494,16 @@ export default {
         mobile: record.mobile
       };
 
-      axios.post('/urge', params)
+      axios.post('http://139.199.159.36:37192/backpay/sendshortletter', params)
         .then(response => {
           if (response.data.success) {
-            this.$message.success('催缴信息发送成功');
+            this.$message.success('催缴短信发送成功');
           } else {
             this.$message.error(response.data.msg || '请求失败');
           }
         })
         .catch(error => {
-          console.error('催缴请求异常:', error);
+          console.error('请求异常:', error);
           this.$message.error('服务器错误，请稍后重试');
         });
     },
@@ -516,13 +516,13 @@ export default {
       console.log('userData.value.username', userData.value.username)
       console.log('record.depositWay:', record.depositWay)
       if (record.depositWay === '担保公司保函') {
-        this.selectedProcessId = '40066'
+        this.selectedProcessId = '5220'
       } else if (record.depositWay === '保险公司保函') {
-        this.selectedProcessId = '40062'
+        this.selectedProcessId = '5224'
       } else if (record.depositWay === '银行保函') {
-        this.selectedProcessId = '40064'
+        this.selectedProcessId = '5222'
       } else if (record.depositWay === '银行现金存单') {
-        this.selectedProcessId = '40060'
+        this.selectedProcessId = '5226'
       }
       nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
         .then((res) => {
@@ -567,58 +567,6 @@ export default {
       }
       // this.getLoadClaim() // 获取未认领流程
     },
-    // //得到所有未认领的流程
-    // getLoadClaim() {
-    //   let params = {
-    //     processIdList: ['5131'],
-    //     applyState: ['claim'],
-    //     pageSize: 1000,
-    //     pageNum: 1,
-    //     categoryId: '1860939985686949889',
-    //   }
-    //   nw_postAction1(`/generalList/getAllList`, params)
-    //     .then((res) => {
-    //       console.log('获取未认领的返回数据:', res.result.dataList)
-    //       this.loadClaimData = res.result.dataList
-    //       if (this.loadClaimData.length > 0) {
-    //         const claimPromises = [] // 用于存储所有认领任务的 Promise
-
-    //         for (var i = 0; i < this.loadClaimData.length; i++) {
-    //           this.loadClaimData[i].state = '待领取'
-
-    //           const projectAddress = this.loadClaimData[i].allData.main_payment.project_address
-
-    //           //通过用户的部门地址和项目的地址进行匹配来自动认领
-    //           if (this.userInfo.orgAddress.some((addr) => addr === projectAddress)) {
-    //             const promise = this.claimTask(this.loadClaimData[i])
-    //             claimPromises.push(promise)
-    //           }
-    //         }
-
-    //         // 等待所有认领任务完成后更新界面
-    //         Promise.all(claimPromises).then(() => { })
-    //       }
-    //     })
-    //     .catch((res) => {
-    //       console.log(res)
-    //     })
-    // },
-    // claimTask(reocrd) {
-    //   return nw_getAction(`/task/claimTask/` + reocrd.taskId)
-    //     .then((res) => {
-    //       if (res.result) {
-    //         console.log('认领成功', reocrd)
-    //         return true // 认领成功返回 true
-    //       } else {
-    //         console.error('认领失败')
-    //         return false // 认领失败返回 false
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       console.log(error)
-    //       return false // 出现错误时返回 false
-    //     })
-    // },
     //处理该任务
     announceTask(record) {
       console.log('record1', record)
