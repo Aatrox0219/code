@@ -179,6 +179,11 @@ export default {
             show: true,
           },
         ],
+        filterFunction: (dataList) => {
+          return dataList.filter(item =>
+            Number(item.Money) !== 0 // 过滤掉 Money 为 0 的项
+          );
+        }
       },
       configurationParameter2: {
         inquire: {
