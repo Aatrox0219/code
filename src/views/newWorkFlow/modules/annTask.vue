@@ -226,28 +226,36 @@ export default {
                       console.error('获取用户数据失败', error)
                     })
                 } else if (category === '变更') {
-                  console.log('保证金变更的数据', data)
-                  this.$refs.generateForm.setData({
-                    company_name: data.companyName,
-                    credit_code: data.creditCode,
-                    company_address: data.companyAddress,
-                    postal_code: data.postalCode,
-                    project_name: data.projectName,
-                    project_address: data.projectAddress,
-                    address_detail: data.addressDetail,
-                    money: data.contractAmount,
-                    start_date: data.formCreateDate,
-                    end_date: data.formEndDate,
-                    // reason:,
-                    project_contact: data.responsiblePerson,
-                    project_mobile: data.mobile,
-                    proportions: data.proportions,
-                    old_deposit_method: data.depositWay,
-                    new_deposit_method: data.newProjectStatus,
-                    reason: data.reason,
-                    proportions: data.proportions,
-                    ensure_money: data.Money,
-                  })
+                  let userData = {}
+                  getSingleQYUser(this.userInfo.id)
+                    .then((res) => {
+                      userData = res.result
+                      console.log('userData', userData)
+                      this.$refs.generateForm.setData({
+                        company_name: userData.companyName, //这里的company_name是表单中的字段标识
+                        credit_code: userData.creditCode,
+                        company_address: userData.postalAddress,
+                        postal_code: userData.postcode,
+                        project_name: data.projectName,
+                        project_address: data.projectAddress,
+                        address_detail: data.addressDetail,
+                        money: data.contractAmount,
+                        start_date: data.formCreateDate,
+                        end_date: data.formEndDate,
+                        // reason:,
+                        project_contact: data.responsiblePerson,
+                        project_mobile: data.mobile,
+                        proportions: data.proportions,
+                        old_deposit_method: data.depositWay,
+                        new_deposit_method: data.newProjectStatus,
+                        reason: data.reason,
+                        proportions: data.proportions,
+                        ensure_money: data.Money,
+                      })
+                    })
+                    .catch((error) => {
+                      console.error('获取用户数据失败', error)
+                    })
                 } else if (category === '补缴') {
                   console.log('保证金补缴的数据', data)
                   this.totalMoney = data.Money
