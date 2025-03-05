@@ -3,9 +3,9 @@ import './config'
 
 
 import Vue from 'vue'
-import App from './App.vue'
+import element from './elementUI.js'
+import Antd, { version, message } from 'ant-design-vue'
 import Storage from 'vue-ls'
-import router from './router'
 import store from './store/'
 import { VueAxios } from "@/utils/request"
 import $ from 'jquery'
@@ -13,8 +13,6 @@ import '../node_modules/jquery/dist/jquery.min.js'
 
 require('@jeecg/antd-online-mini')
 require('@jeecg/antd-online-mini/dist/OnlineForm.css')
-
-import Antd, { version, message } from 'ant-design-vue'
 
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
@@ -64,7 +62,6 @@ import FormMaking from './components/FormMaking/index.js'
 // import VueI18n from 'vue-i18n'
 // import ElementUI, { Message } from 'element-ui'
 import Board from './components/Board/index.js'//引入看板
-import element from './elementUI.js'
 import 'element-ui/lib/theme-chalk/index.css'
 
 // import ElementUI from 'element-ui'
@@ -75,6 +72,8 @@ require('vue-video-player/src/custom-theme.css')
 import CKEditor from '@ckeditor/ckeditor5-vue2';
 // import VueCoreVideoPlayer from 'vue-core-video-player'
 // import i18n from './i18n/index'
+import App from './App.vue'
+import router from './router'
 
 Vue.use(CKEditor);
 

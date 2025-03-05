@@ -534,6 +534,7 @@ export default {
 <style scoped>
 .card-table {
   background-color: white;
+  min-height: 650px;
 }
 
 .table-container {

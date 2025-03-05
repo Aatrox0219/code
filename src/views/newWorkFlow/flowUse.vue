@@ -26,7 +26,7 @@
                       <a-card :bordered="false">
                         <div class="table-container">
                           <commonTable ref="commonTableRef2" :configurationParameter="configurationParameter2"
-                            :seeHistory="seeHistory">
+                            :seeHistory="seeHistory" :download="download">
                           </commonTable>
                         </div>
                       </a-card>
@@ -80,6 +80,8 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 import { taskStateMapping } from './taskStateMapping'
 import commonTable from './modules/commonTable.vue'
+import { useList, useCategoryId, depositList, depositCategoryId } from '@/api/processId'
+import { downloadDocument } from '@/api/userList'
 
 export default {
   name: 'flowUse',
@@ -88,8 +90,8 @@ export default {
     return {
       configurationParameter1: {
         inquire: {
-          categoryId: '1847453055727501313', //流程分类
-          processIdList: ['20560', '20563', '20566', '20569'], //存缴
+          categoryId: depositCategoryId, //流程分类
+          processIdList: depositList, //存缴
           applyState: ['complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -160,18 +162,13 @@ export default {
             show: false,
           },
           {
-            dataIndex: 'companyAddress',
-            dataLocation: 'allData.main_payment.company_address',
-            show: false,
-          },
-          {
-            dataIndex: 'postalCode',
-            dataLocation: 'allData.main_payment.postal_code',
-            show: false,
-          },
-          {
             dataIndex: 'addressDetail',
             dataLocation: 'allData.main_payment.address_detail',
+            show: false,
+          },
+          {
+            dataIndex: 'agency',
+            dataLocation: 'allData.main_payment.handl_company',
             show: false,
           },
           {
@@ -182,11 +179,16 @@ export default {
             show: true,
           },
         ],
+        filterFunction: (dataList) => {
+          return dataList.filter(item =>
+            Number(item.Money) !== 0 // 过滤掉 Money 为 0 的项
+          );
+        }
       },
       configurationParameter2: {
         inquire: {
-          categoryId: '1847453556447707137', //流程分类
-          processIdList: ['20560', '20563', '20566', '20569','20572'], //存缴+使用
+          categoryId: useCategoryId, //流程分类
+          processIdList: useList, //存缴+使用
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -266,6 +268,16 @@ export default {
             show: true,
           },
           {
+            dataIndex: 'is_export',
+            dataLocation: 'allData.main_use.is_export',
+            show: false,
+          },
+          {
+            dataIndex: 'export_path',
+            dataLocation: 'allData.main_use.export_path',
+            show: false,
+          },
+          {
             title: '详情',
             align: 'center',
             dataIndex: 'flowHistoryaction',
@@ -276,8 +288,8 @@ export default {
       },
       configurationParameter3: {
         inquire: {
-          categoryId: '1847453556447707137', //流程分类
-          processIdList: ['20560', '20563', '20566', '20569','20572'], //存缴+使用
+          categoryId: useCategoryId, //流程分类
+          processIdList: useList, //存缴+使用
           applyState: ['pending'], //想要查询的流程类型
         },
         columnsData: [
@@ -442,6 +454,10 @@ export default {
     seeHistory(record) {
       this.$refs.flowHistory.openModal(record)
     },
+    download(record) {
+      console.log('downloadrecord', record);
+      downloadDocument(record)
+    },
     // 更新表格数据
     getData() {
       // 先获取子组件实例
@@ -457,58 +473,6 @@ export default {
       if (commonTableInstance3) {
         commonTableInstance3.getAllList()
       }
-      this.getLoadClaim() // 获取未认领流程
-    },
-    //得到所有未认领的流程
-    getLoadClaim() {
-      let params = {
-        processIdList: ['20560', '20563', '20566', '20569','20572'],
-        applyState: ['claim'],
-        categoryId: '1847453556447707137',
-      }
-      nw_postAction1(`/generalList/getAllList`, params)
-        .then((res) => {
-          console.log('获取未认领的返回数据:', res.result.dataList)
-          this.loadClaimData = res.result.dataList
-          if (this.loadClaimData.length > 0) {
-            const claimPromises = [] // 用于存储所有认领任务的 Promise
-
-            for (var i = 0; i < this.loadClaimData.length; i++) {
-              this.loadClaimData[i].state = '待领取'
-
-              const projectAddress = this.loadClaimData[i].allData.main_payment.project_address
-
-              //通过用户的部门地址和项目的地址进行匹配来自动认领
-              if (this.userInfo.orgAddress.some((addr) => addr === projectAddress)) {
-                const promise = this.claimTask(this.loadClaimData[i])
-                claimPromises.push(promise)
-              }
-            }
-
-            // 等待所有认领任务完成后更新界面
-            Promise.all(claimPromises).then(() => { })
-          }
-        })
-        .catch((res) => {
-          console.log(res)
-        })
-    },
-    //认领流程
-    claimTask(reocrd) {
-      return nw_getAction(`/task/claimTask/` + reocrd.taskId)
-        .then((res) => {
-          if (res.result) {
-            console.log('认领成功', reocrd)
-            return true // 认领成功返回 true
-          } else {
-            console.error('认领失败')
-            return false // 认领失败返回 false
-          }
-        })
-        .catch((error) => {
-          console.log(error)
-          return false // 出现错误时返回 false
-        })
     },
     //处理该任务
     announceTask(record) {
@@ -525,6 +489,7 @@ export default {
 <style scoped>
 .card-table {
   background-color: white;
+  min-height: 650px;
 }
 
 .table-container {

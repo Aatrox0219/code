@@ -24,7 +24,7 @@ module.exports = {
   //     filename: 'index.html',
   //   }
   // },
-  
+
   // 打包app时放开该配置
   // publicPath:'././',
   // publicPath:'/llm-kg/subject-one/stj-front',
@@ -92,7 +92,13 @@ module.exports = {
   },
 
   css: {
+    // 禁用css提取
+    extract: false,
     loaderOptions: {
+      css: {
+        // 禁用css压缩
+        minimize: false
+      },
       less: {
         modifyVars: {
           /* less 变量覆盖，用于自定义 ant design 主题 */

@@ -15,43 +15,38 @@
       <a-icon type="search"></a-icon>
     </span> -->
     <!-- update-begin author:sunjianlei date:20200219 for: 菜单搜索改为动态组件，在手机端呈现出弹出框 -->
-    <component
-      :is="searchMenuComp"
-      v-show="searchMenuVisible || isMobile()"
-      class="borders"
-      :visible="searchMenuVisible"
-      title="搜索菜单"
-      :footer="null"
-      @cancel="searchMenuVisible = false"
-    >
-      <a-select
-        class="search-input"
-        showSearch
-        :showArrow="false"
-        placeholder="搜索菜单"
-        optionFilterProp="children"
-        :filterOption="filterOption"
-        :open="isMobile() ? true : null"
-        :getPopupContainer="(node) => node.parentNode"
-        :style="isMobile() ? { width: '100%', marginBottom: '50px' } : {}"
-        @change="searchMethods"
-        @blur="hiddenClick"
-      >
+    <component :is="searchMenuComp" v-show="searchMenuVisible || isMobile()" class="borders"
+      :visible="searchMenuVisible" title="搜索菜单" :footer="null" @cancel="searchMenuVisible = false">
+      <a-select class="search-input" showSearch :showArrow="false" placeholder="搜索菜单" optionFilterProp="children"
+        :filterOption="filterOption" :open="isMobile() ? true : null" :getPopupContainer="(node) => node.parentNode"
+        :style="isMobile() ? { width: '100%', marginBottom: '50px' } : {}" @change="searchMethods" @blur="hiddenClick">
         <a-select-option v-for="(site, index) in searchMenuOptions" :key="index" :value="site.id">{{
           site.meta.title
         }}</a-select-option>
       </a-select>
     </component>
-    <div v-if="showDeposit" style="position: relative; display: inline-block; margin-right: 30px">
-      <!-- <router-link
-        :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }"
-        style="font-size: 16px"
-        >保证金存缴待处理</router-link
-      > -->
-      <a href="#/newWorkFlow/flowDeposit" style="font-size: 16px; color: #fff">保证金存缴待处理</a>
+    <div v-if="showDeposit" style="position: relative; display: inline-block; margin-right: 10px">
+      <!-- <router-link :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }"
+        style="font-size: 16px;color:#fff">保证金存缴待处理</router-link> -->
+      <a href="#/newWorkFlow/flowDeposit" style="font-size: 16px; color: #fff">存缴待处理</a>
       <a-badge :count="depositTotal" :style="badgeStyle" show-zero />
     </div>
     <a-divider v-if="showDeposit" type="vertical" />
+    <div v-if="showUse" style="position: relative; display: inline-block; margin-right: 10px">
+      <a href="#/newWorkFlow/flowUse" style="font-size: 16px; color: #fff">使用待处理</a>
+      <a-badge :count="useTotal" :style="badgeStyle" show-zero />
+    </div>
+    <a-divider v-if="showUse" type="vertical" />
+    <div v-if="showBackpay" style="position: relative; display: inline-block; margin-right: 10px">
+      <a href="#/newWorkFlow/flowBackPay" style="font-size: 16px; color: #fff">补缴待处理</a>
+      <a-badge :count="backpayTotal" :style="badgeStyle" show-zero />
+    </div>
+    <a-divider v-if="showBackpay" type="vertical" />
+    <div v-if="showChange" style="position: relative; display: inline-block; margin-right: 10px">
+      <a href="#/newWorkFlow/flowChange" style="font-size: 16px; color: #fff">保证金存缴方式变更待处理</a>
+      <a-badge :count="changeTotal" :style="badgeStyle" show-zero />
+    </div>
+    <a-divider v-if="showChange" type="vertical" />
     <a-dropdown>
       <span class="action action-full ant-dropdown-link user-dropdown-menu">
         <!-- <a-avatar class="avatar" size="small" :src="getAvatar()" /> -->
@@ -114,15 +109,20 @@ import { USER_ID } from '@/store/mutation-types'
 import { UI_CACHE_DB_DICT_DATA } from '@/store/mutation-types'
 import api from '@/api/index'
 import { getPendingTotal, AutoClaim } from '@/api/userList'
-import { depositList, depositCategoryId } from '@/api/processId'
-
+import { depositList, depositCategoryId, useList, useCategoryId, backpayList, backpayCategoryId, changeList, changeCategoryId } from '@/api/processId'
 export default {
   name: 'UserMenu',
   mixins: [mixinDevice],
   data() {
     return {
       showDeposit: false,// 是否显示保证金存缴待处理
+      showUse: false,// 是否显示保证金使用待处理
+      showBackpay: false,// 是否显示保证金补缴待处理
+      showChange: false,// 是否显示保证金补缴待处理
       depositTotal: 0,    // 保证金存缴待处理数量
+      useTotal: 0,    // 保证金使用待处理数量
+      backpayTotal: 0, //保证金补缴待处理数量
+      changeTotal: 0,    // 保证金存缴方式变更待处理数量
       intervalId: null,
       // update-begin author:sunjianlei date:20200219 for: 头部菜单搜索规范命名 --------------
       searchMenuOptions: [],
@@ -200,34 +200,109 @@ export default {
   methods: {
     // 获取菜单权限判断是否展示待处理数量
     getPermission() {
-      let permission = this.permissionMenuList
+      let permission = this.permissionMenuList;
+      console.log('菜单权限', permission);
       permission.forEach((item) => {
         if (item.component === 'newWorkFlow/flowDeposit') {
-          this.showDeposit = true
-          return
+          this.showDeposit = true;
+          return; // 继续检查其他项
         }
-      })
+        // 检查保证金使用
+        if (item.children && item.children.length > 0 && !this.showUse) {
+          this.checkChildren(item.children, 'newWorkFlow/flowUse', (found) => {
+            this.showUse = found;
+          });
+        }
+        // 检查保证金补缴
+        if (item.children && item.children.length > 0 && !this.showBackpay) {
+          this.checkChildren(item.children, 'newWorkFlow/flowBackPay', (found) => {
+            this.showBackpay = found;
+          });
+        }
+        if (item.component === 'newWorkFlow/flowChange') {
+          this.showChange = true;
+          return;
+        }
+      });
+    },
+
+    // 新增递归函数
+    checkChildren(children, targetComponent, callback) {
+      for (const child of children) {
+        if (child.component === targetComponent) {
+          callback(true);
+          console.log('找到目标组件：', child.component);
+          return true; // 终止递归
+        }
+        if (child.children && child.children.length > 0) {
+          const found = this.checkChildren(child.children, targetComponent, callback);
+          if (found) return true; // 子节点找到后终止上层递归
+        }
+      }
+      return false;
     },
     // 获取所有办事项的总数
     getTotal() {
-      // 获取保证金存缴代办事项总数
+      // 获取保证金存缴待办事项总数
       getPendingTotal(depositList, depositCategoryId)
         .then((total) => {
           this.depositTotal = total
           console.log('depositTotal', this.depositTotal)
         })
         .catch((error) => {
-          console.error('获取代办事项总数失败:', error)
+          console.error('获取待办事项总数失败:', error)
+        })
+      // 获取保证金使用待办事项总数
+      getPendingTotal(useList, useCategoryId)
+        .then((total) => {
+          this.useTotal = total
+          console.log('useTotal', this.useTotal)
+        })
+        .catch((error) => {
+          console.error('获取待办事项总数失败:', error)
+        })
+      // 获取保证金补缴待办事项总数
+      getPendingTotal(backpayList, backpayCategoryId)
+        .then((total) => {
+          this.backpayTotal = total
+          console.log('backpayTotal', this.backpayTotal)
+        })
+        .catch((error) => {
+          console.error('获取待办事项总数失败:', error)
+        })
+        // 获取保证金方式变更待办事项总数
+      getPendingTotal(changeList, changeCategoryId)
+        .then((total) => {
+          this.changeTotal = total
+          console.log('changeTotal', this.changeTotal)
+        })
+        .catch((error) => {
+          console.error('获取待办事项总数失败:', error)
         })
     },
 
     // 开启定时器
     async startInterval() {
       await AutoClaim(depositList, depositCategoryId, this.getUserInfo) // 自动认领该用户的保证金存缴的流程
+      await AutoClaim(useList, useCategoryId, this.getUserInfo) // 自动认领该用户的保证金使用的流程
+      await AutoClaim(backpayList, backpayCategoryId, this.getUserInfo) // 自动认领该用户的保证金补缴的流程
+      await AutoClaim(changeList, changeCategoryId, this.getUserInfo) // 自动认领该用户的保证金存缴方式变更的流程
       console.log('开启保证金存缴的自动认领')
       this.getTotal()
       this.intervalId = setInterval(async () => {
         await AutoClaim(depositList, depositCategoryId)
+        this.getTotal()
+      }, 180000)
+      this.intervalId = setInterval(async () => {
+        await AutoClaim(useList, useCategoryId)
+        this.getTotal()
+      }, 180000)
+      this.intervalId = setInterval(async () => {
+        await AutoClaim(backpayList, backpayCategoryId)
+        this.getTotal()
+      }, 180000)
+      this.intervalId = setInterval(async () => {
+        await AutoClaim(changeList, changeCategoryId)
         this.getTotal()
       }, 180000)
     },
@@ -268,7 +343,7 @@ export default {
               })
             })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     updatePassword() {
       let username = this.userInfo().username
@@ -329,7 +404,7 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.intervalId)
-    console.log('关闭获取代办事项数量的定时器')
+    console.log('关闭获取待办事项数量的定时器')
     this.$bus.$off('callGetTotal')
     console.log('关闭事件总线监听')
   },
@@ -347,12 +422,14 @@ export default {
     background-color: inherit;
     border: 0;
     border-bottom: 1px solid white;
+
     &__placeholder,
     &__field__placeholder {
       color: inherit;
     }
   }
 }
+
 /* update-end author:sunjianlei date:20191220 for: 解决全局样式冲突问题 */
 /* update_end author:zhaoxin date:20191129 for: 让搜索框颜色能随主题颜色变换*/
 </style>

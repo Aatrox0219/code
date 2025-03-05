@@ -20,8 +20,9 @@
         </div>
       </div>
       <!-- 自定义关闭按钮 -->
-      <a @click="close" class="custom-close-btn"
-        style="position: absolute; right: 10px; top: 5px; font-size: 20px;color: black;">x</a>
+      <!-- <a @click="close" class="custom-close-btn"
+        style="position: absolute; right: 10px; top: 5px; font-size: 20px;color: black;">x</a> -->
+      <div class="buttonstyle"><a-button class="xbutton" type="dashed" @click="close()">X</a-button></div>
     </a-modal>
   </div>
 </template>
@@ -31,7 +32,7 @@ import AntdGenerateForm from '@/components/FormMaking/components/AntdvGenerator/
 import { t_postAction, t_getAction } from '@/api/tempApi.js'
 import { o_postAction, o_getAction } from '@/api/onApi.js'
 import { nw_postAction1, nw_delete } from '@api/newWorkApi'
-import { getSingleQYUser } from '@/api/userList'
+import { getSingleQYUser, getBusinessByCompanyName } from '@/api/userList'
 
 export default {
   name: 'AnnTask',
@@ -59,6 +60,10 @@ export default {
       taskId: '',
       processInstanceId: '',
       visible: false,
+      useMoney: null,
+      remainingAmount: null,
+      totalMoney: null,
+      supplementary: null,
       formJson: {},
       func1: {
         //获得所有的库存地址
@@ -128,11 +133,16 @@ export default {
         type: 'warning',
       })
         .then(async () => {
-          await this.deleteFlow(this.processInstanceId)
-          if (!this.isOriginal) {
-            this.getData() //直接关闭流程后刷新数据
-          }
           _this.visible = false
+          this.deleteFlow(this.processInstanceId)
+            .then(() => {
+              if (!this.isOriginal && this.getData) {
+                this.getData() // 刷新父组件数据
+              }
+            })
+            .catch(error => {
+              console.error('删除流程失败:', error)
+            })
         })
         .catch(() => { })
     },
@@ -179,9 +189,9 @@ export default {
                       this.$refs.generateForm.setData({
                         company_name: userData.companyName, //这里的company_name是表单中的字段标识
                         deposit_way: data.projectStatus,
-                        postalAddress: userData.postalAddress,
-                        postcode: userData.postcode,
-                        creditCode: userData.creditCode,
+                        // postalAddress: userData.postalAddress,
+                        // postcode: userData.postcode,
+                        // creditCode: userData.creditCode,
                         licenseCopy: licenseCopy,
                       })
                       console.log('图片地址上传成功')
@@ -190,53 +200,88 @@ export default {
                       console.error('获取用户数据失败', error)
                     })
                 } else if (category === '使用') {
+                  this.remainingAmount = data.remainingAmount
                   console.log('保证金使用的数据', data)
-                  this.$refs.generateForm.setData({
-                    company_name: data.companyName,
-                    credit_code: data.creditCode,
-                    company_address: data.companyAddress,
-                    postal_code: data.postalCode,
-                    project_name: data.projectName,
-                    project_address: data.projectAddress,
-                    address_detail: data.addressDetail,
-                    project_contact: data.responsiblePerson,
-                    project_mobile: data.mobile,
-                  })
+                  let userData = {}
+                  getBusinessByCompanyName(data.companyName)
+                    .then((res) => {
+                      userData = res.result
+                      console.log('使用的userData', userData)
+                      this.$refs.generateForm.setData({
+                        company_name: data.companyName,
+                        credit_code: userData.creditCode,
+                        postal_address: userData.postalAddress,
+                        post_code: userData.postcode,
+                        project_contact: data.responsiblePerson,
+                        project_mobile: data.mobile,
+                        project_name: data.projectName,
+                        project_address: data.projectAddress,
+                        address_detail: data.addressDetail,
+                        representative: userData.representative,
+                        phone: userData.phone,
+                        agency: data.agency
+                      })
+                    })
+                    .catch((error) => {
+                      console.error('获取用户数据失败', error)
+                    })
                 } else if (category === '变更') {
-                  console.log('保证金变更的数据', data)
-                  this.$refs.generateForm.setData({
-                    company_name: data.companyName,
-                    credit_code: data.creditCode,
-                    company_address: data.companyAddress,
-                    postal_code: data.postalCode,
-                    project_name: data.projectName,
-                    project_address: data.projectAddress,
-                    address_detail: data.addressDetail,
-                    money: data.contractAmount,
-                    start_date: data.formCreateDate,
-                    end_date: data.formEndDate,
-                    // reason:,
-                    project_contact: data.responsiblePerson,
-                    project_mobile: data.mobile,
-                    proportions: data.proportions,
-                    old_deposit_method: data.depositWay,
-                    new_deposit_method: data.newProjectStatus,
-                    reason: data.reason,
-                    proportions: data.proportions,
-                    ensure_money: data.Money,
-                  })
+                  let userData = {}
+                  getSingleQYUser(this.userInfo.id)
+                    .then((res) => {
+                      userData = res.result
+                      console.log('userData', userData)
+                      this.$refs.generateForm.setData({
+                        company_name: userData.companyName, //这里的company_name是表单中的字段标识
+                        credit_code: userData.creditCode,
+                        company_address: userData.postalAddress,
+                        postal_code: userData.postcode,
+                        project_name: data.projectName,
+                        project_address: data.projectAddress,
+                        address_detail: data.addressDetail,
+                        money: data.contractAmount,
+                        start_date: data.formCreateDate,
+                        end_date: data.formEndDate,
+                        // reason:,
+                        project_contact: data.responsiblePerson,
+                        project_mobile: data.mobile,
+                        proportions: data.proportions,
+                        old_deposit_method: data.depositWay,
+                        new_deposit_method: data.newProjectStatus,
+                        reason: data.reason,
+                        proportions: data.proportions,
+                        ensure_money: data.Money,
+                      })
+                    })
+                    .catch((error) => {
+                      console.error('获取用户数据失败', error)
+                    })
                 } else if (category === '补缴') {
-                  console.log('保证的数据', data)
-                  this.$refs.generateForm.setData({
-                    company_name: data.companyName,
-                    company_address: data.companyAddress,
-                    postal_code: data.postalCode,
-                    credit_code: data.creditCode,
-                    project_name: data.projectName,
-                    project_address: data.projectAddress,
-                    address_detail: data.addressDetail,
-                    ensure_money: data.ensureMoney,
-                  })
+                  console.log('保证金补缴的数据', data)
+                  this.totalMoney = data.Money
+                  this.remainingAmount = data.remainingAmount
+                  let userData = {}
+                  getSingleQYUser(this.userInfo.id)
+                    .then((res) => {
+                      userData = res.result
+                      console.log('userData', userData)
+                      this.$refs.generateForm.setData({
+                        company_name: userData.companyName,
+                        credit_code: userData.creditCode,
+                        postal_address: userData.postalAddress,
+                        post_code: userData.postcode,
+                        project_contact: data.responsiblePerson,
+                        project_mobile: data.mobile,
+                        project_name: data.projectName,
+                        project_address: data.projectAddress,
+                        address_detail: data.addressDetail,
+                        money: data.Money,
+                        remaining_amount: data.remainingAmount
+                      })
+                    })
+                    .catch((error) => {
+                      console.error('获取用户数据失败', error)
+                    })
                 }
               }
             })
@@ -252,7 +297,24 @@ export default {
       $form
         .getData()
         .then((data) => {
-          this.commitToDatabase(data) //将数据存储到online数据库中
+          this.useMoney = data.use_money;
+          this.supplementary = data.supplementary;
+          console.log('使用金额:', this.useMoney)
+          console.log('剩余金额:', this.remainingAmount)
+          console.log('总金额:', this.totalMoney)
+          // 新增校验逻辑：在提交前检查金额
+          if (Number(this.useMoney) > Number(this.remainingAmount)) {
+            this.$message.error("使用金额不能大于剩余金额");
+            return; // 直接返回，不执行后续操作
+          }
+          console.log('补缴金额:', this.supplementary)
+          console.log('剩余金额:', this.remainingAmount)
+          console.log('总金额:', this.totalMoney)
+          if ((Number(this.supplementary) + (Number(this.remainingAmount))) > Number(this.totalMoney)) {
+            this.$message.error("补缴后金额不能大于保证金金额");
+            return; // 直接返回，不执行后续操作
+          }
+          this.commitToDatabase(data); //将数据存储到online数据库中
         })
         .catch((e) => {
           this.$message.error(e)
@@ -425,9 +487,9 @@ export default {
 #formContent {
   padding: 5px;
   background-color: #fff;
-  border: 1px solid;
+  border: 1px solid #dcdcdc;
   border-radius: 5px;
-  margin: 0 auto;
+  margin: 26px 0 auto;
 }
 
 .formTable {
@@ -454,5 +516,12 @@ export default {
 .submitBtn button {
   margin: 20px auto;
   left: 45%;
+}
+
+.buttonstyle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 10px;
 }
 </style>

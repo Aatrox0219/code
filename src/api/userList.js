@@ -43,6 +43,18 @@ export function getSingleQYUser(userId) {
     })
 }
 
+//通过企业名称获取企业基本信息
+export function getBusinessByCompanyName(companyName) {
+    return axios({
+        url: '/stj/sys/user/getBusinessByCompanyName',
+        method: 'post',
+        baseURL: api.server_url + api.global_workflow_baseURL,
+        data: {
+            companyName: companyName
+        }
+    });
+}
+
 //新增施工单位用户
 export function addQYUser(data) {
     return axios({

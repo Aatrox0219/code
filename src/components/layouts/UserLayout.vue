@@ -112,10 +112,10 @@ export default {
     position: relative;
     width: 100%;
     min-height: 100%;
-    // background: #f0f2f5 url(~@/assets/background.svg) no-repeat 50%;
-    // background: url('~@/assets/background.png') no-repeat center center;
-    // background-size: 100%;
-    background-color: #007bFF;
+    background: #f0f2f5 url(~@/assets/background.svg) no-repeat 50%;
+    background: url('~@/assets/background.png') no-repeat center center;
+    background-size: 100%;
+    // background-color: #007bFF;
     padding: 110px 0 144px;
     position: relative;
 

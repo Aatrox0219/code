@@ -3,13 +3,13 @@
     <!-- 筛选部分 -->
     <a-row v-if="hasFilterOptions" :gutter="24" style="margin-bottom: 20px">
       <!-- 普通筛选控件 -->
-      <a-col v-for="column in configurationParameter.columnsData" :key="column.dataIndex" :md="8" :xxl="5"  
+      <a-col v-for="column in configurationParameter.columnsData" :key="column.dataIndex" :md="8" :xxl="5"
         v-if="column.filterType && column.filterType !== 'mixedInput'" style="display: flex; align-items: center">
         <!-- 控件的左侧标签 -->
         <span style="width: 100px; text-align: right; margin-right: 8px; font-weight: bold">{{ column.title }}：</span>
 
         <!-- 根据 filterType 渲染不同的筛选控件,目前支持 input、select和日期选择器 -->
-        <a-input v-if="column.filterType === 'input'" v-model="filterConditions[column.dataIndex]" 
+        <a-input v-if="column.filterType === 'input'" v-model="filterConditions[column.dataIndex]"
           :placeholder="`请输入${column.title}`" style="flex: 1; max-width: 200px" allowClear />
 
         <a-select v-if="column.filterType === 'select'" v-model="filterConditions[column.dataIndex]"
@@ -24,7 +24,7 @@
       </a-col>
 
       <!-- 混合筛选控件 -->
-      <a-col v-if="mixedFilterColumns.length" style="display: flex; align-items: center" :md="8" :xxl="5" >
+      <a-col v-if="mixedFilterColumns.length" style="display: flex; align-items: center" :md="8" :xxl="5">
         <span style="width: 150px; text-align: right; margin-right: 8px;  font-weight: bold">
           {{ mixedFilterTitles }}：
         </span>
@@ -32,7 +32,7 @@
       </a-col>
 
       <!-- 筛选按钮和清空按钮 -->
-      <div v-if="hasFilterOptions" style="margin-bottom: 20px" :md="4" :xxl="5" >
+      <div v-if="hasFilterOptions" style="margin-bottom: 20px" :md="4" :xxl="5">
         <a-button type="primary" @click="handleFilter" style="margin-right: 8px">筛选</a-button>
         <a-button @click="clearFilters">清空筛选</a-button>
       </div>
@@ -57,7 +57,7 @@
         <a @click="startFixedProcess(true, record)">申请存缴方式变更</a>
       </span>
       <span slot="flowBackPaycolumns" slot-scope="text, record, index">
-        <a @click="urge" v-if="['承办人员', '业务分管', '人社分管'].some(role => userInfo.roleNames.includes(role))">催缴</a>
+        <a @click="urge(record)" v-if="['承办人员', '业务分管', '人社分管'].some(role => userInfo.roleNames.includes(role))">催缴</a>
         <a @click="startProcess(record)" v-if="['施工企业', '管理员'].some(role => userInfo.roleNames.includes(role))">补缴</a>
       </span>
       <span slot="flowExtendcolumns" slot-scope="text, record, index">
@@ -104,6 +104,10 @@ export default {
     },
     userInfo: {
       type: Object,
+      default: () => { },
+    },
+    urge: {
+      type: Function,
       default: () => { },
     },
   },
@@ -170,7 +174,7 @@ export default {
               const keys = column.dataLocation.split('.')
               let value = dataItem
               keys.forEach((key) => {
-                value = value[key] || null
+                value = (value && value[key] !== undefined) ? value[key] : null
               })
               // 特殊处理 nodeName
               if (column.dataLocation === 'nodeName') {
@@ -205,6 +209,14 @@ export default {
         this.columnsList = columnsList
         console.log('dataSourceList:', this.dataSourceList)
         console.log('columnsList:', this.columnsList)
+
+        // 生成 dataSourceList 后添加以下代码
+        if (this.configurationParameter.filterFunction) {
+          this.dataSourceList = this.configurationParameter.filterFunction(this.dataSourceList);
+        }
+
+        // 更新 filteredDataSourceList
+        this.filteredDataSourceList = [...this.dataSourceList];
       } catch (error) {
         console.error('获取数据失败：', error)
       }
@@ -273,6 +285,10 @@ export default {
           // 过滤出同时满足普通条件和混合筛选条件的数据
           return basicFilter && (!this.mixedFilterValue || mixedFilter)
         })
+
+        if (this.configurationParameter.filterFunction) {
+          this.filteredDataSourceList = this.configurationParameter.filterFunction(this.filteredDataSourceList);
+        }
 
         console.log('筛选后的数据：', this.filteredDataSourceList)
       } catch (error) {
