@@ -221,6 +221,11 @@ export default {
             show: false,
           },
           {
+            dataIndex: 'isRefundable',
+            dataLocation: 'allData.main_payment.is_refundable',
+            show: false,
+          },
+          {
             title: '操作',
             align: 'center',
             dataIndex: 'flowChangecolumns',
@@ -228,6 +233,11 @@ export default {
             show: true,
           },
         ],
+        filterFunction: (dataList) => {
+          return dataList.filter(item =>
+            Number(item.isRefundable) !== 1 // 过滤掉 isRefundable 为 1 的项(已返还)
+          );
+        }
       },
       configurationParameter2: {
         inquire: {

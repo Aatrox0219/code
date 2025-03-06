@@ -81,6 +81,7 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 import { taskStateMapping } from './taskStateMapping'
 import commonTable from './modules/commonTable.vue'
+import { returnList, returnCategoryId, depositList, depositCategoryId } from '@/api/processId'
 export default {
   name: 'flowReturn',
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory, commonTable },
@@ -88,8 +89,8 @@ export default {
     return {
       configurationParameter1: {
         inquire: {
-          categoryId: '1847453055727501313', //流程分类
-          processIdList: ['20010', '20013', '20016', '20019'], //想要显示的流程信息
+          categoryId: depositCategoryId, //流程分类
+          processIdList: depositList, //想要显示的流程信息
           applyState: ['complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -155,23 +156,23 @@ export default {
             filterType: 'date',
           },
           {
-            dataIndex: 'creditCode',
-            dataLocation: 'allData.main_payment.credit_code',
-            show: false,
-          },
-          {
             dataIndex: 'companyAddress',
             dataLocation: 'allData.main_payment.company_address',
             show: false,
           },
           {
-            dataIndex: 'postalCode',
-            dataLocation: 'allData.main_payment.postal_code',
+            dataIndex: 'addressDetail',
+            dataLocation: 'allData.main_payment.address_detail',
             show: false,
           },
           {
-            dataIndex: 'addressDetail',
-            dataLocation: 'allData.main_payment.address_detail',
+            dataIndex: 'storageStartDate',
+            dataLocation: 'allData.main_payment.storage_start_date',
+            show: false,
+          },
+          {
+            dataIndex: 'storageEndDate',
+            dataLocation: 'allData.main_payment.storage_end_date',
             show: false,
           },
           {
@@ -182,12 +183,17 @@ export default {
             show: true,
           },
         ],
+        filterFunction: (dataList) => {
+          return dataList.filter(item =>
+            Number(item.Money) !== 0 // 过滤掉 Money 为 0 的项
+          );
+        }
       },
       configurationParameter2: {
         inquire: {
-          categoryId: '1867119977859956738', //流程分类
+          categoryId: returnCategoryId, //流程分类
           // 这里差一个返还的流程
-          processIdList: ['20010', '20013', '20016', '20019'], //想要显示的流程信息
+          processIdList: returnList, //想要显示的流程信息
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -277,9 +283,9 @@ export default {
       },
       configurationParameter3: {
         inquire: {
-          categoryId: '1867119977859956738', //流程分类
+          categoryId: returnCategoryId, //流程分类
           // 这里差一个返还的流程
-          processIdList: ['20010', '20013', '20016', '20019'], //想要显示的流程信息
+          processIdList: returnList, //想要显示的流程信息
           applyState: ['pending'], //想要查询的流程类型
         },
         columnsData: [
@@ -457,58 +463,6 @@ export default {
       if (commonTableInstance3) {
         commonTableInstance3.getAllList()
       }
-      this.getLoadClaim() // 获取未认领流程
-    },
-    //得到所有未认领的流程
-    getLoadClaim() {
-      let params = {
-        // 这里差一个返还的流程
-        processIdList: ['20010', '20013', '20016', '20019'],
-        applyState: ['claim'],
-        categoryId: '1867119977859956738',
-      }
-      nw_postAction1(`/generalList/getAllList`, params)
-        .then((res) => {
-          console.log('获取未认领的返回数据:', res.result.dataList)
-          this.loadClaimData = res.result.dataList
-          if (this.loadClaimData.length > 0) {
-            const claimPromises = [] // 用于存储所有认领任务的 Promise
-
-            for (var i = 0; i < this.loadClaimData.length; i++) {
-              this.loadClaimData[i].state = '待领取'
-
-              const projectAddress = this.loadClaimData[i].allData.main_payment.project_address
-
-              //通过用户的部门地址和项目的地址进行匹配来自动认领
-              if (this.userInfo.orgAddress.some((addr) => addr === projectAddress)) {
-                const promise = this.claimTask(this.loadClaimData[i])
-                claimPromises.push(promise)
-              }
-            }
-
-            // 等待所有认领任务完成后更新界面
-            Promise.all(claimPromises).then(() => { })
-          }
-        })
-        .catch((res) => {
-          console.log(res)
-        })
-    },
-    claimTask(reocrd) {
-      return nw_getAction(`/task/claimTask/` + reocrd.taskId)
-        .then((res) => {
-          if (res.result) {
-            console.log('认领成功', reocrd)
-            return true // 认领成功返回 true
-          } else {
-            console.error('认领失败')
-            return false // 认领失败返回 false
-          }
-        })
-        .catch((error) => {
-          console.log(error)
-          return false // 出现错误时返回 false
-        })
     },
     //处理该任务
     announceTask(record) {
