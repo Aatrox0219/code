@@ -10,13 +10,25 @@
       :before-remove="beforeRemove"
       :on-success="handleSuccess"
       multiple
-      :limit="1"
       :on-exceed="handleExceed"
-      accept=".jpg,.png,.pdf"
-      :before-upload="beforeUpload"
     >
       <el-button v-if="showUploadButton" size="small" type="primary">点击上传</el-button>
-    </el-upload> 
+    </el-upload>
+    <template>
+      <!-- <div>
+        <template v-for="item in fileList">
+          <el-tooltip effect="dark" :content="item.name" placement="top-start">
+            <el-link
+              type="info"
+              class="file-download"
+              @click.prevent="handleDownload(item)"
+            >
+              {{ item.name }}
+            </el-link>
+          </el-tooltip>
+        </template>
+      </div> -->
+    </template>
   </div>
 </template>
 
@@ -119,23 +131,6 @@ export default {
   },
 
   methods: {
-    // 上传文件之前的校验
-    beforeUpload(file) {
-      // 限制文件类型
-      const isValidType = ['image/jpeg', 'image/png', 'application/pdf'].includes(file.type);
-      if (!isValidType) {
-        this.$message.error('只能上传 JPG、PNG 和 PDF 文件!');
-        return false;
-      }
-      // 限制文件大小
-      const isValidSize = file.size / 1024 / 1024 < 5;
-      if (!isValidSize) {
-        this.$message.error('文件大小不能超过 5MB!');
-        return false;
-      }
-      return true;
-    },
-
     //:action="`/apiUpload/sonline/common/upload/`"
     getFileList(value) {
       console.log('调用了getFileList', value)
@@ -200,8 +195,7 @@ export default {
     },
     handleExceed(files, fileList) {
       this.$message.warning(
-        // `当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`
-        '当前限制上传 1 个文件'
+        `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`
       )
     },
     beforeRemove(file, fileList) {

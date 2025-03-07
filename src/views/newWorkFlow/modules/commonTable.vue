@@ -61,8 +61,8 @@
         <a @click="startProcess(record)" v-if="['施工企业', '管理员'].some(role => userInfo.roleNames.includes(role))">补缴</a>
       </span>
       <span slot="flowExtendcolumns" slot-scope="text, record, index">
-        <a @click="urge" v-if="['承办人员', '业务分管', '人社分管'].some(role => userInfo.roleNames.includes(role))">预警</a>
-        <a @click="startProcess(record)" v-if="['施工企业', '管理员'].some(role => userInfo.roleNames.includes(role))">更换保函</a>
+        <a @click="urge(record)" v-if="['承办人员', '业务分管', '人社分管'].some(role => userInfo.roleNames.includes(role))">预警</a>
+        <a @click="startProcess(record)" v-if="['施工企业', '管理员'].some(role => userInfo.roleNames.includes(role))">更换保函/延长有效期</a>
       </span>
       <span slot="flowReturncolumns" slot-scope="text, record, index">
         <a @click="startProcess(record)">申请返还</a>

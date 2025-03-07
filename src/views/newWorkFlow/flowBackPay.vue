@@ -187,13 +187,18 @@ export default {
             scopedSlots: { customRender: 'flowBackPaycolumns' },
             show: true,
           },
+          {
+            dataIndex: 'isRefundable',
+            dataLocation: 'allData.main_payment.is_refundable',
+            show: false,
+          },
         ],
         filterFunction: function (dataList) {
           return dataList.filter(item => {
-            // 直接使用已提取到顶层的属性
-            const remaining = parseFloat(item.remainingAmount || 0) // 对应 dataLocation 提取后的值
-            const money = parseFloat(item.Money || 0)               // 对应 dataLocation 提取后的值
-            return remaining < money
+            // 留的是remaining小于money的项
+            const remaining = parseFloat(item.remainingAmount || 0) 
+            const money = parseFloat(item.Money || 0)
+            return remaining < money && item.isRefundable !== 1
           })
         }
       },

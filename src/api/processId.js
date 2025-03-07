@@ -13,3 +13,11 @@ export const backpayCategoryId = '1860939985686949889';
 //保证金存缴方式变更的流程id列表和分类id
 export const changeList = ['5210', '5212', '5214', '5216', '5228', '5230', '5232', '5234'];
 export const changeCategoryId = '1860602147955077121';
+
+//保证金保函变更的流程id列表和分类id
+export const extendList = ['5210', '5212', '5214', '5216', '10009', '10012', '10015', '10019'];
+export const extendCategoryId = '1867119925569568769';
+
+//保证金返还的流程id列表和分类id
+export const returnList = ['5210', '5212', '5214', '5216', '35002'];
+export const returnCategoryId = '1867119977859956738';

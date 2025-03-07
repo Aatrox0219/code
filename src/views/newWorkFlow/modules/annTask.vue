@@ -282,6 +282,57 @@ export default {
                     .catch((error) => {
                       console.error('获取用户数据失败', error)
                     })
+                } else if (category === '更换') {
+                  console.log('保证金更换的数据', data)
+                  let userData = {}
+                  getSingleQYUser(this.userInfo.id)
+                    .then((res) => {
+                      userData = res.result
+                      console.log('userData', userData)
+                      this.$refs.generateForm.setData({
+                        company_name: userData.companyName,
+                        credit_code: userData.creditCode,
+                        postal_address: userData.postalAddress,
+                        post_code: userData.postcode,
+                        project_contact: data.responsiblePerson,
+                        project_mobile: data.mobile,
+                        project_name: data.projectName,
+                        project_address: data.projectAddress,
+                        address_detail: data.addressDetail,
+                        money: data.contractAmount,
+                        start_date: data.formCreateDate,
+                        end_date: data.formEndDate,
+                        deposit_method: data.depositWay,
+                        reason: data.reason,
+                        proportions: data.proportions,
+                        ensure_money: data.Money,
+                      })
+                    })
+                    .catch((error) => {
+                      console.error('获取用户数据失败', error)
+                    })
+                } else if (category === '返还') {
+                  console.log('保证金返还的数据', data)
+                  let userData = {}
+                  getSingleQYUser(this.userInfo.id)
+                    .then((res) => {
+                      userData = res.result
+                      console.log('userData', userData)
+                      this.$refs.generateForm.setData({
+                        company_name: userData.companyName,
+                        project_name: data.projectName,
+                        project_address: data.projectAddress,
+                        address_detail: data.addressDetail,
+                        deposit_method: data.depositWay,
+                        money: data.Money,
+                        return_amount: data.remainingAmount,
+                        storage_start_date: data.storageStartDate,
+                        storage_end_date: data.storageEndDate,
+                      })
+                    })
+                    .catch((error) => {
+                      console.error('获取用户数据失败', error)
+                    })
                 }
               }
             })

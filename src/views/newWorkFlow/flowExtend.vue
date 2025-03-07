@@ -11,13 +11,8 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <commonTable
-                            ref="commonTableRef1"
-                            :configurationParameter="configurationParameter1"
-                            :urge="urge"
-                            :startFixedProcess="startFixedProcess"
-                            :userInfo="userInfo"
-                          >
+                          <commonTable ref="commonTableRef1" :configurationParameter="configurationParameter1"
+                            :urge="urge" :startProcess="startProcess" :userInfo="userInfo">
                           </commonTable>
                         </div>
                       </a-card>
@@ -31,11 +26,8 @@
                       <a-card :bordered="false">
                         <div class="table-container">
                           <div class="table-container">
-                            <commonTable
-                              ref="commonTableRef2"
-                              :configurationParameter="configurationParameter2"
-                              :seeHistory="seeHistory"
-                            >
+                            <commonTable ref="commonTableRef2" :configurationParameter="configurationParameter2"
+                              :seeHistory="seeHistory">
                             </commonTable>
                           </div>
                         </div>
@@ -53,12 +45,8 @@
                     <div class="card-table" style="padding: 10px">
                       <a-card :bordered="false">
                         <div class="flowAnnounce">
-                          <commonTable
-                            ref="commonTableRef3"
-                            :configurationParameter="configurationParameter3"
-                            :seeHistory="seeHistory"
-                            :announceTask="announceTask"
-                          >
+                          <commonTable ref="commonTableRef3" :configurationParameter="configurationParameter3"
+                            :seeHistory="seeHistory" :announceTask="announceTask">
                           </commonTable>
                         </div>
                       </a-card>
@@ -71,24 +59,6 @@
         </div>
       </a-card>
     </div>
-    <a-modal
-      title="更换保函/延长有效期"
-      :visible="isModalVisible"
-      @ok="startProcess"
-      @cancel="handleCancel"
-      width="800px"
-    >
-      <div class="flowConfig">
-        <div style="padding-top: 20px">
-          <span>请选择更换方式：</span>
-          <a-select v-model="selectedProcessId" placeholder="请选择一个流程" style="width: 300px">
-            <a-select-option v-for="item in flowConfigData" :key="item.processId" :value="item.processId">
-              {{ item.name }}
-            </a-select-option>
-          </a-select>
-        </div>
-      </div>
-    </a-modal>
     <annTask ref="modalform" :getData="getData" :userInfo="userInfo"> </annTask>
 
     <approve-model ref="approveModel" @close="getData"></approve-model>
@@ -112,6 +82,7 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 import { taskStateMapping } from './taskStateMapping'
 import commonTable from './modules/commonTable.vue'
+import { depositList, depositCategoryId, extendList, extendCategoryId } from '@/api/processId'
 export default {
   name: 'flowExtend',
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory, commonTable },
@@ -119,8 +90,8 @@ export default {
     return {
       configurationParameter1: {
         inquire: {
-          categoryId: '1847453055727501313', //流程分类
-          processIdList: ['20010', '20013', '20016', '20019'], //想要显示的流程信息
+          categoryId: depositCategoryId, //流程分类
+          processIdList: depositList, //想要显示的流程信息
           applyState: ['complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -153,6 +124,13 @@ export default {
             align: 'center',
             dataIndex: 'Money',
             dataLocation: 'allData.main_payment.money',
+            show: true,
+          },
+          {
+            title: '存储结束时间',
+            align: 'center',
+            dataIndex: 'storageEndDate',
+            dataLocation: 'allData.main_payment.storage_end_date',
             show: true,
           },
           {
@@ -199,6 +177,36 @@ export default {
             show: false,
           },
           {
+            dataIndex: 'contractAmount',
+            dataLocation: 'allData.main_payment.contract_amount',
+            show: false,
+          },
+          {
+            dataIndex: 'formCreateDate',
+            dataLocation: 'allData.main_payment.form_create_date',
+            show: false,
+          },
+          {
+            dataIndex: 'formEndDate',
+            dataLocation: 'allData.main_payment.form_end_date',
+            show: false,
+          },
+          {
+            dataIndex: 'proportions',
+            dataLocation: 'allData.main_payment.proportions',
+            show: false,
+          },
+          {
+            dataIndex: 'reason',
+            dataLocation: 'allData.main_payment.reason',
+            show: false,
+          },
+          {
+            dataIndex: 'isRefundable',
+            dataLocation: 'allData.main_payment.is_refundable',
+            show: false,
+          },
+          {
             title: '操作',
             align: 'center',
             dataIndex: 'flowExtendcolumns',
@@ -206,11 +214,16 @@ export default {
             show: true,
           },
         ],
+        filterFunction: (dataList) => {
+          return dataList.filter(item =>
+            Number(item.isRefundable) !== 1 // 过滤掉 isRefundable 为 1 的项(已返还)
+          );
+        }
       },
       configurationParameter2: {
         inquire: {
-          categoryId: '1867119925569568769', //流程分类
-          processIdList: [], //想要显示的流程信息
+          categoryId: extendCategoryId, //流程分类
+          processIdList: extendList, //想要显示的流程信息
           applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
         },
         columnsData: [
@@ -254,6 +267,13 @@ export default {
             show: true,
           },
           {
+            title: '存储结束时间',
+            align: 'center',
+            dataIndex: 'storageEndDate',
+            dataLocation: 'allData.main_payment.storage_end_date',
+            show: true,
+          },
+          {
             title: '负责人',
             align: 'center',
             dataIndex: 'responsiblePerson',
@@ -286,8 +306,8 @@ export default {
       },
       configurationParameter3: {
         inquire: {
-          categoryId: '1867119925569568769', //流程分类
-          processIdList: [], //想要显示的流程信息
+          categoryId: extendCategoryId, //流程分类
+          processIdList: extendList, //想要显示的流程信息
           applyState: ['pending'], //想要查询的流程类型
         },
         columnsData: [
@@ -328,6 +348,13 @@ export default {
             align: 'center',
             dataIndex: 'Money',
             dataLocation: 'allData.main_payment.money',
+            show: true,
+          },
+          {
+            title: '存储结束时间',
+            align: 'center',
+            dataIndex: 'storageEndDate',
+            dataLocation: 'allData.main_payment.storage_end_date',
             show: true,
           },
           {
@@ -410,22 +437,44 @@ export default {
         })
     },
 
-    //TODO 预警 发送短信
-    urge() {},
+
+    urge(record) {
+      console.log('更换record', record)
+      const params = {
+        companyName: record.companyName,
+        projectName: record.projectName,
+        responsiblePerson: record.responsiblePerson,
+        mobile: record.mobile,
+        storageEndDate: record.storageEndDate
+      };
+      axios.post('http://139.199.159.36:37192/extend/sendshortletter', params)
+        .then(response => {
+          if (response.data.success) {
+            this.$message.success('更换保函/延长短信发送成功');
+          } else {
+            this.$message.error(response.data.msg || '请求失败');
+          }
+        })
+        .catch(error => {
+          console.error('请求异常:', error);
+          this.$message.error('服务器错误，请稍后重试');
+        });
+    },
 
     //开启流程
     startProcess(record) {
       let userData = JSON.parse(localStorage.getItem('pro__Login_Userinfo'))
       axios.defaults.headers.common['userName'] = userData.value.username
       console.log('userData.value.username', userData.value.username)
+      console.log('record.depositWay:', record.depositWay)
       if (record.depositWay === '担保公司保函') {
-        this.selectedProcessId = ''
+        this.selectedProcessId = '10012'
       } else if (record.depositWay === '保险公司保函') {
-        this.selectedProcessId = ''
+        this.selectedProcessId = '10015'
       } else if (record.depositWay === '银行保函') {
-        this.selectedProcessId = ''
+        this.selectedProcessId = '10019'
       } else if (record.depositWay === '银行现金存单') {
-        this.selectedProcessId = ''
+        this.selectedProcessId = '10009'
       }
       nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
         .then((res) => {
@@ -439,8 +488,8 @@ export default {
               onlineTableId,
               taskId,
               processInstanceId,
-              '补缴',
-              this.currentRecord
+              '更换',
+              record
             )
           } else {
             this.$message.error('开启流程失败')
@@ -467,57 +516,6 @@ export default {
       if (commonTableInstance3) {
         commonTableInstance3.getAllList()
       }
-      this.getLoadClaim() // 获取未认领流程
-    },
-    //得到所有未认领的流程
-    getLoadClaim() {
-      let params = {
-        processIdList: [],
-        applyState: ['claim'],
-        categoryId: '1867119925569568769',
-      }
-      nw_postAction1(`/generalList/getAllList`, params)
-        .then((res) => {
-          console.log('获取未认领的返回数据:', res.result.dataList)
-          this.loadClaimData = res.result.dataList
-          if (this.loadClaimData.length > 0) {
-            const claimPromises = [] // 用于存储所有认领任务的 Promise
-
-            for (var i = 0; i < this.loadClaimData.length; i++) {
-              this.loadClaimData[i].state = '待领取'
-
-              const projectAddress = this.loadClaimData[i].allData.main_payment.project_address
-
-              //通过用户的部门地址和项目的地址进行匹配来自动认领
-              if (this.userInfo.orgAddress.some((addr) => addr === projectAddress)) {
-                const promise = this.claimTask(this.loadClaimData[i])
-                claimPromises.push(promise)
-              }
-            }
-
-            // 等待所有认领任务完成后更新界面
-            Promise.all(claimPromises).then(() => {})
-          }
-        })
-        .catch((res) => {
-          console.log(res)
-        })
-    },
-    claimTask(reocrd) {
-      return nw_getAction(`/task/claimTask/` + reocrd.taskId)
-        .then((res) => {
-          if (res.result) {
-            console.log('认领成功', reocrd)
-            return true // 认领成功返回 true
-          } else {
-            console.error('认领失败')
-            return false // 认领失败返回 false
-          }
-        })
-        .catch((error) => {
-          console.log(error)
-          return false // 出现错误时返回 false
-        })
     },
     //处理该任务
     announceTask(record) {
