@@ -26,7 +26,7 @@
                       <a-card :bordered="false">
                         <div class="table-container">
                           <commonTable ref="commonTableRef2" :configurationParameter="configurationParameter2"
-                            :seeHistory="seeHistory">
+                            :seeHistory="seeHistory" :download="download">
                           </commonTable>
                         </div>
                       </a-card>
@@ -82,6 +82,7 @@ import { mapState } from 'vuex'
 import { taskStateMapping } from './taskStateMapping'
 import commonTable from './modules/commonTable.vue'
 import { returnList, returnCategoryId, depositList, depositCategoryId } from '@/api/processId'
+import { downloadDocument } from '@/api/userList'
 export default {
   name: 'flowReturn',
   components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory, commonTable },
@@ -176,6 +177,11 @@ export default {
             show: false,
           },
           {
+            dataIndex: 'isRefundable',
+            dataLocation: 'allData.main_payment.is_refundable',
+            show: false,
+          },
+          {
             title: '操作',
             align: 'center',
             dataIndex: 'flowReturncolumns',
@@ -185,7 +191,8 @@ export default {
         ],
         filterFunction: (dataList) => {
           return dataList.filter(item =>
-            Number(item.Money) !== 0 // 过滤掉 Money 为 0 的项
+            // 过滤掉 保证金 为 0 和返还过的项
+            Number(item.Money) !== 0 && Number(item.isRefundable) !== 1
           );
         }
       },
@@ -271,6 +278,16 @@ export default {
             dataIndex: 'createDate',
             dataLocation: 'allData.main_return.create_time',
             show: true,
+          },
+          {
+            dataIndex: 'is_export',
+            dataLocation: 'allData.main_return.is_export',
+            show: false,
+          },
+          {
+            dataIndex: 'export_path',
+            dataLocation: 'allData.main_return.export_path',
+            show: false,
           },
           {
             title: '详情',
@@ -449,7 +466,10 @@ export default {
     seeHistory(record) {
       this.$refs.flowHistory.openModal(record)
     },
-    // 更新表格数据
+    download(record) {
+      console.log('downloadrecord', record);
+      downloadDocument(record)
+    },    // 更新表格数据
     getData() {
       const commonTableInstance1 = this.$refs.commonTableRef1
       if (commonTableInstance1) {
