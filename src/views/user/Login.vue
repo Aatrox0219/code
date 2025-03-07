@@ -220,24 +220,19 @@ export default {
   },
   methods: {
     registerAccount() {
+      let token = ''
+      // 使用注册的账号获取token
+      loginGetToken('/stj/sys/login2', { username: 'zhuce', password: 'Admin123...' })
+        .then((res) => {
+          if (res.success) {
+            token = res.result.token;
+            axios.get(`http://139.199.159.36:37192/process/startProcess/35488?processId=35488`, { });
 
-      //使用注册的账号获取token
-      // loginGetToken('/stj/sys/login2', { username: 'zhuce', password: 'Admin123...' })
-      //   .then((res) => {
-      //     console.log('注册res', res)
-      //     if (res.success) {
-      //       let token = res.result.token;
-      //       let processRes = axios.get(`http://139.199.159.36:37192/process/startProcess/5216?processId=5216`, {
-      //         // headers: {
-      //         //   'Authorization': `Bearer ${token}`,
-      //         // }
-      //       });
-
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log(error)
-      //   })
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
 
 
         
@@ -257,7 +252,7 @@ export default {
               taskId,
               processInstanceId,
               '注册',
-              null
+              token
             )
           } else {
             this.$message.error('开启流程失败')

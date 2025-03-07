@@ -1,7 +1,14 @@
 <template>
   <div>
-    <a-modal :visible="visible" :footer="null" width="1300px" :zIndex="100" :closable="false" :destroyOnClose="true"
-      :centered="true">
+    <a-modal
+      :visible="visible"
+      :footer="null"
+      width="1300px"
+      :zIndex="100"
+      :closable="false"
+      :destroyOnClose="true"
+      :centered="true"
+    >
       <div>
         <div id="formContent">
           <div class="formbody">
@@ -30,8 +37,8 @@
 import GenerateForm from '@/components/FormMaking/components/GenerateForm'
 import AntdGenerateForm from '@/components/FormMaking/components/AntdvGenerator/GenerateForm'
 import { t_postAction, t_getAction } from '@/api/tempApi.js'
-import { o_postAction, o_getAction } from '@/api/onApi.js'
-import { nw_postAction1, nw_delete } from '@api/newWorkApi'
+import { o_postAction, o_getAction, o_postAction1 } from '@/api/onApi.js'
+import { nw_postAction1, nw_delete, nw_postAction2 } from '@api/newWorkApi'
 import { getSingleQYUser, getBusinessByCompanyName } from '@/api/userList'
 
 export default {
@@ -49,6 +56,7 @@ export default {
   },
   data() {
     return {
+      registerToken: '', //注册时传入的token
       isProcessingUnload: false, // 标志位，防止刷新页面时重复执行函数
       category: '',
       projectStatus: '',
@@ -94,8 +102,8 @@ export default {
       },
     }
   },
-  updated() { },
-  mounted() { },
+  updated() {},
+  mounted() {},
   methods: {
     openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, category, data) {
       console.log('category:', category)
@@ -122,6 +130,12 @@ export default {
       if (category === '存缴') {
         this.projectStatus = data.projectStatus
       }
+
+      //将注册时得到的token传入
+      if (category === '注册') {
+        this.registerToken = data
+      }
+
       this.getForm(category, data)
     },
     //点击关闭按钮关闭
@@ -140,11 +154,11 @@ export default {
                 this.getData() // 刷新父组件数据
               }
             })
-            .catch(error => {
+            .catch((error) => {
               console.error('删除流程失败:', error)
             })
         })
-        .catch(() => { })
+        .catch(() => {})
     },
 
     //如果点击了返回，则需要将该流程删除
@@ -219,7 +233,7 @@ export default {
                         address_detail: data.addressDetail,
                         representative: userData.representative,
                         phone: userData.phone,
-                        agency: data.agency
+                        agency: data.agency,
                       })
                     })
                     .catch((error) => {
@@ -276,7 +290,7 @@ export default {
                         project_address: data.projectAddress,
                         address_detail: data.addressDetail,
                         money: data.Money,
-                        remaining_amount: data.remainingAmount
+                        remaining_amount: data.remainingAmount,
                       })
                     })
                     .catch((error) => {
@@ -348,24 +362,24 @@ export default {
       $form
         .getData()
         .then((data) => {
-          this.useMoney = data.use_money;
-          this.supplementary = data.supplementary;
+          this.useMoney = data.use_money
+          this.supplementary = data.supplementary
           console.log('使用金额:', this.useMoney)
           console.log('剩余金额:', this.remainingAmount)
           console.log('总金额:', this.totalMoney)
           // 新增校验逻辑：在提交前检查金额
           if (Number(this.useMoney) > Number(this.remainingAmount)) {
-            this.$message.error("使用金额不能大于剩余金额");
-            return; // 直接返回，不执行后续操作
+            this.$message.error('使用金额不能大于剩余金额')
+            return // 直接返回，不执行后续操作
           }
           console.log('补缴金额:', this.supplementary)
           console.log('剩余金额:', this.remainingAmount)
           console.log('总金额:', this.totalMoney)
-          if ((Number(this.supplementary) + (Number(this.remainingAmount))) > Number(this.totalMoney)) {
-            this.$message.error("补缴后金额不能大于保证金金额");
-            return; // 直接返回，不执行后续操作
+          if (Number(this.supplementary) + Number(this.remainingAmount) > Number(this.totalMoney)) {
+            this.$message.error('补缴后金额不能大于保证金金额')
+            return // 直接返回，不执行后续操作
           }
-          this.commitToDatabase(data); //将数据存储到online数据库中
+          this.commitToDatabase(data) //将数据存储到online数据库中
         })
         .catch((e) => {
           this.$message.error(e)
@@ -385,23 +399,43 @@ export default {
       if (this.frontId) {
         params.frontId = this.frontId
       }
-      nw_postAction1('/task/complete', params)
-        .then((res) => {
-          if (res.result.result) {
-            _this.$message.success('通过成功')
-            this.$nextTick(() => {
-              this.getData()
-              this.$bus.$emit('callGetTotal');
-            })
-          } else {
-            _this.$message.error('通过失败')
-            console.log('出错')
-          }
-        })
-        .catch((err) => {
-          this.deleteFlow(this.processInstanceId)
-          console.log(err)
-        })
+      if (this.category === '注册') {
+        nw_postAction2('/task/complete', params,this.registerToken)
+          .then((res) => {
+            if (res.result.result) {
+              _this.$message.success('通过成功')
+              this.$nextTick(() => {
+                this.getData()
+                this.$bus.$emit('callGetTotal')
+              })
+            } else {
+              _this.$message.error('通过失败')
+              console.log('出错')
+            }
+          })
+          .catch((err) => {
+            this.deleteFlow(this.processInstanceId)
+            console.log(err)
+          })
+      } else {
+        nw_postAction1('/task/complete', params)
+          .then((res) => {
+            if (res.result.result) {
+              _this.$message.success('通过成功')
+              this.$nextTick(() => {
+                this.getData()
+                this.$bus.$emit('callGetTotal')
+              })
+            } else {
+              _this.$message.error('通过失败')
+              console.log('出错')
+            }
+          })
+          .catch((err) => {
+            this.deleteFlow(this.processInstanceId)
+            console.log(err)
+          })
+      }
     },
 
     //保存数据的接口
@@ -520,16 +554,31 @@ export default {
           datajson[tableCol.toString()] = commitdata[model]
         }
       }
-      o_postAction('/cgform/api/form/' + onlineId, datajson)
-        .then((res) => {
-          this.visible = false
-          this.completeTask(onlineId, res.result)
-          this.$message.success('提交成功')
-        })
-        .catch((err) => {
-          this.$message.error('提交失败')
-          console.log(err)
-        })
+      console.log('this.category:', this.category)
+
+      if (this.category === '注册') {
+        o_postAction1('/cgform/api/form/' + onlineId, datajson, this.registerToken)
+          .then((res) => {
+            this.visible = false
+            this.completeTask(onlineId, res.result)
+            this.$message.success('提交成功')
+          })
+          .catch((err) => {
+            this.$message.error('提交失败')
+            console.log(err)
+          })
+      } else {
+        o_postAction('/cgform/api/form/' + onlineId, datajson)
+          .then((res) => {
+            this.visible = false
+            this.completeTask(onlineId, res.result)
+            this.$message.success('提交成功')
+          })
+          .catch((err) => {
+            this.$message.error('提交失败')
+            console.log(err)
+          })
+      }
     },
   },
 }

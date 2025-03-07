@@ -12,6 +12,18 @@ export function o_postAction(url,parameter) {
   })
 }
 
+export function o_postAction1(url,parameter,registerToken) {
+  return axios({
+    url: url,
+    method:'post' ,
+    data: parameter,
+    baseURL:api.global_online_baseURL,
+    headers: {
+      'x-access-token': registerToken,
+    },
+  })
+}
+
 //post method= {post | put}
 export function o_httpAction(url,parameter,method) {
   return axios({
