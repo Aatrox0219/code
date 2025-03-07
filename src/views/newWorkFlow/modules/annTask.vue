@@ -108,7 +108,7 @@ export default {
       this.processInstanceId = processInstanceId
       this.category = category
       //存缴和原始不需要传frontId
-      if (category === '存缴' || category === '原始') {
+      if (category === '存缴' || category === '原始' || category === '注册') {
         this.frontId = ''
       } else {
         this.frontId = data.frontId

@@ -106,7 +106,7 @@
           >登录
         </a-button>
 
-        <a v-if="department === 'qiye'" @click="" style="margin-left: 10px"> 注册账户 </a>
+        <a v-if="department === 'qiye'" @click="registerAccount()" style="margin-left: 10px"> 注册账户 </a>
         <a
           href="https://m12333.cn/policy/mazrc.html#:~:text=%E7%AC%AC%E4%B8%80%E6%9D%A1%20%E4%B8%BA%E4%BE%9D%E6%B3%95%E4%BF%9D%E6%8A%A4%E5%86%9C"
           target="_blank"
@@ -126,6 +126,8 @@
     ></two-step-captcha>
     <login-select-tenant v-show="!hasToken" ref="loginSelect" @success="loginSelectOk"></login-select-tenant>
     <!-- <third-login ref="thirdLogin"></third-login> -->
+
+    <annTask ref="modalform"> </annTask>
 
     <a-modal> </a-modal>
   </div>
@@ -149,12 +151,14 @@ import LoginSelectTenant from './LoginSelectTenant'
 import axios from 'axios'
 import { Message } from 'element-ui'
 import { getRoleName, getRoleInfo } from '@/api/login'
-import { reject } from 'lodash'
+import annTask from '@/views/newWorkFlow/modules/annTask'
+import { nw_getAction, loginGetToken } from '@api/newWorkApi'
 
 export default {
   components: {
     LoginSelectTenant,
     TwoStepCaptcha,
+    annTask,
     // ThirdLogin
   },
   data() {
@@ -215,6 +219,56 @@ export default {
     // this.$forceUpdate()
   },
   methods: {
+    registerAccount() {
+
+      //使用注册的账号获取token
+      // loginGetToken('/stj/sys/login2', { username: 'zhuce', password: 'Admin123...' })
+      //   .then((res) => {
+      //     console.log('注册res', res)
+      //     if (res.success) {
+      //       let token = res.result.token;
+      //       let processRes = axios.get(`http://139.199.159.36:37192/process/startProcess/5216?processId=5216`, {
+      //         // headers: {
+      //         //   'Authorization': `Bearer ${token}`,
+      //         // }
+      //       });
+
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     console.log(error)
+      //   })
+
+
+        
+
+      axios.defaults.headers.common['userName'] = 'zhuce'
+      nw_getAction('/process/startProcess/{processId}?processId=35488')
+        .then((res) => {
+          console.log('res', res.success);
+          if (res.success) {
+            this.$message.success('开启流程成功')
+            const { formDesignerId, onlineDataId, onlineTableId, processInstanceId } = res.result.startProcessVO
+            const taskId = res.result.fistTaskId
+            this.$refs.modalform.openModal(
+              formDesignerId,
+              onlineDataId,
+              onlineTableId,
+              taskId,
+              processInstanceId,
+              '注册',
+              null
+            )
+          } else {
+            this.$message.error('开启流程失败')
+          }
+          this.selectedProcessId = null
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+
     ...mapActions(['Login', 'Logout', 'PhoneLogin']),
     // 解析token，存入localstore
     getToken() {

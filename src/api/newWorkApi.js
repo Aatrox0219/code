@@ -43,6 +43,19 @@ export function nw_delete(url,parameter) {
   })
 }
 
+//注册新用户时默认登录获取token
+export function loginGetToken(url,parameter) {
+  return axios({
+    url: url,
+    method:'post',
+    data: parameter,
+    baseURL: api.server_url+api.global_workflow_baseURL,
+    // headers: {
+    //   'userId': Vue.ls.get(USER_ID),
+    // },
+  })
+}
+
 //获取所有数据
 export function nw_getAllData(url,parameter) {
   return axios({
