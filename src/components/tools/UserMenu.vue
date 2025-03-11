@@ -25,6 +25,11 @@
         }}</a-select-option>
       </a-select>
     </component>
+    <div v-if="showRegister" style="position: relative; display: inline-block; margin-right: 3px">
+      <a href="#/newWorkFlow/flowRegister" style="font-size: 13px; color: #fff">施工企业注册待处理</a>
+      <a-badge :count="registerTotal" :style="badgeStyle" show-zero />
+    </div>
+    <a-divider v-if="showRegister" type="vertical" />
     <div v-if="showDeposit" style="position: relative; display: inline-block; margin-right: 3px">
       <!-- <router-link :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }"
         style="font-size: 16px;color:#fff">保证金存缴待处理</router-link> -->
@@ -119,19 +124,21 @@ import { USER_ID } from '@/store/mutation-types'
 import { UI_CACHE_DB_DICT_DATA } from '@/store/mutation-types'
 import api from '@/api/index'
 import { getPendingTotal, AutoClaim } from '@/api/userList'
-import { depositList, depositCategoryId, useList, useCategoryId, backpayList, backpayCategoryId, changeList, changeCategoryId, extendList, extendCategoryId, returnList, returnCategoryId } from '@/api/processId'
+import { depositList, depositCategoryId, useList, useCategoryId, backpayList, backpayCategoryId, changeList, changeCategoryId, extendList, extendCategoryId, returnList, returnCategoryId, registerList, registerCategoryId } from '@/api/processId'
 import { extend } from 'vuedraggable'
 export default {
   name: 'UserMenu',
   mixins: [mixinDevice],
   data() {
     return {
+      showRegister: false,
       showDeposit: false,// 是否显示保证金存缴待处理
       showUse: false,// 是否显示保证金使用待处理
       showBackpay: false,// 是否显示保证金补缴待处理
       showChange: false,// 是否显示保证金补缴待处理
       showExtend: false,// 是否显示保证金更换待处理
       showReturn: false,// 是否显示保证金返还待处理
+      registerTotal: 0,
       depositTotal: 0,    // 保证金存缴待处理数量
       useTotal: 0,    // 保证金使用待处理数量
       backpayTotal: 0, //保证金补缴待处理数量
@@ -246,6 +253,10 @@ export default {
           this.showReturn = true;
           return;
         }
+        if (item.component === 'newWorkFlow/flowRegister') {
+          this.showRegister = true;
+          return;
+        }
       });
     },
 
@@ -320,6 +331,13 @@ export default {
         .catch((error) => {
           console.error('获取待办事项总数失败:', error)
         })
+      getPendingTotal(registerList, registerCategoryId)
+        .then((total) => {
+          this.registerTotal = total
+        })
+        .catch((error) => {
+          console.error('获取待办事项总数失败:', error)
+        })
     },
 
     // 开启定时器
@@ -330,6 +348,7 @@ export default {
       await AutoClaim(changeList, changeCategoryId, this.getUserInfo) // 自动认领该用户的保证金存缴方式变更的流程
       await AutoClaim(extendList, extendCategoryId, this.getUserInfo) // 自动认领该用户的保证金保函更换的流程
       await AutoClaim(returnList, returnCategoryId, this.getUserInfo) // 自动认领该用户的保证金返还的流程
+      await AutoClaim(registerList, registerCategoryId, this.getUserInfo) // 自动认领该用户的保证金返还的流程
       console.log('开启保证金存缴的自动认领')
       this.getTotal()
       this.intervalId = setInterval(async () => {
@@ -354,6 +373,10 @@ export default {
       }, 180000)
       this.intervalId = setInterval(async () => {
         await AutoClaim(returnList, returnCategoryId)
+        this.getTotal()
+      }, 180000)
+      this.intervalId = setInterval(async () => {
+        await AutoClaim(registerList, registerCategoryId)
         this.getTotal()
       }, 180000)
     },

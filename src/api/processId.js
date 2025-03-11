@@ -21,3 +21,14 @@ export const extendCategoryId = '1867119925569568769';
 //保证金返还的流程id列表和分类id
 export const returnList = ['5210', '5212', '5214', '5216', '35002'];
 export const returnCategoryId = '1867119977859956738';
+
+export const registerList = ['85002'];
+export const registerCategoryId = '1897615212177567746';
+
+// 正式
+// export const depositList = ['5', '7', '9', '11'];
+// export const useList = ['5', '7', '9', '11', '14'];
+// export const backpayList = ['5', '7', '9', '11', '14', '20', '22', '24', '26'];
+// export const changeList = ['5', '7', '9', '11', '32', '34', '36', '38'];
+// export const extendList = ['5', '7', '9', '11', '44', '46', '48', '50'];
+// export const returnList = ['5', '7', '9', '11', '54'];
