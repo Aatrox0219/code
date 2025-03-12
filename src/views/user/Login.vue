@@ -226,7 +226,7 @@ export default {
         .then((res) => {
           if (res.success) {
             token = res.result.token;
-            axios.get(`http://139.199.159.36:37192/process/startProcess/35488?processId=35488`, { });
+            axios.get(`http://139.199.159.36:37192/process/startProcess/145033?processId=145033`, { });
 
           }
         })
@@ -238,7 +238,7 @@ export default {
         
 
       axios.defaults.headers.common['userName'] = 'zhuce'
-      nw_getAction('/process/startProcess/{processId}?processId=35488')
+      nw_getAction('/process/startProcess/{processId}?processId=145033')
         .then((res) => {
           console.log('res', res.success);
           if (res.success) {

@@ -22,7 +22,7 @@ export const extendCategoryId = '1867119925569568769';
 export const returnList = ['5210', '5212', '5214', '5216', '35002'];
 export const returnCategoryId = '1867119977859956738';
 
-export const registerList = ['85002'];
+export const registerList = ['145033'];
 export const registerCategoryId = '1897615212177567746';
 
 // 正式

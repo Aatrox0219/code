@@ -405,7 +405,7 @@ export default {
             if (res.result.result) {
               _this.$message.success('通过成功')
               this.$nextTick(() => {
-                this.getData()
+                // this.getData()
                 this.$bus.$emit('callGetTotal')
               })
             } else {

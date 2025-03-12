@@ -62,7 +62,8 @@
       </span>
       <span slot="flowExtendcolumns" slot-scope="text, record, index">
         <a @click="urge(record)" v-if="['承办人员', '业务分管', '人社分管'].some(role => userInfo.roleNames.includes(role))">预警</a>
-        <a @click="startProcess(record)" v-if="['施工企业', '管理员'].some(role => userInfo.roleNames.includes(role))">更换保函/延长有效期</a>
+        <a @click="startProcess(record)"
+          v-if="['施工企业', '管理员'].some(role => userInfo.roleNames.includes(role))">更换保函/延长有效期</a>
       </span>
       <span slot="flowReturncolumns" slot-scope="text, record, index">
         <a @click="startProcess(record)">申请返还</a>
@@ -159,7 +160,9 @@ export default {
           item.processInstanceId = dataItem.processInstanceId
           item.processHisInstanceId = dataItem.processHisInstanceId
           // 某些流程需要取下面这些值
-          item.depositWay = dataItem.allData.main_payment.deposit_way // 保证金存缴方式
+          if (dataItem.allData.main_payment) { // 确保main_payment存在
+            item.depositWay = dataItem.allData.main_payment.deposit_way // 保证金存缴方式
+          }
           item.flag = dataItem.flag // 用于判断是否是撤回的任务
 
           // 处理前置流程 id
