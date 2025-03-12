@@ -1,14 +1,7 @@
 <template>
   <div>
-    <a-modal
-      :visible="visible"
-      :footer="null"
-      width="1300px"
-      :zIndex="100"
-      :closable="false"
-      :destroyOnClose="true"
-      :centered="true"
-    >
+    <a-modal :visible="visible" :footer="null" width="1300px" :zIndex="100" :closable="false" :destroyOnClose="true"
+      :centered="true">
       <div>
         <div id="formContent">
           <div class="formbody">
@@ -102,8 +95,8 @@ export default {
       },
     }
   },
-  updated() {},
-  mounted() {},
+  updated() { },
+  mounted() { },
   methods: {
     openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, category, data) {
       console.log('category:', category)
@@ -158,7 +151,7 @@ export default {
               console.error('删除流程失败:', error)
             })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
 
     //如果点击了返回，则需要将该流程删除
@@ -362,22 +355,26 @@ export default {
       $form
         .getData()
         .then((data) => {
-          this.useMoney = data.use_money
-          this.supplementary = data.supplementary
-          console.log('使用金额:', this.useMoney)
-          console.log('剩余金额:', this.remainingAmount)
-          console.log('总金额:', this.totalMoney)
-          // 新增校验逻辑：在提交前检查金额
-          if (Number(this.useMoney) > Number(this.remainingAmount)) {
-            this.$message.error('使用金额不能大于剩余金额')
-            return // 直接返回，不执行后续操作
+          if (this.category === '使用') {
+            this.useMoney = data.use_money
+            this.supplementary = data.supplementary
+            console.log('使用金额:', this.useMoney)
+            console.log('剩余金额:', this.remainingAmount)
+            console.log('总金额:', this.totalMoney)
+            // 新增校验逻辑：在提交前检查金额
+            if (Number(this.useMoney) > Number(this.remainingAmount)) {
+              this.$message.error('使用金额不能大于剩余金额')
+              return // 直接返回，不执行后续操作
+            }
           }
-          console.log('补缴金额:', this.supplementary)
-          console.log('剩余金额:', this.remainingAmount)
-          console.log('总金额:', this.totalMoney)
-          if (Number(this.supplementary) + Number(this.remainingAmount) > Number(this.totalMoney)) {
-            this.$message.error('补缴后金额不能大于保证金金额')
-            return // 直接返回，不执行后续操作
+          if (this.category === '补缴') {
+            console.log('补缴金额:', this.supplementary)
+            console.log('剩余金额:', this.remainingAmount)
+            console.log('总金额:', this.totalMoney)
+            if (Number(this.supplementary) + Number(this.remainingAmount) > Number(this.totalMoney)) {
+              this.$message.error('补缴后金额不能大于保证金金额')
+              return // 直接返回，不执行后续操作
+            }
           }
           this.commitToDatabase(data) //将数据存储到online数据库中
         })
@@ -400,7 +397,7 @@ export default {
         params.frontId = this.frontId
       }
       if (this.category === '注册') {
-        nw_postAction2('/task/complete', params,this.registerToken)
+        nw_postAction2('/task/complete', params, this.registerToken)
           .then((res) => {
             if (res.result.result) {
               _this.$message.success('通过成功')
