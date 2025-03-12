@@ -8,7 +8,7 @@
             <span slot="nodeState" slot-scope="text, record, index">
               <span v-if="record.state == 'Created'">已创建</span>
               <span v-if="record.state == 'Withdraw'">已退回</span>
-              <span v-if="record.state == 'Completed'">已完成</span>
+              <span v-if="record.state == 'Completed'">已通过</span>
               <span v-if="record.state == 'Cancel'">已拒绝</span>
             </span>
             <span slot="endDate" slot-scope="text, record, index">
