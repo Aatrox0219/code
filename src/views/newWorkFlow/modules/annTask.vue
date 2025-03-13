@@ -1,7 +1,14 @@
 <template>
   <div>
-    <a-modal :visible="visible" :footer="null" width="1300px" :zIndex="100" :closable="false" :destroyOnClose="true"
-      :centered="true">
+    <a-modal
+      :visible="visible"
+      :footer="null"
+      width="1300px"
+      :zIndex="100"
+      :closable="false"
+      :destroyOnClose="true"
+      :centered="true"
+    >
       <div>
         <div id="formContent">
           <div class="formbody">
@@ -95,8 +102,8 @@ export default {
       },
     }
   },
-  updated() { },
-  mounted() { },
+  updated() {},
+  mounted() {},
   methods: {
     openModal(formDesignerId, onlineDataId, onlineTableId, taskId, processInstanceId, category, data) {
       console.log('category:', category)
@@ -151,7 +158,7 @@ export default {
               console.error('删除流程失败:', error)
             })
         })
-        .catch(() => { })
+        .catch(() => {})
     },
 
     //如果点击了返回，则需要将该流程删除
@@ -556,15 +563,15 @@ export default {
       if (this.category === '注册') {
         o_postAction1('/cgform/api/form/' + onlineId, datajson, this.registerToken)
           .then((res) => {
-            o_postAction2(`/user/checkUsername?onlineTableId=${onlineId}&onlineDataId=${res.result}`, this.registerToken)
+            const data = res.result
+            o_postAction2(`/user/checkUsername?onlineTableId=${onlineId}&onlineDataId=${data}`, this.registerToken)
               .then((res) => {
-                console.log('res:', res);
-                if(res.success){
+                console.log('res:', res)
+                if (res.success) {
                   this.visible = false
-                  this.completeTask(onlineId, res.result)
+                  this.completeTask(onlineId, data)
                   this.$message.success('提交成功')
-                }
-                else{
+                } else {
                   this.$message.error('提交失败,用户账号已存在,请修改用户账号后重新提交')
                 }
               })
