@@ -30,7 +30,7 @@
 import GenerateForm from '@/components/FormMaking/components/GenerateForm'
 import AntdGenerateForm from '@/components/FormMaking/components/AntdvGenerator/GenerateForm'
 import { t_postAction, t_getAction } from '@/api/tempApi.js'
-import { o_postAction, o_getAction, o_postAction1 } from '@/api/onApi.js'
+import { o_postAction, o_getAction, o_postAction1, o_postAction2 } from '@/api/onApi.js'
 import { nw_postAction1, nw_delete, nw_postAction2 } from '@api/newWorkApi'
 import { getSingleQYUser, getBusinessByCompanyName } from '@/api/userList'
 
@@ -556,9 +556,21 @@ export default {
       if (this.category === '注册') {
         o_postAction1('/cgform/api/form/' + onlineId, datajson, this.registerToken)
           .then((res) => {
-            this.visible = false
-            this.completeTask(onlineId, res.result)
-            this.$message.success('提交成功')
+            o_postAction2(`/user/checkUsername?onlineTableId=${onlineId}&onlineDataId=${res.result}`, this.registerToken)
+              .then((res) => {
+                console.log('res:', res);
+                if(res.success){
+                  this.visible = false
+                  this.completeTask(onlineId, res.result)
+                  this.$message.success('提交成功')
+                }
+                else{
+                  this.$message.error('提交失败,用户账号已存在,请修改用户账号后重新提交')
+                }
+              })
+              .catch((err) => {
+                console.log(err)
+              })
           })
           .catch((err) => {
             this.$message.error('提交失败')
