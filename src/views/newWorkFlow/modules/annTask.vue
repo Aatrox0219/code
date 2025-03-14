@@ -572,7 +572,7 @@ export default {
                   this.completeTask(onlineId, data)
                   this.$message.success('提交成功')
                 } else {
-                  this.$message.error('提交失败,用户账号已存在,请修改用户账号后重新提交')
+                  this.$message.error('提交失败，用户账号或企业名称已存在，请修改用户账号后重新提交')
                 }
               })
               .catch((err) => {
