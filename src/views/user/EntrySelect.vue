@@ -16,9 +16,9 @@
                 </div>
                 <div class="text">企业入口</div>
             </div>
-            <div class="card3" @click="goToLogin('yinhang')">
+            <div class="card3" @click="goToLogin('jingji')">
                 <div class="icon">
-                    <img src="@/assets/yinhang.png" alt="icon" class="icon-img" />
+                    <img src="@/assets/jingji.png" alt="icon" class="icon-img" />
                 </div>
                 <div class="text">经纪公司入口</div>
             </div>

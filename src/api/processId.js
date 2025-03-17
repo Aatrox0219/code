@@ -32,3 +32,4 @@ export const registerCategoryId = '1897615212177567746';
 // export const changeList = ['5', '7', '9', '11', '32', '34', '36', '38'];
 // export const extendList = ['5', '7', '9', '11', '44', '46', '48', '50'];
 // export const returnList = ['5', '7', '9', '11', '54'];
+// export const registerList = ['5002'];

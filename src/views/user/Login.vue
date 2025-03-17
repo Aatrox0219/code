@@ -1,36 +1,22 @@
 <template>
   <div class="main">
-    <div
-      element-loading-text="Loading..."
-      v-loading.fullscreen.lock="hasToken"
-      element-loading-background="rgba(255, 255, 255, 1)"
-    ></div>
+    <div element-loading-text="Loading..." v-loading.fullscreen.lock="hasToken"
+      element-loading-background="rgba(255, 255, 255, 1)"></div>
     <a-form v-show="!hasToken" :form="form" class="user-layout-login" ref="formLogin" id="formLogin">
-      <a-tabs
-        :activeKey="customActiveKey"
-        :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
-        @change="handleTabClick"
-      >
+      <a-tabs :activeKey="customActiveKey" :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
+        @change="handleTabClick">
         <a-tab-pane key="tab1" tab="账号密码登录">
           <a-form-item>
-            <a-input
-              size="large"
-              v-decorator="['username', validatorRules.username, { validator: this.handleUsernameOrEmail }]"
-              type="text"
-              placeholder="请输入帐户名"
-            >
+            <a-input size="large"
+              v-decorator="['username', validatorRules.username, { validator: this.handleUsernameOrEmail }]" type="text"
+              placeholder="请输入帐户名">
               <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input>
           </a-form-item>
 
           <a-form-item>
-            <a-input
-              v-decorator="['password', validatorRules.password]"
-              size="large"
-              type="password"
-              autocomplete="false"
-              placeholder="密码"
-            >
+            <a-input v-decorator="['password', validatorRules.password]" size="large" type="password"
+              autocomplete="false" placeholder="密码">
               <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input>
           </a-form-item>
@@ -38,24 +24,15 @@
           <a-row :gutter="0">
             <a-col :span="16">
               <a-form-item>
-                <a-input
-                  v-decorator="['inputCode', validatorRules.inputCode]"
-                  size="large"
-                  type="text"
-                  @change="inputCodeChange"
-                  placeholder="请输入验证码"
-                >
+                <a-input v-decorator="['inputCode', validatorRules.inputCode]" size="large" type="text"
+                  @change="inputCodeChange" placeholder="请输入验证码">
                   <a-icon slot="prefix" type="smile" :style="{ color: 'rgba(0,0,0,.25)' }" />
                 </a-input>
               </a-form-item>
             </a-col>
             <a-col :span="8" style="text-align: right">
-              <img
-                v-if="requestCodeSuccess"
-                style="margin-top: 2px"
-                :src="randCodeImage"
-                @click="handleChangeCheckCode"
-              />
+              <img v-if="requestCodeSuccess" style="margin-top: 2px" :src="randCodeImage"
+                @click="handleChangeCheckCode" />
               <img v-else style="margin-top: 2px" src="../../assets/checkcode.png" @click="handleChangeCheckCode" />
             </a-col>
           </a-row>
@@ -95,35 +72,19 @@
       </a-form-item> -->
 
       <a-form-item style="margin-top: 24px">
-        <a-button
-          size="large"
-          type="primary"
-          htmlType="submit"
-          class="login-button"
-          :loading="loginBtn"
-          @click.stop.prevent="handleSubmit"
-          :disabled="loginBtn"
-          >登录
+        <a-button size="large" type="primary" htmlType="submit" class="login-button" :loading="loginBtn"
+          @click.stop.prevent="handleSubmit" :disabled="loginBtn">登录
         </a-button>
 
         <a v-if="department === 'qiye'" @click="registerAccount()" style="margin-left: 10px"> 注册账户 </a>
-        <a
-          href="https://m12333.cn/policy/mazrc.html#:~:text=%E7%AC%AC%E4%B8%80%E6%9D%A1%20%E4%B8%BA%E4%BE%9D%E6%B3%95%E4%BF%9D%E6%8A%A4%E5%86%9C"
-          target="_blank"
-          style="float: right"
-        >
-          操作指南
+        <a target="_blank" style="float: right" @click="downloadManual">
+          用户手册
         </a>
       </a-form-item>
     </a-form>
 
-    <two-step-captcha
-      v-if="requiredTwoStepCaptcha"
-      :visible="stepCaptchaVisible"
-      @success="stepCaptchaSuccess"
-      @cancel="stepCaptchaCancel"
-      v-show="!hasToken"
-    ></two-step-captcha>
+    <two-step-captcha v-if="requiredTwoStepCaptcha" :visible="stepCaptchaVisible" @success="stepCaptchaSuccess"
+      @cancel="stepCaptchaCancel" v-show="!hasToken"></two-step-captcha>
     <login-select-tenant v-show="!hasToken" ref="loginSelect" @success="loginSelectOk"></login-select-tenant>
     <!-- <third-login ref="thirdLogin"></third-login> -->
 
@@ -226,7 +187,7 @@ export default {
         .then((res) => {
           if (res.success) {
             token = res.result.token;
-            axios.get(`http://139.199.159.36:37192/process/startProcess/145033?processId=145033`, { });
+            axios.get(`http://139.199.159.36:37192/process/startProcess/5002?processId=5002`, {});
 
           }
         })
@@ -235,10 +196,10 @@ export default {
         })
 
 
-        
+
 
       axios.defaults.headers.common['userName'] = 'zhuce'
-      nw_getAction('/process/startProcess/{processId}?processId=145033')
+      nw_getAction('/process/startProcess/{processId}?processId=5002')
         .then((res) => {
           console.log('res', res.success);
           if (res.success) {
@@ -646,6 +607,49 @@ export default {
         this.encryptedString = encryptedString
       }
     },
+    downloadManual() {
+      // 从 URL 获取 department 参数
+      const department = this.$route.query.department;
+      console.log('department:', department)
+      const downloadTemplateApi = 'http://139.199.159.36:37192/file/download';
+
+      let filePath, fileName;
+      switch (department) {
+        case 'qiye':
+          filePath = '/opt/UserManual/施工企业用户手册.pdf';
+          fileName = '施工企业用户手册.pdf';
+          break;
+        case 'renshe':
+          filePath = '/opt/UserManual/人社局用户手册.pdf';
+          fileName = '人社局用户手册.pdf';
+          break;
+        case 'jingji':
+          filePath = '/opt/UserManual/经纪公司用户手册.pdf';
+          fileName = '经纪公司用户手册.pdf';
+          break;
+        default:
+      }
+
+      axios.post(downloadTemplateApi, null, {
+        params: {
+          filePath: filePath, // 将 filePath 作为查询参数
+        },
+        responseType: 'blob', // 设置响应类型为 blob，用于处理文件下载
+      })
+        .then((response) => {
+          const blob = new Blob([response.data]);
+          const downloadLink = document.createElement('a');
+          const url = window.URL.createObjectURL(blob);
+          downloadLink.href = url;
+          downloadLink.download = fileName;
+          downloadLink.click();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+          console.error('下载用户手册失败:', error);
+          this.$message.error('下载用户手册失败');
+        });
+    }
   },
 }
 </script>
