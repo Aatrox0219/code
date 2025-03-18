@@ -27,39 +27,39 @@
     </component>
     <div v-if="showRegister" style="position: relative; display: inline-block; margin-right: 3px">
       <a href="#/newWorkFlow/flowRegister" style="font-size: 13px; color: #fff">施工企业注册待处理</a>
-      <a-badge :count="registerTotal" :style="badgeStyle" show-zero />
+      <a-badge :count="registerTotal" :style="badgeStyle"/>
     </div>
     <a-divider v-if="showRegister" type="vertical" />
     <div v-if="showDeposit" style="position: relative; display: inline-block; margin-right: 3px">
       <!-- <router-link :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }"
         style="font-size: 16px;color:#fff">保证金存缴待处理</router-link> -->
       <a href="#/newWorkFlow/flowDeposit" style="font-size: 13px; color: #fff">存缴待处理</a>
-      <a-badge :count="depositTotal" :style="badgeStyle" show-zero />
+      <a-badge :count="depositTotal" :style="badgeStyle"/>
     </div>
     <a-divider v-if="showDeposit" type="vertical" />
     <div v-if="showUse" style="position: relative; display: inline-block; margin-right: 3px">
       <a href="#/newWorkFlow/flowUse" style="font-size: 13px; color: #fff">使用待处理</a>
-      <a-badge :count="useTotal" :style="badgeStyle" show-zero />
+      <a-badge :count="useTotal" :style="badgeStyle"/>
     </div>
     <a-divider v-if="showUse" type="vertical" />
     <div v-if="showBackpay" style="position: relative; display: inline-block; margin-right: 3px">
       <a href="#/newWorkFlow/flowBackPay" style="font-size: 13px; color: #fff">补缴待处理</a>
-      <a-badge :count="backpayTotal" :style="badgeStyle" show-zero />
+      <a-badge :count="backpayTotal" :style="badgeStyle"/>
     </div>
     <a-divider v-if="showBackpay" type="vertical" />
     <div v-if="showChange" style="position: relative; display: inline-block; margin-right: 3px">
       <a href="#/newWorkFlow/flowChange" style="font-size: 13px; color: #fff">方式变更待处理</a>
-      <a-badge :count="changeTotal" :style="badgeStyle" show-zero />
+      <a-badge :count="changeTotal" :style="badgeStyle"/>
     </div>
     <a-divider v-if="showChange" type="vertical" />
     <div v-if="showExtend" style="position: relative; display: inline-block; margin-right: 3px">
       <a href="#/newWorkFlow/flowExtend" style="font-size: 13px; color: #fff">更换延长待处理</a>
-      <a-badge :count="extendTotal" :style="badgeStyle" show-zero />
+      <a-badge :count="extendTotal" :style="badgeStyle"/>
     </div>
     <a-divider v-if="showExtend" type="vertical" />
     <div v-if="showReturn" style="position: relative; display: inline-block; margin-right: 3px">
       <a href="#/newWorkFlow/flowReturn" style="font-size: 13px; color: #fff">返还待处理</a>
-      <a-badge :count="returnTotal" :style="badgeStyle" show-zero />
+      <a-badge :count="returnTotal" :style="badgeStyle"/>
     </div>
     <a-divider v-if="showReturn" type="vertical" style="margin-right: 3px" />
     <a-dropdown>
