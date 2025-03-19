@@ -82,9 +82,9 @@
             <span v-else-if="department === 'mohrss'">人社局用户手册</span>
           </a> -->
           <a @click="showPdfPreview" style="display:flex;align-items: center;justify-content: center;">
-            <span v-if="department === 'enterprise'">施工企业用户手册</span>
-            <span v-else-if="department === 'brokerage'">经纪公司用户手册</span>
-            <span v-else-if="department === 'mohrss'">人社局用户手册</span>
+            <span v-if="department === 'enterprise'"><a-icon type="book" />施工企业用户手册</span>
+            <span v-else-if="department === 'brokerage'"><a-icon type="book" />经纪公司用户手册</span>
+            <span v-else-if="department === 'mohrss'"><a-icon type="book" />人社局用户手册</span>
           </a>
           <a @click="showVideoDialog" style="float: right; cursor: pointer">
             <a-icon type="video-camera" /> 视频教程
