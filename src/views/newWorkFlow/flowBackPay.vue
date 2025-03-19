@@ -196,7 +196,7 @@ export default {
         filterFunction: function (dataList) {
           return dataList.filter(item => {
             // 留的是remaining小于money的项
-            const remaining = parseFloat(item.remainingAmount || 0) 
+            const remaining = parseFloat(item.remainingAmount || 0)
             const money = parseFloat(item.Money || 0)
             return remaining < money && item.isRefundable !== 1
           })
@@ -461,6 +461,10 @@ export default {
     this.startFixedProcess(false)
     this.getData()
     console.log('当前用户信息', this.userInfo)
+    // 添加路由参数主动检查
+    if (this.$route.query.tab) {
+      this.taskTab.tabKey = this.$route.query.tab
+    }
   },
   methods: {
     //获取保证金补缴的流程数据,1860939985686949889是保证金补缴的流程分类id
@@ -581,6 +585,22 @@ export default {
         this.$refs.approveModel.announceTask(record)
       }
     },
+  },
+  watch: {
+    '$route.query.tab': {
+      immediate: true,
+      deep: true,
+      handler(newVal) {
+        if (newVal) {
+          this.taskTab.tabKey = newVal;
+        } else {
+          this.taskTab.tabKey = '2'
+        }
+        this.$nextTick(() => {
+          this.getData()
+        })
+      }
+    }
   },
 }
 </script>

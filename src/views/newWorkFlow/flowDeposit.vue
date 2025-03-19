@@ -262,7 +262,7 @@ export default {
       backlogNumber: 0,
       selectedStatus: 'all', // 状态默认选择 "全部"
       taskTab: {
-        tabKey: '2', // 主 Tab 页的状态
+        tabKey: '2', // 默认显示存缴历史
       },
       flowConfigData: [],
       isModalVisible: false,
@@ -276,16 +276,13 @@ export default {
       return Vue.ls.get(USER_INFO) || {}
     },
   },
-  // created() {
-  //   // 获取路由的查询参数，并根据参数设置选中的标签页
-  //   const tab = this.$route.query.tab;
-  //   if (tab !== undefined) {
-  //     this.taskTab.tabKey = tab; // 如果传入了tab参数，设置activeTab
-  //   }
-  // },
   mounted() {
     this.startFixedProcess(false)
     this.getData()
+    // 添加路由参数主动检查
+    if(this.$route.query.tab) {
+      this.taskTab.tabKey = this.$route.query.tab
+    }
     console.log('当前用户信息', this.userInfo)
   },
   methods: {
@@ -298,7 +295,7 @@ export default {
           if (res.success) {
             let flowConfigData = res.result
 
-            // 去掉name中的“存缴”后缀
+            // 去掉name中的"存缴"后缀
             flowConfigData = flowConfigData.map((item) => {
               return {
                 ...item,
@@ -429,6 +426,23 @@ export default {
           console.error('下载存款协议书样本失败:', error);
           this.$message.error('下载存款协议书样本失败');
         });
+    }
+  },
+  watch: {
+    '$route.query.tab': {
+      immediate: true,
+      deep: true, // 添加深度监听
+      handler(newVal) {
+        if (newVal) {
+          this.taskTab.tabKey = newVal;
+        } else {
+          this.taskTab.tabKey = '2'
+        }
+        // 强制刷新表格数据
+        this.$nextTick(() => {
+          this.getData()
+        })
+      }
     }
   },
 }

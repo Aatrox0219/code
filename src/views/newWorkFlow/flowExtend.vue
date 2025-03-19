@@ -414,6 +414,9 @@ export default {
     this.startFixedProcess(false)
     this.getData()
     console.log('当前用户信息', this.userInfo)
+    if(this.$route.query.tab) {
+      this.taskTab.tabKey = this.$route.query.tab
+    }
   },
   methods: {
     //获取保函变更/延长有效期的流程数据,1867119925569568769是保函变更/延长有效期的流程分类id
@@ -526,6 +529,22 @@ export default {
         this.$refs.approveModel.announceTask(record)
       }
     },
+  },
+  watch: {
+    '$route.query.tab': {
+      immediate: true,
+      deep: true,
+      handler(newVal) {
+        if (newVal) {
+          this.taskTab.tabKey = newVal;
+        } else {
+          this.taskTab.tabKey = '2' // 默认显示历史tab
+        }
+        this.$nextTick(() => {
+          this.getData()
+        })
+      }
+    }
   },
 }
 </script>

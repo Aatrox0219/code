@@ -214,6 +214,10 @@ export default {
     mounted() {
         this.getData()
         console.log('当前用户信息', this.userInfo)
+        // 添加路由参数主动检查
+        if (this.$route.query.tab) {
+            this.taskTab.tabKey = this.$route.query.tab
+        }
     },
     methods: {
         //查看历史
@@ -245,6 +249,22 @@ export default {
                 this.$refs.approveModel.announceTask(record)
             }
         },
+    },
+    watch: {
+        '$route.query.tab': {
+            immediate: true,
+            deep: true,
+            handler(newVal) {
+                if (newVal) {
+                    this.taskTab.tabKey = newVal;
+                } else {
+                    this.taskTab.tabKey = '2'
+                }
+                this.$nextTick(() => {
+                    this.getData()
+                })
+            }
+        }
     },
 }
 </script>

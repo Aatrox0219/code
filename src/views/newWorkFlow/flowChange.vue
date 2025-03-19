@@ -448,6 +448,10 @@ export default {
     this.startFixedProcess(false, null)
     this.getData()
     console.log('当前用户信息', this.userInfo)
+    // 添加路由参数主动检查
+    if(this.$route.query.tab) {
+      this.taskTab.tabKey = this.$route.query.tab
+    }
   },
   methods: {
     //获取存缴方式变更的流程数据,1860602147955077121是存缴方式变更的流程分类id
@@ -463,7 +467,7 @@ export default {
           if (res.success) {
             let flowConfigData = res.result
 
-            // 去掉name中的“变更为”前缀
+            // 去掉name中的"变更为"前缀
             flowConfigData = flowConfigData.map((item) => {
               return {
                 ...item,
@@ -572,6 +576,22 @@ export default {
         this.$refs.approveModel.announceTask(record)
       }
     },
+  },
+  watch: {
+    '$route.query.tab': {
+      immediate: true,
+      deep: true,
+      handler(newVal) {
+        if (newVal) {
+          this.taskTab.tabKey = newVal;
+        } else {
+          this.taskTab.tabKey = '2' // 默认显示历史tab
+        }
+        this.$nextTick(() => {
+          this.getData()
+        })
+      }
+    }
   },
 }
 </script>
