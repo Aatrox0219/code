@@ -4,21 +4,21 @@
             <!-- <h1>黄冈市农民工保证金智慧管理服务平台</h1> -->
         </header>
         <div class="card-container">
-            <div class="card1" @click="goToLogin('renshe')">
+            <div class="card1" @click="goToLogin('MOHRSS')">
                 <div class="icon">
-                    <img src="@/assets/renshe.png" alt="icon" class="icon-img" />
+                    <img src="@/assets/MOHRSS.png" alt="icon" class="icon-img" />
                 </div>
                 <div class="text">人社入口</div>
             </div>
-            <div class="card2" @click="goToLogin('qiye')">
+            <div class="card2" @click="goToLogin('enterprise')">
                 <div class="icon">
-                    <img src="@/assets/qiye.png" alt="icon" class="icon-img" />
+                    <img src="@/assets/enterprise.png" alt="icon" class="icon-img" />
                 </div>
                 <div class="text">企业入口</div>
             </div>
-            <div class="card3" @click="goToLogin('jingji')">
+            <div class="card3" @click="goToLogin('brokerage')">
                 <div class="icon">
-                    <img src="@/assets/jingji.png" alt="icon" class="icon-img" />
+                    <img src="@/assets/brokerage.png" alt="icon" class="icon-img" />
                 </div>
                 <div class="text">经纪公司入口</div>
             </div>
