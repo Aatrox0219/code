@@ -73,15 +73,35 @@
 
       <a-form-item style="margin-top: 24px">
         <a-button size="large" type="primary" htmlType="submit" class="login-button" :loading="loginBtn"
-          @click.stop.prevent="handleSubmit" :disabled="loginBtn">登录
-        </a-button>
-
-        <a v-if="department === 'qiye'" @click="registerAccount()" style="margin-left: 10px"> 注册账户 </a>
-        <a target="_blank" style="float: right" @click="downloadManual">
-          用户手册
-        </a>
+          @click.stop.prevent="handleSubmit" :disabled="loginBtn">登录</a-button>
+        <div class="container">
+          <a v-if="department === 'enterprise'" @click="registerAccount()">注册账户</a>
+          <!-- <a target="_blank" @click="downloadManual" style="display:flex;align-items: center;justify-content: center;">
+            <span v-if="department === 'enterprise'">施工企业用户手册</span>
+            <span v-else-if="department === 'brokerage'">经纪公司用户手册</span>
+            <span v-else-if="department === 'mohrss'">人社局用户手册</span>
+          </a> -->
+          <a @click="showPdfPreview" style="display:flex;align-items: center;justify-content: center;">
+            <span v-if="department === 'enterprise'">施工企业用户手册</span>
+            <span v-else-if="department === 'brokerage'">经纪公司用户手册</span>
+            <span v-else-if="department === 'mohrss'">人社局用户手册</span>
+          </a>
+          <a @click="showVideoDialog" style="float: right; cursor: pointer">
+            <a-icon type="video-camera" /> 视频教程
+          </a>
+        </div>
       </a-form-item>
     </a-form>
+
+    <a-modal title="用户手册预览" :visible="previewVisible" width="80%" centered :footer="null"
+      @cancel="previewVisible = false">
+      <div style="height: 80vh">
+        <iframe :src="pdfUrl" style="width: 100%; height: 100%" frameborder="0"></iframe>
+      </div>
+      <div style="text-align: center; margin-top: 16px">
+        <a-button type="primary" @click="downloadManual">下载手册</a-button>
+      </div>
+    </a-modal>
 
     <two-step-captcha v-if="requiredTwoStepCaptcha" :visible="stepCaptchaVisible" @success="stepCaptchaSuccess"
       @cancel="stepCaptchaCancel" v-show="!hasToken"></two-step-captcha>
@@ -90,7 +110,14 @@
 
     <annTask ref="modalform"> </annTask>
 
-    <a-modal> </a-modal>
+    <a-modal title="视频教程" :visible="videoVisible" width="720px" @cancel="videoVisible = false" :footer="null"
+      :destroyOnClose="true">
+      <div style="position: relative; padding-top: 56.25%"> <!-- 16:9比例 -->
+        <iframe :src="videoUrl" frameborder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%"></iframe>
+      </div>
+    </a-modal>
   </div>
 </template>
 
@@ -156,6 +183,10 @@ export default {
       requestCodeSuccess: false,
       hasToken: false,
       _token: '',
+      videoVisible: false,
+      videoUrl: '', // 动态设置的视频URL
+      previewVisible: false,
+      pdfUrl: '',
     }
   },
   beforeCreate() {
@@ -187,7 +218,7 @@ export default {
         .then((res) => {
           if (res.success) {
             token = res.result.token;
-            axios.get(`http://139.199.159.36:37192/process/startProcess/5002?processId=5002`, {});
+            axios.get(`http://139.199.159.36:37192/process/startProcess/2?processId=2`, {});
 
           }
         })
@@ -199,7 +230,7 @@ export default {
 
 
       axios.defaults.headers.common['userName'] = 'zhuce'
-      nw_getAction('/process/startProcess/{processId}?processId=5002')
+      nw_getAction('/process/startProcess/{processId}?processId=2')
         .then((res) => {
           console.log('res', res.success);
           if (res.success) {
@@ -607,6 +638,23 @@ export default {
         this.encryptedString = encryptedString
       }
     },
+
+    showPdfPreview() {
+      // 根据部门设置预览PDF路径
+      switch (this.department) {
+        case 'enterprise':
+          this.pdfUrl = 'http://139.199.159.36:37192/file/static/施工企业用户手册.pdf'; // 替换为实际PDF路径
+          break;
+        case 'brokerage':
+          this.pdfUrl = 'http://139.199.159.36:37192/file/static/经纪公司用户手册.pdf';
+          break;
+        case 'mohrss':
+          this.pdfUrl = 'http://139.199.159.36:37192/file/static/人社局用户手册.pdf';
+          break;
+      }
+      console.log('pdfUrl:', this.pdfUrl)
+      this.previewVisible = true;
+    },
     downloadManual() {
       // 从 URL 获取 department 参数
       const department = this.$route.query.department;
@@ -615,15 +663,15 @@ export default {
 
       let filePath, fileName;
       switch (department) {
-        case 'qiye':
+        case 'enterprise':
           filePath = '/opt/UserManual/施工企业用户手册.pdf';
           fileName = '施工企业用户手册.pdf';
           break;
-        case 'renshe':
+        case 'mohrss':
           filePath = '/opt/UserManual/人社局用户手册.pdf';
           fileName = '人社局用户手册.pdf';
           break;
-        case 'jingji':
+        case 'brokerage':
           filePath = '/opt/UserManual/经纪公司用户手册.pdf';
           fileName = '经纪公司用户手册.pdf';
           break;
@@ -649,6 +697,21 @@ export default {
           console.error('下载用户手册失败:', error);
           this.$message.error('下载用户手册失败');
         });
+    },
+    showVideoDialog() {
+      // 设置不同的视频地址（
+      switch (this.department) {
+        case 'enterprise':
+          this.videoUrl = '/videos/施工企业视频教程.mp4';
+          break;
+        case 'brokerage':
+          this.videoUrl = '/videos/经纪公司视频教程.mp4';
+          break;
+        case 'mohrss':
+          this.videoUrl = '/videos/人社局视频教程.mp4';
+          break;
+      }
+      this.videoVisible = true;
     }
   },
 }
@@ -711,6 +774,32 @@ export default {
   height: 200px;
   width: 400px;
   margin: 200px auto;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container a {
+  text-decoration: none;
+}
+
+.video-container {
+  position: relative;
+  padding-top: 56.25%;
+  /* 16:9比例 */
+  height: 0;
+  overflow: hidden;
+}
+
+video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>
 <style>

@@ -22,10 +22,11 @@ export const extendCategoryId = '1867119925569568769';
 export const returnList = ['5210', '5212', '5214', '5216', '35002'];
 export const returnCategoryId = '1867119977859956738';
 
-export const registerList = ['145033'];
+export const registerList = ['2'];
 export const registerCategoryId = '1897615212177567746';
 
 // 正式
+// 1.替换List 2.替换ip 3.替换注册的流程id
 // export const depositList = ['5', '7', '9', '11'];
 // export const useList = ['5', '7', '9', '11', '14'];
 // export const backpayList = ['5', '7', '9', '11', '14', '20', '22', '24', '26'];

@@ -4,9 +4,9 @@
             <!-- <h1>黄冈市农民工保证金智慧管理服务平台</h1> -->
         </header>
         <div class="card-container">
-            <div class="card1" @click="goToLogin('MOHRSS')">
+            <div class="card1" @click="goToLogin('mohrss')">
                 <div class="icon">
-                    <img src="@/assets/MOHRSS.png" alt="icon" class="icon-img" />
+                    <img src="@/assets/mohrss.png" alt="icon" class="icon-img" />
                 </div>
                 <div class="text">人社入口</div>
             </div>

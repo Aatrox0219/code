@@ -395,6 +395,7 @@ export default {
       // 从 Vue.ls 中获取 USER_INFO
       return Vue.ls.get(USER_INFO) || {} // 如果没有值，默认为空对象
     },
+
   },
 
   created() {
@@ -409,9 +410,9 @@ export default {
     this.getData()
     console.log('当前用户信息', this.userInfo)
     // 添加路由参数主动检查
-    // if(this.$route.query.tab) {
-    //   this.taskTab.tabKey = this.$route.query.tab
-    // }
+    if(this.$route.query.tab) {
+      this.taskTab.tabKey = this.$route.query.tab
+    }
   },
   methods: {
     //获取保证金使用的流程数据,1847453556447707137是保证金使用的流程分类id
@@ -494,22 +495,22 @@ export default {
       }
     },
   },
-  // watch: {
-  //   '$route.query.tab': {
-  //     immediate: true,
-  //     deep: true,
-  //     handler(newVal) {
-  //       if (newVal) {
-  //         this.taskTab.tabKey = newVal;
-  //       } else {
-  //         this.taskTab.tabKey = '2'
-  //       }
-  //       this.$nextTick(() => {
-  //         this.getData()
-  //       })
-  //     }
-  //   }
-  // },
+  watch: {
+    '$route.query.tab': {
+      immediate: true,
+      deep: true,
+      handler(newVal) {
+        if (newVal) {
+          this.taskTab.tabKey = newVal;
+        } else {
+          this.taskTab.tabKey = '2'
+        }
+        this.$nextTick(() => {
+          this.getData()
+        })
+      }
+    }
+  },
 }
 </script>
 <style scoped>
