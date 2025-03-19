@@ -84,17 +84,10 @@
             v-model="licenseCopy"></j-image-upload-one>
         </a-form-item>
 
-        <a-form-item label="负责人签名" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <!-- <j-image-upload
-            class="avatar-uploader"
-            text="上传"
-            v-model="avatar"
-            dataType="signature"
-            v-decorator.trim="['avatar', validatorRules.avatar]"
-          ></j-image-upload> -->
+        <!-- <a-form-item label="负责人签名" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <j-image-upload-two :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传"
             v-model="avatar"></j-image-upload-two>
-        </a-form-item>
+        </a-form-item> -->
 
         <a-form-item label="企业盖章" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <!-- <j-image-upload
@@ -151,7 +144,7 @@ export default {
   data() {
     return {
       licenseCopy: [],
-      avatar: [],
+      // avatar: [],
       stamp: [],
       isEdit: true,
       isAdd: false,
@@ -353,7 +346,7 @@ export default {
         that.loadUserRoles(record.id)
         setTimeout(() => {
           this.licenseCopy = record.licenseCopy
-          this.avatar = record.avatar
+          // this.avatar = record.avatar
           this.stamp = record.stamp
         }, 5)
       }
@@ -447,7 +440,7 @@ export default {
       this.departIdShow = false
       this.identity = '1'
       this.licenseCopy = []
-      this.avatar = []
+      // this.avatar = []
       this.stamp = []
       this.isEdit = true
     },
@@ -468,9 +461,9 @@ export default {
           if (that.licenseCopy) {
             formData.licenseCopy = that.licenseCopy
           }
-          if (that.avatar) {
-            formData.avatar = that.avatar
-          }
+          // if (that.avatar) {
+          //   formData.avatar = that.avatar
+          // }
           if (that.stamp) {
             formData.stamp = that.stamp
           }
@@ -643,7 +636,8 @@ export default {
       if (Array.isArray(e)) {
         return e
       }
-      return e && e.licenseCopy && e.avatar && e.stamp
+      // return e && e.licenseCopy && e.avatar && e.stamp
+      return e && e.licenseCopy && e.stamp
     },
     beforeUpload: function (file) {
       var fileType = file.type
@@ -664,7 +658,7 @@ export default {
         this.uploadLoading = false
         console.log(response)
         if (response.success) {
-          this.model.avatar = response.message
+          // this.model.avatar = response.message
           this.picUrl = 'Has no pic url yet'
         } else {
           this.$message.warning(response.message)
