@@ -27,49 +27,49 @@
     </component>
     <div v-if="showRegister" style="position: relative; display: inline-block; margin-right: 3px">
       <div style="position: relative; display: inline-block;">
-        <router-link :to="{ path: '/newWorkFlow/flowRegister', query: { tab: '1' } }" style="font-size: 13px; color: #fff">施工企业注册待处理</router-link>
+        <router-link :to="{ path: '/newWorkFlow/flowRegister', query: { tab: '1' } }" class="pending-link">施工企业注册待处理</router-link>
         <a-badge :count="registerTotal" :style="badgeStyle"/>
       </div>
     </div>
     <a-divider v-if="showRegister" type="vertical" />
     <div v-if="showDeposit" style="position: relative; display: inline-block; margin-right: 3px">
       <div style="position: relative; display: inline-block;">
-        <router-link :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }" style="font-size: 13px; color: #fff">存缴待处理</router-link>
+        <router-link :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }" class="pending-link">存缴待处理</router-link>
         <a-badge :count="depositTotal" :style="badgeStyle"/>
       </div>
     </div>
     <a-divider v-if="showDeposit" type="vertical" />
     <div v-if="showUse" style="position: relative; display: inline-block; margin-right: 3px">
       <div style="position: relative; display: inline-block;">
-        <router-link :to="{ path: '/newWorkFlow/flowUse', query: { tab: '1' } }" style="font-size: 13px; color: #fff">使用待处理</router-link>
+        <router-link :to="{ path: '/newWorkFlow/flowUse', query: { tab: '1' } }" class="pending-link">使用待处理</router-link>
         <a-badge :count="useTotal" :style="badgeStyle"/>
       </div>
     </div>
     <a-divider v-if="showUse" type="vertical" />
     <div v-if="showBackpay" style="position: relative; display: inline-block; margin-right: 3px">
       <div style="position: relative; display: inline-block;">
-        <router-link :to="{ path: '/newWorkFlow/flowBackPay', query: { tab: '1' } }" style="font-size: 13px; color: #fff">补缴待处理</router-link>
+        <router-link :to="{ path: '/newWorkFlow/flowBackPay', query: { tab: '1' } }" class="pending-link">补缴待处理</router-link>
         <a-badge :count="backpayTotal" :style="badgeStyle"/>
       </div>
     </div>
     <a-divider v-if="showBackpay" type="vertical" />
     <div v-if="showChange" style="position: relative; display: inline-block; margin-right: 3px">
       <div style="position: relative; display: inline-block;">
-        <router-link :to="{ path: '/newWorkFlow/flowChange', query: { tab: '1' } }" style="font-size: 13px; color: #fff">方式变更待处理</router-link>
+        <router-link :to="{ path: '/newWorkFlow/flowChange', query: { tab: '1' } }" class="pending-link">方式变更待处理</router-link>
         <a-badge :count="changeTotal" :style="badgeStyle"/>
       </div>
     </div>
     <a-divider v-if="showChange" type="vertical" />
     <div v-if="showExtend" style="position: relative; display: inline-block; margin-right: 3px">
       <div style="position: relative; display: inline-block;">
-        <router-link :to="{ path: '/newWorkFlow/flowExtend', query: { tab: '1' } }" style="font-size: 13px; color: #fff">更换延长待处理</router-link>
+        <router-link :to="{ path: '/newWorkFlow/flowExtend', query: { tab: '1' } }" class="pending-link">更换延长待处理</router-link>
         <a-badge :count="extendTotal" :style="badgeStyle"/>
       </div>
     </div>
     <a-divider v-if="showExtend" type="vertical" />
     <div v-if="showReturn" style="position: relative; display: inline-block; margin-right: 3px">
       <div style="position: relative; display: inline-block;">
-        <router-link :to="{ path: '/newWorkFlow/flowReturn', query: { tab: '1' } }" style="font-size: 13px; color: #fff">返还待处理</router-link>
+        <router-link :to="{ path: '/newWorkFlow/flowReturn', query: { tab: '1' } }" class="pending-link">返还待处理</router-link>
         <a-badge :count="returnTotal" :style="badgeStyle"/>
       </div>
     </div>
@@ -525,6 +525,17 @@ export default {
 
 /* update-end author:sunjianlei date:20191220 for: 解决全局样式冲突问题 */
 /* update_end author:zhaoxin date:20191129 for: 让搜索框颜色能随主题颜色变换*/
+
+.pending-link {
+  font-size: 13px;
+  color: #fff;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
 </style>
 
 <style scoped>
