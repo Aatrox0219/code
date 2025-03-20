@@ -1,28 +1,30 @@
 //保证金存缴的流程id列表和分类id
-export const depositList = ['5210', '5212', '5214', '5216'];
+export const depositList = ['10111', '10113', '10115', '10117'];
 export const depositCategoryId = '1847453055727501313';
 
 //保证金使用的流程id列表和分类id
-export const useList = ['5210', '5212', '5214', '5216', '5218'];
+export const useList = ['10111', '10113', '10115', '10117', '10120'];
 export const useCategoryId = '1847453556447707137';
 
 //保证金补缴的流程id列表和分类id
-export const backpayList = ['5210', '5212', '5214', '5216', '5218', '5220', '5222', '5224', '5226'];
+//如果部署了新的流程，记得改flowBackPay.vue里开启的对应的流程id
+export const backpayList = ['10111', '10113', '10115', '10117', '10120', '10126', '10128', '10130', '10132'];
 export const backpayCategoryId = '1860939985686949889';
 
 //保证金存缴方式变更的流程id列表和分类id
-export const changeList = ['5210', '5212', '5214', '5216', '5228', '5230', '5232', '5234'];
+export const changeList = ['10111', '10113', '10115', '10117', '10138', '10140', '10142', '10144'];
 export const changeCategoryId = '1860602147955077121';
 
-//保证金保函变更的流程id列表和分类id
-export const extendList = ['5210', '5212', '5214', '5216', '10009', '10012', '10015', '10019'];
+//保证金保函更换的流程id列表和分类id
+//如果部署了新的流程，记得改flowExtend.vue里开启的对应的流程id
+export const extendList = ['10111', '10113', '10115', '10117', '10150', '10152', '10154', '10156'];
 export const extendCategoryId = '1867119925569568769';
 
 //保证金返还的流程id列表和分类id
-export const returnList = ['5210', '5212', '5214', '5216', '35002'];
+export const returnList = ['10111', '10113', '10115', '10117', '10159'];
 export const returnCategoryId = '1867119977859956738';
 
-export const registerList = ['2'];
+export const registerList = ['10162'];
 export const registerCategoryId = '1897615212177567746';
 
 // 正式

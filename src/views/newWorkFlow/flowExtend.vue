@@ -471,13 +471,13 @@ export default {
       console.log('userData.value.username', userData.value.username)
       console.log('record.depositWay:', record.depositWay)
       if (record.depositWay === '担保公司保函') {
-        this.selectedProcessId = '10012'
+        this.selectedProcessId = '10156'
       } else if (record.depositWay === '保险公司保函') {
-        this.selectedProcessId = '10015'
+        this.selectedProcessId = '10152'
       } else if (record.depositWay === '银行保函') {
-        this.selectedProcessId = '10019'
+        this.selectedProcessId = '10154'
       } else if (record.depositWay === '银行现金存单') {
-        this.selectedProcessId = '10009'
+        this.selectedProcessId = '10150'
       }
       nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
         .then((res) => {
