@@ -26,38 +26,52 @@
       </a-select>
     </component>
     <div v-if="showRegister" style="position: relative; display: inline-block; margin-right: 3px">
-      <router-link :to="{ path: '/newWorkFlow/flowRegister', query: { tab: '1' } }" style="font-size: 13px; color: #fff">施工企业注册待处理</router-link>
-      <a-badge :count="registerTotal" :style="badgeStyle"/>
+      <div style="position: relative; display: inline-block;">
+        <router-link :to="{ path: '/newWorkFlow/flowRegister', query: { tab: '1' } }" style="font-size: 13px; color: #fff">施工企业注册待处理</router-link>
+        <a-badge :count="registerTotal" :style="badgeStyle"/>
+      </div>
     </div>
     <a-divider v-if="showRegister" type="vertical" />
     <div v-if="showDeposit" style="position: relative; display: inline-block; margin-right: 3px">
-      <router-link :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }" style="font-size: 13px; color: #fff">存缴待处理</router-link>
-      <a-badge :count="depositTotal" :style="badgeStyle"/>
+      <div style="position: relative; display: inline-block;">
+        <router-link :to="{ path: '/newWorkFlow/flowDeposit', query: { tab: '1' } }" style="font-size: 13px; color: #fff">存缴待处理</router-link>
+        <a-badge :count="depositTotal" :style="badgeStyle"/>
+      </div>
     </div>
     <a-divider v-if="showDeposit" type="vertical" />
     <div v-if="showUse" style="position: relative; display: inline-block; margin-right: 3px">
-      <router-link :to="{ path: '/newWorkFlow/flowUse', query: { tab: '1' } }" style="font-size: 13px; color: #fff">使用待处理</router-link>
-      <a-badge :count="useTotal" :style="badgeStyle"/>
+      <div style="position: relative; display: inline-block;">
+        <router-link :to="{ path: '/newWorkFlow/flowUse', query: { tab: '1' } }" style="font-size: 13px; color: #fff">使用待处理</router-link>
+        <a-badge :count="useTotal" :style="badgeStyle"/>
+      </div>
     </div>
     <a-divider v-if="showUse" type="vertical" />
     <div v-if="showBackpay" style="position: relative; display: inline-block; margin-right: 3px">
-      <router-link :to="{ path: '/newWorkFlow/flowBackPay', query: { tab: '1' } }" style="font-size: 13px; color: #fff">补缴待处理</router-link>
-      <a-badge :count="backpayTotal" :style="badgeStyle"/>
+      <div style="position: relative; display: inline-block;">
+        <router-link :to="{ path: '/newWorkFlow/flowBackPay', query: { tab: '1' } }" style="font-size: 13px; color: #fff">补缴待处理</router-link>
+        <a-badge :count="backpayTotal" :style="badgeStyle"/>
+      </div>
     </div>
     <a-divider v-if="showBackpay" type="vertical" />
     <div v-if="showChange" style="position: relative; display: inline-block; margin-right: 3px">
-      <router-link :to="{ path: '/newWorkFlow/flowChange', query: { tab: '1' } }" style="font-size: 13px; color: #fff">方式变更待处理</router-link>
-      <a-badge :count="changeTotal" :style="badgeStyle"/>
+      <div style="position: relative; display: inline-block;">
+        <router-link :to="{ path: '/newWorkFlow/flowChange', query: { tab: '1' } }" style="font-size: 13px; color: #fff">方式变更待处理</router-link>
+        <a-badge :count="changeTotal" :style="badgeStyle"/>
+      </div>
     </div>
     <a-divider v-if="showChange" type="vertical" />
     <div v-if="showExtend" style="position: relative; display: inline-block; margin-right: 3px">
-      <router-link :to="{ path: '/newWorkFlow/flowExtend', query: { tab: '1' } }" style="font-size: 13px; color: #fff">更换延长待处理</router-link>
-      <a-badge :count="extendTotal" :style="badgeStyle"/>
+      <div style="position: relative; display: inline-block;">
+        <router-link :to="{ path: '/newWorkFlow/flowExtend', query: { tab: '1' } }" style="font-size: 13px; color: #fff">更换延长待处理</router-link>
+        <a-badge :count="extendTotal" :style="badgeStyle"/>
+      </div>
     </div>
     <a-divider v-if="showExtend" type="vertical" />
     <div v-if="showReturn" style="position: relative; display: inline-block; margin-right: 3px">
-      <router-link :to="{ path: '/newWorkFlow/flowReturn', query: { tab: '1' } }" style="font-size: 13px; color: #fff">返还待处理</router-link>
-      <a-badge :count="returnTotal" :style="badgeStyle"/>
+      <div style="position: relative; display: inline-block;">
+        <router-link :to="{ path: '/newWorkFlow/flowReturn', query: { tab: '1' } }" style="font-size: 13px; color: #fff">返还待处理</router-link>
+        <a-badge :count="returnTotal" :style="badgeStyle"/>
+      </div>
     </div>
     <a-divider v-if="showReturn" type="vertical" style="margin-right: 3px" />
     <a-dropdown>
@@ -203,10 +217,12 @@ export default {
     badgeStyle() {
       return {
         position: 'absolute',
-        top: '5px',
-        right: '-10px',
-        // backgroundColor: '#f5222d',  // 红色背景
+        top: '-12px',
+        right: '-15px',
+        transform: 'scale(0.8)',
+        transformOrigin: 'center',
         color: '#fff',
+        zIndex: 1
       }
     },
   },

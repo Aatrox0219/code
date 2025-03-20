@@ -29,12 +29,25 @@
           @click="toggle"></a-icon>
         <a-icon v-else class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="toggle" />
 
-        <span class="welcome-text">欢迎进入！</span>
-        <a-button type="link" class="user-manual-btn" @click="showPdfPreview"><a-icon type="book" />用户手册</a-button>
-        <a-button type="link" class="user-manual-btn" @click="showVideoDialog"><a-icon
-            type="video-camera" />视频教程</a-button>
-        <user-menu :theme="theme" />
+        <div class="header-content">
+          <div class="welcome-line">
+            <span v-if="device === 'desktop'" class="welcome-text">欢迎进入黄冈市农民工保证金智慧管理服务平台</span>
+            <span v-else class="welcome-text">黄冈市农民工保证金智慧管理服务平台</span>
+          </div>
+          <div class="button-line">
+            <a-button type="link" class="user-manual-btn" @click="showPdfPreview">
+              <a-icon type="book" />用户手册
+            </a-button>
+            <a-button type="link" class="user-manual-btn" @click="showVideoDialog">
+              <a-icon type="video-camera" />视频教程
+            </a-button>
+          </div>
+        </div>
+        <div>
+          <user-menu :theme="theme" />
+        </div>
       </div>
+
       <!-- 顶部导航栏模式 -->
       <div v-else :class="['top-nav-header-index', theme]">
         <div class="header-index-wide">
@@ -274,93 +287,96 @@ export default {
 <style lang="less" scoped>
 /* update_begin author:scott date:20190220 for: 缩小首页布局顶部的高度*/
 
-@height: 59px;
-
-.layout {
-
-  .top-nav-header-index {
-
-    .header-index-wide {
-      margin-left: 10px;
-
-      .ant-menu.ant-menu-horizontal {
-        height: @height;
-        line-height: @height;
-      }
-    }
-
-    .trigger {
-      line-height: 64px;
-
-      &:hover {
-        background: rgba(0, 0, 0, 0.05);
-      }
-    }
-  }
-
-  .header {
-    z-index: 2;
-    color: white;
-    height: @height;
-    background-color: @primary-color;
-    transition: background 300ms;
-
-    /* dark 样式 */
-    &.dark {
-      color: #000000;
-      box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
-      background-color: white !important;
-    }
-  }
-
-  .header,
-  .top-nav-header-index {
-    &.dark .trigger:hover {
-      background: rgba(0, 0, 0, 0.05);
-    }
-  }
-}
+@header-height: 59px;
 
 .ant-layout-header {
-  height: @height;
-  line-height: @height;
+  height: @header-height;
+  line-height: normal;
 }
 
-/* 添加按钮样式 */
-.user-manual-btn {
-  margin-left: 15px;
-  padding: 0 5px;
-  vertical-align: middle;
+.header {
+  display: flex;
+  align-items: center;
+  background-color: #1890ff !important;
   color: white !important;
-  /* 强制文字颜色为白色 */
-  border-color: transparent !important;
-  /* 移除边框颜色 */
-
-  /* 所有状态下的颜色保持一致 */
-  &:hover,
-  &:focus,
-  &:active {
-    color: white !important;
-    background: transparent !important;
+  height: 59px;
+  .trigger {
+    font-size: 18px;
+    margin-right: 16px;
   }
 
-  /* 如果是暗色主题需要调整颜色 */
-  .dark & {
-    color: rgba(0, 0, 0, 0.85) !important;
-    /* 使用深色文字 */
+  .header-content {
+    flex: 1;
+    min-width: 0; // 防止内容溢出
+    margin-right: 16px;
 
-    &:hover,
-    &:focus,
-    &:active {
-      color: rgba(0, 0, 0, 0.85) !important;
+    .welcome-line {
+      line-height: 20px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .button-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 20px;
+
+      .user-manual-btn {
+        padding: 0;
+        height: auto;
+        color: inherit !important;
+        font-size: 13px;
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        .anticon {
+          margin-right: 4px;
+        }
+      }
     }
   }
+
+  // 暗色主题适配
+  &.dark {
+    .header-content {
+      .welcome-line {
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .button-line {
+        .user-manual-btn {
+          color: rgba(255, 255, 255, 0.85) !important;
+        }
+      }
+    }
+  }
+
+  &.light {
+    height: 59px !important; // 针对light主题强制覆盖
+  }
 }
 
-.welcome-text {
-  display: inline-block;
-  line-height: @height;
-  vertical-align: middle;
+// 移动端适配
+@media screen and (max-width: 768px) {
+  .header {
+    .header-content {
+      .welcome-line {
+        font-size: 12px;
+      }
+
+      .button-line {
+        flex-wrap: wrap;
+        gap: 4px;
+
+        .user-manual-btn {
+          font-size: 12px;
+        }
+      }
+    }
+  }
 }
 
 /* update_end author:scott date:20190220 for: 缩小首页布局顶部的高度*/
