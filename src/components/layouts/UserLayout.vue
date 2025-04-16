@@ -6,7 +6,7 @@
           <!-- <a href="/"> -->
           <!-- <img src="~@/assets/background.png" class="logo" alt="logo" /> -->
           <div class="header-placeholder">
-            <span class="title" v-show="!hasToken">黄冈市农民工保证金智慧管理服务平台</span>
+            <span class="title" v-show="!hasToken">保证金智慧管理服务平台</span>
           </div> <!-- 新增的白色区域 -->
           <!-- </a> -->
         </div>
@@ -16,25 +16,8 @@
       <route-view :class="routeClass"></route-view>
 
       <div class="footer-placeholder">
-        <div class="footer-text">主办单位：黄冈市人力资源和社会保障局</div>
-        <div class="footer-text">技术支持：金诚国际保险经纪有限公司黄冈分公司</div>
       </div>
       <div class="footer">
-        <!-- <div class="links">
-          <a href="http://doc.jeecg.com" target="_blank">帮助</a>
-          <a href="https://github.com/zhangdaiscott/jeecg-boot" target="_blank">隐私</a>
-          <a href="https://github.com/zhangdaiscott/jeecg-boot/blob/master/LICENSE" target="_blank">条款</a>
-        </div>
-        <div class="copyright">
-          Copyright &copy; 2020 <a>仿真实训平台</a>
-        </div> -->
-        <!-- <div class="footer-text">
-          主办单位：黄冈市人力资源和社会保障局
-        </div>
-        <div class="footer-text">
-          技术支持：金诚国际保险经纪有限公司黄冈分公司
-        </div> -->
-        <!-- 底部白色区域 -->
       </div>
     </div>
   </div>

@@ -31,16 +31,16 @@
 
         <div class="header-content">
           <div class="welcome-line">
-            <span v-if="device === 'desktop'" class="welcome-text">欢迎进入黄冈市农民工保证金智慧管理服务平台</span>
-            <span v-else class="welcome-text">黄冈市农民工保证金智慧管理服务平台</span>
+            <span v-if="device === 'desktop'" class="welcome-text">欢迎进入保证金智慧管理服务平台</span>
+            <span v-else class="welcome-text">保证金智慧管理服务平台</span>
           </div>
           <div class="button-line">
             <a-button type="link" class="user-manual-btn" @click="showPdfPreview">
               <a-icon type="book" />用户手册
             </a-button>
-            <a-button type="link" class="user-manual-btn" @click="showVideoDialog">
+            <!-- <a-button type="link" class="user-manual-btn" @click="showVideoDialog">
               <a-icon type="video-camera" />视频教程
-            </a-button>
+            </a-button> -->
           </div>
         </div>
         <div>

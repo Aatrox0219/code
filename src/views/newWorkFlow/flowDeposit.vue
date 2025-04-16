@@ -405,7 +405,7 @@ export default {
       const downloadTemplateApi = 'http://139.199.159.36:37192/file/download'; 
 
       // 将 filePath 作为查询参数传递
-      const filePath = '/opt/temps/附件2：农民工工资保证金存款协议书（样本）.docx';
+      const filePath = '/opt/temps/附件2：工资保证金存款协议书（样本）.docx';
 
       axios.post(downloadTemplateApi, null, {
         params: {

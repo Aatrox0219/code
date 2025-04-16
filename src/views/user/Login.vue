@@ -75,7 +75,6 @@
         <a-button size="large" type="primary" htmlType="submit" class="login-button" :loading="loginBtn"
           @click.stop.prevent="handleSubmit" :disabled="loginBtn">登录</a-button>
         <div class="container">
-          <a v-if="department === 'enterprise'" @click="registerAccount()">注册账户</a>
           <!-- <a target="_blank" @click="downloadManual" style="display:flex;align-items: center;justify-content: center;">
             <span v-if="department === 'enterprise'">施工企业用户手册</span>
             <span v-else-if="department === 'brokerage'">经纪公司用户手册</span>
@@ -86,9 +85,9 @@
             <span v-else-if="department === 'brokerage'"><a-icon type="book" />经纪公司用户手册</span>
             <span v-else-if="department === 'mohrss'"><a-icon type="book" />人社局用户手册</span>
           </a>
-          <a @click="showVideoDialog" style="float: right; cursor: pointer">
+          <!-- <a @click="showVideoDialog" style="float: right; cursor: pointer">
             <a-icon type="video-camera" /> 视频教程
-          </a>
+          </a> -->
         </div>
       </a-form-item>
     </a-form>
@@ -211,50 +210,6 @@ export default {
     // this.$forceUpdate()
   },
   methods: {
-    registerAccount() {
-      let token = ''
-      // 使用注册的账号获取token
-      loginGetToken('/stj/sys/login2', { username: 'zhuce', password: 'Admin123...' })
-        .then((res) => {
-          if (res.success) {
-            token = res.result.token;
-            axios.get(`http://139.199.159.36:37192/process/startProcess/10162?processId=10162`, {});
-
-          }
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-
-
-
-
-      axios.defaults.headers.common['userName'] = 'zhuce'
-      nw_getAction('/process/startProcess/{processId}?processId=10162')
-        .then((res) => {
-          console.log('res', res.success);
-          if (res.success) {
-            this.$message.success('开启流程成功')
-            const { formDesignerId, onlineDataId, onlineTableId, processInstanceId } = res.result.startProcessVO
-            const taskId = res.result.fistTaskId
-            this.$refs.modalform.openModal(
-              formDesignerId,
-              onlineDataId,
-              onlineTableId,
-              taskId,
-              processInstanceId,
-              '注册',
-              token
-            )
-          } else {
-            this.$message.error('开启流程失败')
-          }
-          this.selectedProcessId = null
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
 
     ...mapActions(['Login', 'Logout', 'PhoneLogin']),
     // 解析token，存入localstore

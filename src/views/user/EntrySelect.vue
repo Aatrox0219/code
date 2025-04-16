@@ -1,7 +1,7 @@
 <template>
     <div id="app" class="main-container">
         <header class="header">
-            <!-- <h1>黄冈市农民工保证金智慧管理服务平台</h1> -->
+            <!-- <h1>保证金智慧管理服务平台</h1> -->
         </header>
         <div class="card-container">
             <div class="card1" @click="goToLogin('mohrss')">
