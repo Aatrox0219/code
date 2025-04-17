@@ -50,6 +50,14 @@
         <a-divider v-if="record.is_export === 'true'" type="vertical" />
         <a v-if="record.is_export === 'true'" @click="download(record)">下载文书</a>
       </span>
+      <span slot="review" slot-scope="text, record, index">
+        <a @click="review(record)">审核</a>
+        <a-divider type="vertical" />
+        <a @click="details(record)">详情</a>
+      </span>
+      <span slot="details" slot-scope="text, record, index">
+        <a @click="details(record)">详情</a>
+      </span>
       <span slot="flowUseMoneycolumns" slot-scope="text, record, index">
         <a @click="startProcess(record)">申请使用</a>
       </span>
@@ -75,6 +83,7 @@
 <script>
 import { nw_getAllData } from '@api/newWorkApi'
 import { taskStateMapping } from '../taskStateMapping'
+import axios from 'axios'
 
 export default {
   name: 'commonTable',
@@ -111,14 +120,24 @@ export default {
       type: Function,
       default: () => { },
     },
+    review: {
+      type: Function,
+      default: () => { },
+    },
+    details: {
+      type: Function,
+      default: () => { },
+    },
   },
   data() {
     return {
       dataSourceList: [], // 原始数据
+      registrationDataList: [], // 注册接口返回的原始数据
       filteredDataSourceList: [], // 筛选后的数据
       columnsList: [], // 表格列配置
       filterConditions: {}, // 存储筛选条件
       mixedFilterValue: '', // 混合筛选的输入框值
+      dataSource: 'registration', // 当前使用的数据源：'registration'或'all'
     }
   },
   computed: {
@@ -138,6 +157,9 @@ export default {
   methods: {
     // 获取表格数据并初始化
     async getAllList() {
+      // 先设置数据源类型为all
+      this.dataSource = 'all'
+
       let params = {
         ...this.configurationParameter.inquire,
       }
@@ -148,7 +170,7 @@ export default {
         const validDataList = res.result.dataList.filter((dataItem) => {
           return dataItem.allData && Object.keys(dataItem.allData).length > 0 // 只有 allData 不为空对象时才保留
         })
-        console.log('过滤之后的数据', validDataList)
+        console.log('getAllList过滤之后的数据', validDataList)
 
         // 遍历 dataList 生成 dataSourceList
         const dataSourceList = validDataList.map((dataItem) => {
@@ -199,6 +221,8 @@ export default {
 
         // 更新 dataSourceList
         this.dataSourceList = dataSourceList
+
+        // 在all数据源时，直接更新filteredDataSourceList
         this.filteredDataSourceList = [...dataSourceList]
 
         // 去掉columnsData中的无用字段,生成columnsList,只有show为true的列才会显示
@@ -210,22 +234,197 @@ export default {
           })
         // 更新 columnsList
         this.columnsList = columnsList
-        console.log('dataSourceList:', this.dataSourceList)
-        console.log('columnsList:', this.columnsList)
+        console.log('getAllList - 数据源: all, 数据:', this.dataSourceList)
+        console.log('getAllList - 列表配置:', this.columnsList)
 
         // 生成 dataSourceList 后添加以下代码
         if (this.configurationParameter.filterFunction) {
           this.dataSourceList = this.configurationParameter.filterFunction(this.dataSourceList);
+          this.filteredDataSourceList = [...this.dataSourceList];
         }
 
-        // 更新 filteredDataSourceList
-        this.filteredDataSourceList = [...this.dataSourceList];
+        console.log('getAllList - 筛选后的显示数据:', this.filteredDataSourceList)
+        return this.dataSourceList
       } catch (error) {
-        console.error('获取数据失败：', error)
+        console.error('getAllList获取数据失败：', error)
+        return []
+      }
+    },
+
+    // 从注册列表获取数据
+    async getRegistrationList() {
+      // 先设置数据源类型为registration
+      this.dataSource = 'registration'
+
+      let params = {
+        ...this.configurationParameter.inquire,
+      }
+
+      try {
+        console.log('发送请求到registration/list接口，参数:', params)
+        // 添加跨域头和超时设置
+        let config = {
+          params,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          },
+          timeout: 10000
+        }
+
+        let res;
+        try {
+          // 尝试使用axios
+          res = await axios.get('http://139.199.159.36:37192/registration/list', config)
+        } catch (axiosError) {
+          console.warn('axios请求失败，尝试使用this.$http方式', axiosError)
+          try {
+            // 尝试使用Vue实例的$http
+            res = await this.$http.get('http://139.199.159.36:37192/registration/list', config)
+          } catch (httpError) {
+            console.warn('this.$http方式失败，尝试使用fetch', httpError)
+            // 尝试使用fetch API
+            const fetchRes = await fetch('http://139.199.159.36:37192/registration/list?' + new URLSearchParams(params).toString(), {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+              }
+            })
+            res = { data: await fetchRes.json() }
+          }
+        }
+
+        console.log('注册列表接口响应数据:', res.data)
+
+        // 如果API响应成功但没有数据，尝试使用getAllList获取数据
+        if (!res.data || !res.data.success) {
+          console.warn('注册列表接口未返回有效数据，将使用getAllList方法')
+          return this.getAllList()
+        }
+
+        // 从正确的嵌套结构中提取records数据
+        const records = res.data.result.records || []
+        if (!records.length) {
+          console.warn('注册列表接口未返回记录数据，将使用getAllList方法')
+          return this.getAllList()
+        }
+
+        // 遍历数据生成registrationDataList
+        const registrationDataList = records.map((dataItem) => {
+          const item = {}
+
+          // 基本信息
+          item.id = dataItem.id
+          item.userName = dataItem.username
+          item.companyName = dataItem.companyName
+          item.creditCode = dataItem.creditCode
+          item.representative = dataItem.representative
+          item.createDate = dataItem.createTime
+
+          // 根据status值设置不同的状态文本
+          if (dataItem.status === 0) {
+            item.nodeName = '待审核'
+          } else if (dataItem.status === 1) {
+            item.nodeName = '审核通过'
+          } else if (dataItem.status === 2) {
+            item.nodeName = '审核未通过'
+          } else {
+            item.nodeName = '未知状态'
+          }
+
+          item.is_export = 'false' // 默认不允许导出
+
+          // 保存原始数据，可能在某些场景下需要
+          item.rawData = dataItem
+
+          return item
+        })
+
+        // 更新registrationDataList
+        this.registrationDataList = registrationDataList
+
+        // 在registration数据源时，直接更新filteredDataSourceList
+        this.filteredDataSourceList = [...registrationDataList]
+
+        // 生成columnsList
+        const columnsList = this.configurationParameter.columnsData
+          .filter((column) => column.show)
+          .map((column) => {
+            const { dataLocation, show, filterType, ...rest } = column
+            return rest
+          })
+
+        // 更新columnsList
+        this.columnsList = columnsList
+        console.log('getRegistrationList - 数据源: registration, 数据:', this.registrationDataList)
+        console.log('getRegistrationList - 列表配置:', this.columnsList)
+
+        // 应用筛选函数（如果有）
+        if (this.configurationParameter.filterFunction) {
+          this.registrationDataList = this.configurationParameter.filterFunction(this.registrationDataList)
+          this.filteredDataSourceList = [...this.registrationDataList]
+        }
+
+        console.log('getRegistrationList - 筛选后的显示数据:', this.filteredDataSourceList)
+        return this.registrationDataList
+      } catch (error) {
+        console.error('getRegistrationList获取数据失败：', error)
+        console.warn('将使用getAllList方法作为备选')
+        // 如果请求失败，尝试使用getAllList
+        return this.getAllList()
       }
     },
 
     // 获取 select 下拉选项的方法
+    getSelectOptions(dataIndex) {
+      const column = this.columnsList.find(col => col.dataIndex === dataIndex);
+      // 如果列标题是"状态"，返回固定选项
+      if (column && column.title === '状态') {
+        // 如果当前数据源是registration，使用新的状态选项
+        if (this.dataSource === 'registration') {
+          return ['全部', '待审核', '审核通过', '审核未通过'];
+        }
+        // 否则使用原来的状态选项
+        return ['全部', '进行中', '已完成', '已终止'];
+      }
+
+      // 根据当前数据源选择正确的数据列表
+      const sourceData = this.dataSource === 'registration' ? this.registrationDataList : this.dataSourceList;
+
+      // 动态生成选项
+      const uniqueValues = new Set(sourceData.map((item) => item[dataIndex]));
+      return Array.from(uniqueValues).filter((value) => value !== undefined && value !== null);
+    },
+
+    // 筛选方法
+    async handleFilter() {
+      try {
+        console.log('开始筛选，当前数据源：', this.dataSource)
+
+        // 获取最新数据
+        if (this.dataSource === 'registration') {
+          await this.getRegistrationList()
+          // 筛选注册数据
+          this.filteredDataSourceList = this.registrationDataList.filter(item => this.filterItem(item))
+        } else {
+          await this.getAllList()
+          // 筛选流程数据
+          this.filteredDataSourceList = this.dataSourceList.filter(item => this.filterItem(item))
+        }
+
+        // 应用额外的筛选函数（如果有）
+        if (this.configurationParameter.filterFunction) {
+          this.filteredDataSourceList = this.configurationParameter.filterFunction(this.filteredDataSourceList);
+        }
+
+        console.log('筛选后的数据：', this.filteredDataSourceList)
+      } catch (error) {
+        console.error('筛选数据失败：', error)
+      }
+    },
+
+    // 筛选单个项目
     getSelectOptions(dataIndex) {
       const column = this.columnsList.find(col => col.dataIndex === dataIndex);
       // 如果列标题是“状态”，返回固定选项
@@ -298,16 +497,40 @@ export default {
         console.error('获取数据失败：', error)
       }
     },
+
     // 清空筛选条件
     clearFilters() {
+      console.log('清空筛选条件，当前数据源：', this.dataSource)
       this.filterConditions = {}
       this.mixedFilterValue = ''
-      this.getAllList()
+
+      // 根据当前数据源重新获取数据
+      if (this.dataSource === 'registration') {
+        this.getRegistrationList()
+      } else {
+        this.getAllList()
+      }
     },
   },
 
   mounted() {
-    this.getAllList()
+    console.log('commonTable mounted, 初始化数据获取')
+
+    // 检查configurationParameter中的inquire参数，判断应该使用哪个数据源
+    const inquire = this.configurationParameter.inquire || {}
+
+    // 如果有processIdList或categoryId参数，说明是flowRegister相关的流程数据，使用getAllList
+    if (inquire.processIdList || inquire.categoryId) {
+      console.log('检测到流程相关参数，使用getAllList获取数据')
+      this.getAllList()
+    } else {
+      // 否则，尝试使用getRegistrationList
+      console.log('无流程相关参数，尝试使用getRegistrationList获取数据')
+      this.getRegistrationList().catch(() => {
+        console.warn('从registration获取数据失败，尝试使用getAllList')
+        this.getAllList()
+      })
+    }
   },
 }
 </script>

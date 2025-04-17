@@ -6,24 +6,10 @@
                     <div id="taskList">
                         <div>
                             <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="taskTab.tabKey">
-                                <a-tab-pane key="2" tab="历史">
-                                    <div>
-                                        <div class="card-table">
-                                            <a-card :bordered="false">
-                                                <div class="table-container">
-                                                    <commonTable ref="commonTableRef1"
-                                                        :configurationParameter="configurationParameter1"
-                                                        :seeHistory="seeHistory" :download="download">
-                                                    </commonTable>
-                                                </div>
-                                            </a-card>
-                                        </div>
-                                    </div>
-                                </a-tab-pane>
                                 <a-tab-pane key="1">
                                     <template #tab>
                                         <a-badge :count="backlogNumber" :offset="[10, 0]">
-                                            <span>待办事项</span>
+                                            <span>待审核</span>
                                         </a-badge>
                                     </template>
                                     <div>
@@ -32,7 +18,21 @@
                                                 <div class="flowAnnounce">
                                                     <commonTable ref="commonTableRef2"
                                                         :configurationParameter="configurationParameter2"
-                                                        :seeHistory="seeHistory" :announceTask="announceTask">
+                                                        :review="review" :details="details">
+                                                    </commonTable>
+                                                </div>
+                                            </a-card>
+                                        </div>
+                                    </div>
+                                </a-tab-pane>
+                                <a-tab-pane key="2" tab="审核历史">
+                                    <div>
+                                        <div class="card-table">
+                                            <a-card :bordered="false">
+                                                <div class="table-container">
+                                                    <commonTable ref="commonTableRef1"
+                                                        :configurationParameter="configurationParameter1"
+                                                        :details="details">
                                                     </commonTable>
                                                 </div>
                                             </a-card>
@@ -49,6 +49,8 @@
 
         <approve-model ref="approveModel" @close="getData"></approve-model>
         <flow-history ref="flowHistory"></flow-history>
+        <register-approve-modal ref="registerApproveModal" @close="getData"></register-approve-modal>
+        <register-detail-modal ref="registerDetailModal"></register-detail-modal>
     </div>
 </template>
 <script>
@@ -70,78 +72,27 @@ import { taskStateMapping } from './taskStateMapping'
 import commonTable from './modules/commonTable.vue'
 import { registerList, registerCategoryId } from '@/api/processId'
 import { downloadDocument } from '@/api/userList'
+import RegisterApproveModal from './modules/registerApproveModal.vue'
+import RegisterDetailModal from './modules/registerDetailModal.vue'
 
 export default {
     name: 'flowUse',
-    components: { annTask, ApproveTask, ApproveNewTask, RollbackTask, approveModel, FlowHistory, commonTable },
+    components: {
+        annTask,
+        ApproveTask,
+        ApproveNewTask,
+        RollbackTask,
+        approveModel,
+        FlowHistory,
+        commonTable,
+        RegisterApproveModal,
+        RegisterDetailModal
+    },
     data() {
         return {
-            configurationParameter1: {
-                inquire: {
-                    categoryId: registerCategoryId, //流程分类
-                    processIdList: registerList, //存缴+使用
-                    applyState: ['instance', 'cancel', 'complete'], //想要查询的流程类型
-                },
-                columnsData: [
-                    {
-                        title: '状态',
-                        align: 'center',
-                        dataIndex: 'nodeName',
-                        dataLocation: 'nodeName',
-                        show: true,
-                        filterType: 'select',
-                    },
-                    {
-                        title: '企业账号',
-                        align: 'center',
-                        dataIndex: 'userName',
-                        dataLocation: 'allData.main_register.username',
-                        show: true,
-                        filterType: 'mixedInput',
-                    },
-                    {
-                        title: '企业名称',
-                        align: 'center',
-                        dataIndex: 'companyName',
-                        dataLocation: 'allData.main_register.company_name',
-                        show: true,
-                        filterType: 'mixedInput',
-                    },
-                    {
-                        title: '统一社会信用代码',
-                        align: 'center',
-                        dataIndex: 'creditCode',
-                        dataLocation: 'allData.main_register.credit_code',
-                        show: true,
-                    },
-                    {
-                        title: '法定代表人',
-                        align: 'center',
-                        dataIndex: 'representative',
-                        dataLocation: 'allData.main_register.representative',
-                        show: true,
-                    },
-                    {
-                        title: '创建时间',
-                        align: 'center',
-                        dataIndex: 'createDate',
-                        dataLocation: 'allData.main_register.create_time',
-                        show: true,
-                    },
-                    {
-                        title: '详情',
-                        align: 'center',
-                        dataIndex: 'flowHistoryaction',
-                        scopedSlots: { customRender: 'flowHistoryaction' },
-                        show: true,
-                    },
-                ],
-            },
             configurationParameter2: {
                 inquire: {
-                    categoryId: registerCategoryId, //流程分类
-                    processIdList: registerList, //存缴+使用
-                    applyState: ['pending'], //想要查询的流程类型
+                    status: '0'
                 },
                 columnsData: [
                     {
@@ -156,7 +107,6 @@ export default {
                         title: '企业账号',
                         align: 'center',
                         dataIndex: 'userName',
-                        dataLocation: 'allData.main_register.username',
                         show: true,
                         filterType: 'mixedInput',
                     },
@@ -164,7 +114,6 @@ export default {
                         title: '企业名称',
                         align: 'center',
                         dataIndex: 'companyName',
-                        dataLocation: 'allData.main_register.company_name',
                         show: true,
                         filterType: 'mixedInput',
                     },
@@ -172,28 +121,78 @@ export default {
                         title: '统一社会信用代码',
                         align: 'center',
                         dataIndex: 'creditCode',
-                        dataLocation: 'allData.main_register.credit_code',
                         show: true,
                     },
                     {
                         title: '法定代表人',
                         align: 'center',
                         dataIndex: 'representative',
-                        dataLocation: 'allData.main_register.representative',
                         show: true,
                     },
                     {
-                        title: '创建时间',
+                        title: '申请时间',
                         align: 'center',
                         dataIndex: 'createDate',
-                        dataLocation: 'allData.main_register.create_time',
                         show: true,
                     },
                     {
                         title: '操作',
                         align: 'center',
-                        dataIndex: 'flowWillAnnounceaction',
-                        scopedSlots: { customRender: 'flowWillAnnounceaction' },
+                        dataIndex: 'review',
+                        scopedSlots: { customRender: 'review' },
+                        show: true,
+                    },
+                ],
+            },
+            configurationParameter1: {
+                inquire: {
+                },
+                columnsData: [
+                    {
+                        title: '状态',
+                        align: 'center',
+                        dataIndex: 'nodeName',
+                        dataLocation: 'nodeName',
+                        show: true,
+                        filterType: 'select',
+                    },
+                    {
+                        title: '企业账号',
+                        align: 'center',
+                        dataIndex: 'userName',
+                        show: true,
+                        filterType: 'mixedInput',
+                    },
+                    {
+                        title: '企业名称',
+                        align: 'center',
+                        dataIndex: 'companyName',
+                        show: true,
+                        filterType: 'mixedInput',
+                    },
+                    {
+                        title: '统一社会信用代码',
+                        align: 'center',
+                        dataIndex: 'creditCode',
+                        show: true,
+                    },
+                    {
+                        title: '法定代表人',
+                        align: 'center',
+                        dataIndex: 'representative',
+                        show: true,
+                    },
+                    {
+                        title: '申请时间',
+                        align: 'center',
+                        dataIndex: 'createDate',
+                        show: true,
+                    },
+                    {
+                        title: '详情',
+                        align: 'center',
+                        dataIndex: 'details',
+                        scopedSlots: { customRender: 'details' },
                         show: true,
                     },
                 ],
@@ -201,7 +200,7 @@ export default {
             useProcessId: 0,
             backlogNumber: 0,
             taskTab: {
-                tabKey: '2', // 主 Tab 页的状态
+                tabKey: '1', // 主 Tab 页的状态
             },
         }
     },
@@ -233,11 +232,11 @@ export default {
             // 先获取子组件实例
             const commonTableInstance1 = this.$refs.commonTableRef1
             if (commonTableInstance1) {
-                commonTableInstance1.getAllList()
+                commonTableInstance1.getRegistrationList()
             }
             const commonTableInstance2 = this.$refs.commonTableRef2
             if (commonTableInstance2) {
-                commonTableInstance2.getAllList()
+                commonTableInstance2.getRegistrationList()
             }
         },
         //处理该任务
@@ -249,6 +248,16 @@ export default {
                 this.$refs.approveModel.announceTask(record)
             }
         },
+        // 审核企业注册
+        review(record) {
+            console.log('审核企业注册', record)
+            this.$refs.registerApproveModal.show(record)
+        },
+        // 查看详情
+        details(record) {
+            console.log('查看详情', record)
+            this.$refs.registerDetailModal.show(record)
+        }
     },
     watch: {
         '$route.query.tab': {
@@ -258,7 +267,7 @@ export default {
                 if (newVal) {
                     this.taskTab.tabKey = newVal;
                 } else {
-                    this.taskTab.tabKey = '2'
+                    this.taskTab.tabKey = '1'
                 }
                 this.$nextTick(() => {
                     this.getData()
