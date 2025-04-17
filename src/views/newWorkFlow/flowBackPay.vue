@@ -525,13 +525,13 @@ export default {
       console.log('userData.value.username', userData.value.username)
       console.log('record.depositWay:', record.depositWay)
       if (record.depositWay === '担保公司保函') {
-        this.selectedProcessId = '27'
+        this.selectedProcessId = '10132'
       } else if (record.depositWay === '保险公司保函') {
-        this.selectedProcessId = '23'
+        this.selectedProcessId = '10128'
       } else if (record.depositWay === '银行保函') {
-        this.selectedProcessId = '25'
+        this.selectedProcessId = '10130'
       } else if (record.depositWay === '银行现金存单') {
-        this.selectedProcessId = '21'
+        this.selectedProcessId = '10126'
       }
       nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
         .then((res) => {
