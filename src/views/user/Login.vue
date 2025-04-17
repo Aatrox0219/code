@@ -598,13 +598,13 @@ export default {
       // 根据部门设置预览PDF路径
       switch (this.department) {
         case 'enterprise':
-          this.pdfUrl = 'http://139.199.159.36:37192/file/static/施工企业用户手册.pdf'; // 替换为实际PDF路径
+          this.pdfUrl = 'http://150.158.55.26:37192/file/static/施工企业用户手册.pdf'; // 替换为实际PDF路径
           break;
         case 'brokerage':
-          this.pdfUrl = 'http://139.199.159.36:37192/file/static/经纪公司用户手册.pdf';
+          this.pdfUrl = 'http://150.158.55.26:37192/file/static/经纪公司用户手册.pdf';
           break;
         case 'mohrss':
-          this.pdfUrl = 'http://139.199.159.36:37192/file/static/人社局用户手册.pdf';
+          this.pdfUrl = 'http://150.158.55.26:37192/file/static/人社局用户手册.pdf';
           break;
       }
       console.log('pdfUrl:', this.pdfUrl)
@@ -614,7 +614,7 @@ export default {
       // 从 URL 获取 department 参数
       const department = this.$route.query.department;
       console.log('department:', department)
-      const downloadTemplateApi = 'http://139.199.159.36:37192/file/download';
+      const downloadTemplateApi = 'http://150.158.55.26:37192/file/download';
 
       let filePath, fileName;
       switch (department) {
