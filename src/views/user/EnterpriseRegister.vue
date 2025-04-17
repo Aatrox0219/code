@@ -48,13 +48,13 @@
         </a-col>
         <a-col :span="12">
           <a-form-item label="邮编" :label-col="{ span: 7 }">
-            <a-input v-decorator="['postcode', {
+            <a-input v-decorator="['postCode', {
               rules: [
                 { required: true, message: '请输入邮编' },
                 { pattern: /^[1-9]\d{5}$/, message: '请输入正确的邮编' }
               ],
               validateTrigger: ['change', 'blur']
-            }]" placeholder="请输入邮编" @blur="validateField('postcode')" />
+            }]" placeholder="请输入邮编" @blur="validateField('postCode')" />
           </a-form-item>
         </a-col>
       </a-row>
@@ -252,7 +252,7 @@ export default {
             'username',
             'companyName',
             'postalAddress',
-            'postcode',
+            'postCode',
             'creditCode',
             'phone',
             'representative',
