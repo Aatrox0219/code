@@ -39,7 +39,25 @@
     </a-row>
 
     <!-- 表格 -->
-    <a-table bordered :columns="columnsList" :dataSource="filteredDataSourceList" rowKey="id">
+    <a-table 
+      bordered 
+      :columns="columnsList" 
+      :dataSource="filteredDataSourceList" 
+      rowKey="id"
+      :locale="{ emptyText: '暂无数据' }"
+      :pagination="{ 
+        showTotal: (total, range) => `共 ${total} 条`,
+        showQuickJumper: true
+      }"
+      class="custom-empty-table"
+    >
+      <!-- 自定义空状态 -->
+      <template slot="emptyText">
+        <div style="padding: 64px 0; text-align: center;">
+          <a-icon type="inbox" style="font-size: 48px; color: #bbb;" />
+          <p style="font-size: 16px; color: #999; margin-top: 16px;">暂无数据</p>
+        </div>
+      </template>
       <span slot="flowWillAnnounceaction" slot-scope="text, record, index">
         <a @click="announceTask(record)">处理该任务</a>
         <a-divider type="vertical" />
@@ -140,6 +158,17 @@ export default {
       dataSource: 'registration', // 当前使用的数据源：'registration'或'all'
     }
   },
+  created() {
+    // 确保columnsList在创建组件时就有值，防止表头消失
+    if (this.configurationParameter && this.configurationParameter.columnsData) {
+      this.columnsList = this.configurationParameter.columnsData
+        .filter(column => column.show)
+        .map(column => {
+          const { dataLocation, show, filterType, ...rest } = column;
+          return rest;
+        });
+    }
+  },
   computed: {
     // 判断是否有筛选项
     hasFilterOptions() {
@@ -166,11 +195,49 @@ export default {
       try {
         const res = await nw_getAllData('generalList/getAllList', params)
 
+        // 处理可能的空响应
+        if (!res || !res.result || !res.result.dataList) {
+          console.warn('getAllList接口未返回有效数据，但仍保留表格列配置')
+          
+          // 即使没有数据，也要生成columnsList
+          const columnsList = this.configurationParameter.columnsData
+            .filter((column) => column.show)
+            .map((column) => {
+              const { dataLocation, show, filterType, ...rest } = column
+              return rest
+            })
+          
+          // 更新columnsList
+          this.columnsList = columnsList
+          this.dataSourceList = []
+          this.filteredDataSourceList = []
+          return []
+        }
+
         // 过滤掉 allData 为空的脏数据
         const validDataList = res.result.dataList.filter((dataItem) => {
           return dataItem.allData && Object.keys(dataItem.allData).length > 0 // 只有 allData 不为空对象时才保留
         })
         console.log('getAllList过滤之后的数据', validDataList)
+
+        // 即使没有有效数据，也要生成columnsList
+        const columnsList = this.configurationParameter.columnsData
+          .filter((column) => column.show)
+          .map((column) => {
+            const { dataLocation, show, filterType, ...rest } = column
+            return rest
+          })
+        
+        // 更新columnsList
+        this.columnsList = columnsList
+        
+        // 如果没有有效数据，提前返回空数组
+        if (!validDataList.length) {
+          console.warn('getAllList过滤后无有效数据，但仍保留表格列配置')
+          this.dataSourceList = []
+          this.filteredDataSourceList = []
+          return []
+        }
 
         // 遍历 dataList 生成 dataSourceList
         const dataSourceList = validDataList.map((dataItem) => {
@@ -225,15 +292,6 @@ export default {
         // 在all数据源时，直接更新filteredDataSourceList
         this.filteredDataSourceList = [...dataSourceList]
 
-        // 去掉columnsData中的无用字段,生成columnsList,只有show为true的列才会显示
-        const columnsList = this.configurationParameter.columnsData
-          .filter((column) => column.show)
-          .map((column) => {
-            const { dataLocation, show, filterType, ...rest } = column
-            return rest
-          })
-        // 更新 columnsList
-        this.columnsList = columnsList
         console.log('getAllList - 数据源: all, 数据:', this.dataSourceList)
         console.log('getAllList - 列表配置:', this.columnsList)
 
@@ -247,6 +305,19 @@ export default {
         return this.dataSourceList
       } catch (error) {
         console.error('getAllList获取数据失败：', error)
+        
+        // 错误处理：确保即使出错也会保留表头
+        const columnsList = this.configurationParameter.columnsData
+          .filter((column) => column.show)
+          .map((column) => {
+            const { dataLocation, show, filterType, ...rest } = column
+            return rest
+          })
+        
+        // 更新columnsList
+        this.columnsList = columnsList
+        this.dataSourceList = []
+        this.filteredDataSourceList = []
         return []
       }
     },
@@ -305,9 +376,24 @@ export default {
 
         // 从正确的嵌套结构中提取records数据
         const records = res.data.result.records || []
+        
+        // 即使没有记录数据，也要保证生成columnsList
+        // 这样即使表格数据为空，表头也能显示
+        const columnsList = this.configurationParameter.columnsData
+          .filter((column) => column.show)
+          .map((column) => {
+            const { dataLocation, show, filterType, ...rest } = column
+            return rest
+          })
+
+        // 更新columnsList，不管有没有数据都执行这一步
+        this.columnsList = columnsList
+        
         if (!records.length) {
-          console.warn('注册列表接口未返回记录数据，将使用getAllList方法')
-          return this.getAllList()
+          console.warn('注册列表接口未返回记录数据，但仍保留表格列配置')
+          this.registrationDataList = []
+          this.filteredDataSourceList = []
+          return []
         }
 
         // 遍历数据生成registrationDataList
@@ -347,16 +433,6 @@ export default {
         // 在registration数据源时，直接更新filteredDataSourceList
         this.filteredDataSourceList = [...registrationDataList]
 
-        // 生成columnsList
-        const columnsList = this.configurationParameter.columnsData
-          .filter((column) => column.show)
-          .map((column) => {
-            const { dataLocation, show, filterType, ...rest } = column
-            return rest
-          })
-
-        // 更新columnsList
-        this.columnsList = columnsList
         console.log('getRegistrationList - 数据源: registration, 数据:', this.registrationDataList)
         console.log('getRegistrationList - 列表配置:', this.columnsList)
 
@@ -427,7 +503,7 @@ export default {
     // 筛选单个项目
     getSelectOptions(dataIndex) {
       const column = this.columnsList.find(col => col.dataIndex === dataIndex);
-      // 如果列标题是“状态”，返回固定选项
+      // 如果列标题是"状态"，返回固定选项
       if (column && column.title === '状态') {
         return ['全部', '进行中', '已完成', '已终止'];
       }
@@ -535,4 +611,21 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.custom-empty-table >>> .ant-table-placeholder {
+  padding: 80px 0;
+}
+
+.custom-empty-table >>> .ant-empty-normal {
+  margin: 32px 0;
+}
+
+.custom-empty-table >>> .ant-empty-normal .ant-empty-image {
+  height: 60px;
+}
+
+.custom-empty-table >>> .ant-empty-description {
+  font-size: 16px;
+  color: #999;
+}
+</style>
