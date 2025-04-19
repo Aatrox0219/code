@@ -208,10 +208,10 @@ export default {
           }
 
           // 先检查用户名是否已存在
-          getAction(`${this.registrationApiUrl}/user/checkUsername?username=${values.username}&companyName=${values.companyName}`)
+          getAction(`${this.registrationApiUrl}/user/checkUsername?username=${values.username}&companyName=${values.companyName}&phone=${values.phone}`)
             .then(res => {
               if (!res.success) {
-                this.$message.error('用户账号或企业名称已存在，请修改后重新提交')
+                this.$message.error('用户账号、企业名称或手机号码已存在，请修改后重新提交')
                 return
               }
 

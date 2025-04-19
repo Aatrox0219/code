@@ -249,22 +249,6 @@ export default {
             if (commonTableInstance2) {
                 commonTableInstance2.getRegistrationList()
             }
-            
-            // 获取待审核数量
-            this.getBacklogNumber()
-        },
-        // 获取待审核数量
-        getBacklogNumber() {
-            axios.get(`${process.env.VUE_APP_COUESE_BASE_URL}/registration/count`, {
-                params: { status: 0 }  // 0表示待审核状态
-            }).then(res => {
-                if (res.data.success) {
-                    this.backlogNumber = res.data.result || 0
-                }
-            }).catch(err => {
-                console.error('获取待审核数量失败：', err)
-                this.backlogNumber = 0
-            })
         },
         // 审核企业注册
         reviewRegistration(record) {
