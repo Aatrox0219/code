@@ -64,7 +64,7 @@
           <a-form-item label="法定代表人">
             <a-input v-decorator="['representative', {
               rules: [
-                { required: false, message: '请输入法定代表人!' },
+                { required: true, message: '请输入法定代表人!' },
                 { pattern: /^([\u4e00-\u9fa5]{1,6})$/, message: '请输入正确的法定代表人姓名' }
               ],
               validateTrigger: ['change', 'blur']
@@ -99,7 +99,7 @@
       </a-row>
 
       <a-row :gutter="16">
-        <a-col :span="12">
+        <a-col :span="24">
           <a-form-item>
             <div class="file-message">注: 以下需上传图片，格式为jpg或png。</div>
           </a-form-item>
@@ -112,11 +112,14 @@
             <j-image-upload-one :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传"
               v-model="licenseCopy"></j-image-upload-one>
           </a-form-item>
-          <a-form-item label="企业盖章" :required="true">
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label="企业盖章" :required="true" :label-col="{ span: 7 }">
             <j-image-upload-three :isAdd="isAdd" :isEdit="isEdit" class="avatar-uploader" text="上传"
               v-model="stamp"></j-image-upload-three>
           </a-form-item>
         </a-col>
+
       </a-row>
 
       <div class="form-footer">
@@ -128,7 +131,7 @@
 </template>
 
 <script>
-import { postAction } from '@/api/manage'
+import { postAction, getAction } from '@/api/manage'
 import JImageUploadOne from '@/components/jeecg/JImageUploadOne'
 import JImageUploadThree from '@/components/jeecg/JImageUploadThree'
 
@@ -147,7 +150,8 @@ export default {
       licenseCopy: [],
       stamp: [],
       isAdd: true,
-      isEdit: true
+      isEdit: true,
+      registrationApiUrl: 'http://139.199.159.36:37192'
     }
   },
   methods: {
@@ -203,25 +207,39 @@ export default {
             return
           }
 
-          // 构建提交的数据
-          const formData = {
-            ...values,
-            licenseCopy: this.licenseCopy,
-            stamp: this.stamp
-          }
+          // 先检查用户名是否已存在
+          getAction(`${this.registrationApiUrl}/user/checkUsername?username=${values.username}&companyName=${values.companyName}`)
+            .then(res => {
+              if (!res.success) {
+                this.$message.error('用户账号或企业名称已存在，请修改后重新提交')
+                return
+              }
 
-          // 发送请求到后端
-          postAction('http://139.199.159.36:37192/registration/submit', formData).then(res => {
-            if (res.success) {
-              this.$message.success('提交成功!')
-              this.close()
-            } else {
-              this.$message.error(res.message || '提交失败!')
-            }
-          }).catch(err => {
-            console.error(err)
-            this.$message.error('提交失败，请稍后再试!')
-          })
+              // 用户名可用，继续提交注册信息
+              // 构建提交的数据
+              const formData = {
+                ...values,
+                licenseCopy: this.licenseCopy,
+                stamp: this.stamp
+              }
+
+              // 发送请求到后端
+              postAction(`${this.registrationApiUrl}/registration/submit`, formData).then(res => {
+                if (res.success) {
+                  this.$message.success('提交成功!')
+                  this.close()
+                } else {
+                  this.$message.error(res.message || '提交失败!')
+                }
+              }).catch(err => {
+                console.error(err)
+                this.$message.error('提交失败，请稍后再试!')
+              })
+            })
+            .catch(err => {
+              console.error(err)
+              this.$message.error('检查用户名失败，请稍后再试!')
+            })
         }
       })
     },
@@ -285,11 +303,14 @@ export default {
   color: #ff0000;
   font-size: 15px;
   margin-top: 8px;
+  font-weight: bold;
 }
 
 .file-message {
   color: #ff0000;
   font-size: 15px;
+  padding-left: 50px;
+  font-weight: bold;
 }
 
 /* 统一调整行间距 */
@@ -333,7 +354,8 @@ export default {
 <!-- 全局样式，不受scoped限制 -->
 <style>
 /* 错误提示文字样式 */
-.ant-form-explain, .ant-form-item-explain {
+.ant-form-explain,
+.ant-form-item-explain {
   font-size: 12px !important;
   color: #f56c6c !important;
 }

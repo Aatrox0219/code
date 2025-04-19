@@ -5,7 +5,7 @@
                 <div id="formContent" style="margin-top: -10px">
                     <div id="taskList">
                         <div>
-                            <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="taskTab.tabKey">
+                            <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="taskTab.tabKey" @change="handleTabChange">
                                 <a-tab-pane key="1">
                                     <template #tab>
                                         <a-badge :count="backlogNumber" :offset="[10, 0]">
@@ -49,7 +49,7 @@
 
         <approve-model ref="approveModel" @close="getData"></approve-model>
         <flow-history ref="flowHistory"></flow-history>
-        <register-approve-modal ref="registerApproveModal" @close="getData"></register-approve-modal>
+        <register-approve-modal ref="registerApproveModal" @close="getData" @refresh="getData"></register-approve-modal>
         <register-detail-modal ref="registerDetailModal"></register-detail-modal>
     </div>
 </template>
@@ -132,7 +132,7 @@ export default {
                     {
                         title: '申请时间',
                         align: 'center',
-                        dataIndex: 'createDate',
+                        dataIndex: 'createTime',
                         show: true,
                     },
                     {
@@ -185,9 +185,16 @@ export default {
                     {
                         title: '申请时间',
                         align: 'center',
-                        dataIndex: 'createDate',
+                        dataIndex: 'createTime',
                         show: true,
                     },
+                    {
+                        title: '处理时间',
+                        align: 'center',
+                        dataIndex: 'reviewTime',
+                        show: true,
+                    },
+                    
                     {
                         title: '详情',
                         align: 'center',
@@ -202,13 +209,21 @@ export default {
             taskTab: {
                 tabKey: '1', // 主 Tab 页的状态
             },
+            review: null,
+            details: null,
         }
     },
+    props: ['columnsData', 'dataSource'],
     computed: {
         userInfo() {
             // 从 Vue.ls 中获取 USER_INFO
             return Vue.ls.get(USER_INFO) || {} // 如果没有值，默认为空对象
         },
+    },
+    created() {
+        // 在created中初始化这些方法，确保methods已经定义
+        this.review = this.reviewRegistration;
+        this.details = this.showDetails;
     },
     mounted() {
         this.getData()
@@ -223,10 +238,6 @@ export default {
         seeHistory(record) {
             this.$refs.flowHistory.openModal(record)
         },
-        download(record) {
-            console.log('downloadrecord', record);
-            downloadDocument(record)
-        },
         // 更新表格数据
         getData() {
             // 先获取子组件实例
@@ -238,25 +249,38 @@ export default {
             if (commonTableInstance2) {
                 commonTableInstance2.getRegistrationList()
             }
+            
+            // 获取待审核数量
+            this.getBacklogNumber()
         },
-        //处理该任务
-        announceTask(record) {
-            console.log('record1', record)
-            if (record.flag) {
-                this.$refs.approveModel.announceRollTask(record)
-            } else {
-                this.$refs.approveModel.announceTask(record)
-            }
+        // 获取待审核数量
+        getBacklogNumber() {
+            axios.get(`${process.env.VUE_APP_COUESE_BASE_URL}/registration/count`, {
+                params: { status: 0 }  // 0表示待审核状态
+            }).then(res => {
+                if (res.data.success) {
+                    this.backlogNumber = res.data.result || 0
+                }
+            }).catch(err => {
+                console.error('获取待审核数量失败：', err)
+                this.backlogNumber = 0
+            })
         },
         // 审核企业注册
-        review(record) {
+        reviewRegistration(record) {
             console.log('审核企业注册', record)
             this.$refs.registerApproveModal.show(record)
         },
         // 查看详情
-        details(record) {
+        showDetails(record) {
             console.log('查看详情', record)
             this.$refs.registerDetailModal.show(record)
+        },
+        handleTabChange(key) {
+            this.taskTab.tabKey = key;
+            this.$nextTick(() => {
+                this.getData()
+            })
         }
     },
     watch: {

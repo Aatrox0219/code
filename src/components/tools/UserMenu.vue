@@ -77,7 +77,7 @@
     <a-dropdown>
       <span class="action action-full ant-dropdown-link user-dropdown-menu">
         <!-- <a-avatar class="avatar" size="small" :src="getAvatar()" /> -->
-        <span v-if="isDesktop()">欢迎您，{{ nickname() }}</span>
+        <span v-if="isDesktop()">欢迎您，{{ nickname() || userInfo().username }}</span>
       </span>
       <a-menu slot="overlay" class="user-dropdown-menu-wrapper">
         <!-- <a-menu-item key="0">
@@ -136,8 +136,9 @@ import { USER_ID } from '@/store/mutation-types'
 import { UI_CACHE_DB_DICT_DATA } from '@/store/mutation-types'
 import api from '@/api/index'
 import { getPendingTotal, AutoClaim } from '@/api/userList'
-import { depositList, depositCategoryId, useList, useCategoryId, backpayList, backpayCategoryId, changeList, changeCategoryId, extendList, extendCategoryId, returnList, returnCategoryId, registerList, registerCategoryId } from '@/api/processId'
+import { depositList, depositCategoryId, useList, useCategoryId, backpayList, backpayCategoryId, changeList, changeCategoryId, extendList, extendCategoryId, returnList, returnCategoryId} from '@/api/processId'
 import { extend } from 'vuedraggable'
+import axios from 'axios'
 export default {
   name: 'UserMenu',
   mixins: [mixinDevice],
@@ -191,12 +192,20 @@ export default {
     }
   },
   mounted() {
+    // 打印nickname值
+    console.log('当前用户昵称:', this.nickname())
+    
     this.startInterval()
     this.getPermission()
     //使用事件总线监听事件
     this.$bus.$on('callGetTotal', () => {
       this.getTotal()
     })
+    
+    // 初始调用获取施工企业注册待审核数量
+    if (this.showRegister) {
+      this.getRegisterPendingCount()
+    }
 
     //如果是单点登录模式
     if (process.env.VUE_APP_SSO == 'true') {
@@ -350,13 +359,40 @@ export default {
         .catch((error) => {
           console.error('获取待办事项总数失败:', error)
         })
-      getPendingTotal(registerList, registerCategoryId)
-        .then((total) => {
+      
+      // 如果显示施工企业注册待处理，则获取其数量
+      if (this.showRegister) {
+        this.getRegisterPendingCount()
+      }
+    },
+
+    // 获取施工企业注册待审核数量
+    getRegisterPendingCount() {
+      // 确定正确的API基础URL
+      let baseUrl = process.env.VUE_APP_COUESE_BASE_URL;
+      // 使用 registration/list 接口获取待审核列表，从返回结果中获取总数
+      axios.get(`${baseUrl}/registration/list`, {
+        params: { 
+          status: '0'
+        },
+        timeout: 8000  // 设置超时时间
+      }).then(res => {
+        // 检查返回数据结构
+        console.log('施工企业注册接口返回数据:', res.data)
+        
+        if (res.data && res.data.success && res.data.result) {
+          // 根据返回结构获取总数字段
+          const total = res.data.result.total || 0
           this.registerTotal = total
-        })
-        .catch((error) => {
-          console.error('获取待办事项总数失败:', error)
-        })
+          console.log('施工企业注册待审核数量:', this.registerTotal)
+        } else {
+          console.warn('获取施工企业注册待审核数量失败，接口返回数据无效:', res.data)
+          // 接口返回失败时不修改现有值
+        }
+      }).catch(err => {
+        console.error('获取施工企业注册待审核数量请求异常:', err)
+        // 请求异常时不修改现有值
+      })
     },
 
     // 开启定时器
@@ -367,8 +403,13 @@ export default {
       await AutoClaim(changeList, changeCategoryId, this.getUserInfo) // 自动认领该用户的保证金存缴方式变更的流程
       await AutoClaim(extendList, extendCategoryId, this.getUserInfo) // 自动认领该用户的保证金保函更换的流程
       await AutoClaim(returnList, returnCategoryId, this.getUserInfo) // 自动认领该用户的保证金返还的流程
-      await AutoClaim(registerList, registerCategoryId, this.getUserInfo) // 自动认领该用户的保证金返还的流程
       console.log('开启保证金存缴的自动认领')
+      
+      // 调用获取施工企业注册待审核数量
+      if (this.showRegister) {
+        this.getRegisterPendingCount()
+      }
+      
       this.getTotal()
       this.intervalId = setInterval(async () => {
         await AutoClaim(depositList, depositCategoryId)
@@ -394,10 +435,13 @@ export default {
         await AutoClaim(returnList, returnCategoryId)
         this.getTotal()
       }, 180000)
-      this.intervalId = setInterval(async () => {
-        await AutoClaim(registerList, registerCategoryId)
-        this.getTotal()
-      }, 180000)
+      
+      // 设置定时器定期获取施工企业注册待审核数量
+      if (this.showRegister) {
+        setInterval(() => {
+          this.getRegisterPendingCount()
+        }, 180000)
+      }
     },
 
     /* update_begin author:zhaoxin date:20191129 for: 做头部菜单栏导航*/

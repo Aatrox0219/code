@@ -50,6 +50,8 @@
         showQuickJumper: true
       }"
       class="custom-empty-table"
+      :defaultSortOrder="'descend'"
+      :rowClassName="() => 'custom-row'"
     >
       <!-- 自定义空状态 -->
       <template slot="emptyText">
@@ -182,6 +184,10 @@ export default {
     mixedFilterTitles() {
       return this.mixedFilterColumns.map((column) => column.title).join('/')
     },
+    // 判断是否为施工企业注册列表
+    isRegistrationTable() {
+      return this.dataSource === 'registration'
+    }
   },
   methods: {
     // 获取表格数据并初始化
@@ -406,7 +412,8 @@ export default {
           item.companyName = dataItem.companyName
           item.creditCode = dataItem.creditCode
           item.representative = dataItem.representative
-          item.createDate = dataItem.createTime
+          item.createTime = dataItem.createTime
+          item.reviewTime = dataItem.reviewTime ? dataItem.reviewTime : '无'
 
           // 根据status值设置不同的状态文本
           if (dataItem.status === 0) {
@@ -430,8 +437,15 @@ export default {
         // 更新registrationDataList
         this.registrationDataList = registrationDataList
 
+        // 按申请时间降序排序（最新的在前面）
+        this.registrationDataList.sort((a, b) => {
+          const timeA = new Date(a.createTime || 0).getTime();
+          const timeB = new Date(b.createTime || 0).getTime();
+          return timeB - timeA; // 降序排列
+        });
+
         // 在registration数据源时，直接更新filteredDataSourceList
-        this.filteredDataSourceList = [...registrationDataList]
+        this.filteredDataSourceList = [...this.registrationDataList]
 
         console.log('getRegistrationList - 数据源: registration, 数据:', this.registrationDataList)
         console.log('getRegistrationList - 列表配置:', this.columnsList)
@@ -501,76 +515,76 @@ export default {
     },
 
     // 筛选单个项目
-    getSelectOptions(dataIndex) {
-      const column = this.columnsList.find(col => col.dataIndex === dataIndex);
-      // 如果列标题是"状态"，返回固定选项
-      if (column && column.title === '状态') {
-        return ['全部', '进行中', '已完成', '已终止'];
-      }
-      // 否则动态生成选项
-      const uniqueValues = new Set(this.dataSourceList.map((item) => item[dataIndex]));
-      return Array.from(uniqueValues).filter((value) => value !== undefined && value !== null);
-    },
+    filterItem(item) {
+      if (this.dataSource === 'registration') {
+        // 处理施工企业注册列表的筛选
+        
+        // 处理状态筛选
+        if (this.filterConditions.nodeName) {
+          const statusFilter = this.filterConditions.nodeName
+          if (statusFilter !== '全部' && item.nodeName !== statusFilter) {
+            return false
+          }
+        }
+        
+        // 处理混合筛选 (企业账号/企业名称)
+        if (this.mixedFilterValue && this.mixedFilterValue.trim() !== '') {
+          const mixedMatch = this.mixedFilterColumns.some(column => {
+            const fieldValue = item[column.dataIndex]
+            return fieldValue && fieldValue.toString().toLowerCase().includes(this.mixedFilterValue.toLowerCase())
+          })
+          if (!mixedMatch) {
+            return false
+          }
+        }
+        
+        return true
+      } else {
+        // 处理其他表格的筛选逻辑
+        const basicFilter = Object.keys(this.filterConditions).every((key) => {
+          const filterValue = this.filterConditions[key]
+          if (!filterValue) return true // 如果没有筛选条件，默认不过滤
 
-    // 筛选方法
-    async handleFilter() {
-      try {
-        await this.getAllList()
-        // 在数据更新后执行筛选逻辑
-        this.filteredDataSourceList = this.dataSourceList.filter((item) => {
-          const basicFilter = Object.keys(this.filterConditions).every((key) => {
-            const filterValue = this.filterConditions[key]
-            if (!filterValue) return true // 如果没有筛选条件，默认不过滤
+          const column = this.configurationParameter.columnsData.find((col) => col.dataIndex === key)
+          const itemValue = item[key]
 
-            const column = this.configurationParameter.columnsData.find((col) => col.dataIndex === key)
-            const itemValue = item[key]
-
-            if (column.filterType === 'input') {
-              // 输入框模糊匹配
-              return itemValue && itemValue.toString().includes(filterValue.toString())
-            } else if (column.filterType === 'select') {
-              // 当列标题为状态时特殊处理
-              if (column.title && column.title === '状态') {
-                if (filterValue === '已完成') {
-                  return itemValue === '已完成';
-                } else if (filterValue === '已终止') {
-                  return itemValue === '已终止';
-                } else if (filterValue === '全部') {
-                  return true;
-                } else if (filterValue === '进行中') {
-                  return itemValue !== '已完成' && itemValue !== '已终止';
-                }
+          if (column.filterType === 'input') {
+            // 输入框模糊匹配
+            return itemValue && itemValue.toString().includes(filterValue.toString())
+          } else if (column.filterType === 'select') {
+            // 当列标题为状态时特殊处理
+            if (column.title && column.title === '状态') {
+              if (filterValue === '已完成') {
+                return itemValue === '已完成';
+              } else if (filterValue === '已终止') {
+                return itemValue === '已终止';
+              } else if (filterValue === '全部') {
+                return true;
+              } else if (filterValue === '进行中') {
+                return itemValue !== '已完成' && itemValue !== '已终止';
               }
-              // 下拉框完全匹配（非状态列的处理）
-              return itemValue === filterValue
-            } else if (column.filterType === 'date') {
-              // 日期范围筛选
-              if (!Array.isArray(filterValue) || filterValue.length !== 2) return true
-              const [startDate, endDate] = filterValue
-              const itemDate = new Date(itemValue).getTime()
-              return itemDate >= new Date(startDate).getTime() && itemDate <= new Date(endDate).getTime()
             }
+            // 下拉框完全匹配（非状态列的处理）
+            return itemValue === filterValue
+          } else if (column.filterType === 'date') {
+            // 日期范围筛选
+            if (!Array.isArray(filterValue) || filterValue.length !== 2) return true
+            const [startDate, endDate] = filterValue
+            const itemDate = new Date(itemValue).getTime()
+            return itemDate >= new Date(startDate).getTime() && itemDate <= new Date(endDate).getTime()
+          }
 
-            return true // 如果没有匹配到类型，则默认不过滤
-          })
-
-          // 混合条件筛选
-          const mixedFilter = this.mixedFilterColumns.some((column) => {
-            const itemValue = item[column.dataIndex]
-            return itemValue && itemValue.toString().toLowerCase().includes(this.mixedFilterValue.toLowerCase())
-          })
-
-          // 过滤出同时满足普通条件和混合筛选条件的数据
-          return basicFilter && (!this.mixedFilterValue || mixedFilter)
+          return true // 如果没有匹配到类型，则默认不过滤
         })
 
-        if (this.configurationParameter.filterFunction) {
-          this.filteredDataSourceList = this.configurationParameter.filterFunction(this.filteredDataSourceList);
-        }
+        // 混合条件筛选
+        const mixedFilter = this.mixedFilterColumns.some((column) => {
+          const itemValue = item[column.dataIndex]
+          return itemValue && itemValue.toString().toLowerCase().includes(this.mixedFilterValue.toLowerCase())
+        })
 
-        console.log('筛选后的数据：', this.filteredDataSourceList)
-      } catch (error) {
-        console.error('获取数据失败：', error)
+        // 过滤出同时满足普通条件和混合筛选条件的数据
+        return basicFilter && (!this.mixedFilterValue || mixedFilter)
       }
     },
 
