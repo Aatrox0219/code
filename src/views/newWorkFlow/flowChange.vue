@@ -6,6 +6,19 @@
           <div id="taskList">
             <div>
               <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="taskTab.tabKey">
+                <a-tab-pane key="4" tab="全部" v-if="['经纪公司'].some((role) => userInfo.roleNames.includes(role))">
+                  <div>
+                    <div class="card-table">
+                      <a-card :bordered="false">
+                        <div class="table-container">
+                          <commonTable ref="commonTableRef4" :configurationParameter="configurationParameter4"
+                            :seeHistory="seeHistory" :handleProcessStatusChange="handleProcessStatusChange">
+                          </commonTable>
+                        </div>
+                      </a-card>
+                    </div>
+                  </div>
+                </a-tab-pane>
                 <a-tab-pane key="3" tab="可变更" v-if="['施工企业', '管理员'].some((role) => userInfo.roleNames.includes(role))">
                   <div>
                     <div class="card-table" style="padding: 10px">
@@ -421,6 +434,105 @@ export default {
           },
         ],
       },
+      configurationParameter4: {
+        inquire: {
+          categoryId: changeCategoryId, //流程分类
+          processIdList: changeList, //想要显示的流程信息
+          applyState: ['instance', 'cancel', 'complete'],
+        },
+        useAllViewableData: true,
+        columnsData: [
+          {
+            title: '状态',
+            align: 'center',
+            dataIndex: 'nodeName',
+            dataLocation: 'nodeName',
+            show: true,
+            filterType: 'select',
+          },
+          {
+            title: '企业名称',
+            align: 'center',
+            dataIndex: 'companyName',
+            dataLocation: 'allData.main_payment.enterprise_name',
+            show: true,
+            filterType: 'select',
+          },
+          {
+            title: '项目名称',
+            align: 'center',
+            dataIndex: 'projectName',
+            dataLocation: 'allData.main_payment.project_name',
+            show: true,
+            filterType: 'mixedInput',
+          },
+          {
+            title: '所属区县',
+            align: 'center',
+            dataIndex: 'projectAddress',
+            dataLocation: 'allData.main_payment.project_address',
+            show: true,
+            filterType: 'mixedInput',
+          },
+          {
+            title: '保证金金额（万元）',
+            align: 'center',
+            dataIndex: 'Money',
+            dataLocation: 'allData.main_payment.money',
+            show: true,
+          },
+          {
+            title: '变更前存缴方式',
+            align: 'center',
+            dataIndex: 'oldDepositMethod',
+            dataLocation: 'allData.main_change.old_deposit_method',
+            show: true,
+          },
+          {
+            title: '变更后存缴方式',
+            align: 'center',
+            dataIndex: 'newDepositMethod',
+            dataLocation: 'allData.main_change.new_deposit_method',
+            show: true,
+          },
+          {
+            title: '负责人',
+            align: 'center',
+            dataIndex: 'responsiblePerson',
+            dataLocation: 'allData.main_payment.responsible_person',
+            show: true,
+            filterType: 'input',
+          },
+          {
+            title: '联系方式',
+            align: 'center',
+            dataIndex: 'mobile',
+            dataLocation: 'allData.main_payment.mobile',
+            show: true,
+          },
+          {
+            title: '创建时间',
+            align: 'center',
+            dataIndex: 'createDate',
+            dataLocation: 'allData.main_change.create_time',
+            show: true,
+          },
+          {
+            title: '处理情况',
+            align: 'center',
+            dataIndex: 'processStatus',
+            scopedSlots: { customRender: 'processStatus' },
+            show: true,
+          },
+          {
+            title: '详情',
+            align: 'center',
+            dataIndex: 'flowHistoryaction',
+            scopedSlots: { customRender: 'flowHistoryaction' },
+            show: true,
+          },
+        ],
+      },
     }
   },
   computed: {
@@ -438,7 +550,9 @@ export default {
   },
 
   created() {
-    if (['施工企业', '管理员'].some((role) => this.userInfo.roleNames.includes(role))) {
+    if (['经纪公司'].some((role) => this.userInfo.roleNames.includes(role))) {
+      this.taskTab.tabKey = '4' // 显示 "全部" 页
+    } else if (['施工企业', '管理员'].some((role) => this.userInfo.roleNames.includes(role))) {
       this.taskTab.tabKey = '3' // 显示 "可变更" 页
     } else {
       this.taskTab.tabKey = '2' // 显示 "历史" 页
@@ -449,7 +563,7 @@ export default {
     this.getData()
     console.log('当前用户信息', this.userInfo)
     // 添加路由参数主动检查
-    if(this.$route.query.tab) {
+    if (this.$route.query.tab) {
       this.taskTab.tabKey = this.$route.query.tab
     }
   },
@@ -563,6 +677,10 @@ export default {
       if (commonTableInstance3) {
         commonTableInstance3.getAllList()
       }
+      const commonTableInstance4 = this.$refs.commonTableRef4
+      if (commonTableInstance4) {
+        commonTableInstance4.getAllList()
+      }
     },
     handleCancel() {
       this.isModalVisible = false // 点击取消后隐藏弹窗
@@ -576,6 +694,39 @@ export default {
         this.$refs.approveModel.announceTask(record)
       }
     },
+    // 处理处理情况开关变化
+    handleProcessStatusChange(record, checked) {
+      console.log('处理情况开关变化:', record, checked)
+
+      // 更新记录的状态
+      this.$set(record, 'processStatus', checked)
+      this.$set(record, 'brokerChecked', checked ? "1" : "0")
+
+      // 调用后端接口更新处理情况状态
+      const updateData = {
+        processInstanceId: record.processInstanceId,
+        brokerChecked: checked ? "1" : "0"
+      }
+
+      nw_postAction1('/generalList2/updateChecked', updateData)
+        .then((res) => {
+          if (res.success) {
+            this.$message.success(`已标记为${checked ? '已处理' : '未处理'}`)
+          } else {
+            // 如果更新失败，回滚状态
+            this.$set(record, 'processStatus', !checked)
+            this.$set(record, 'brokerChecked', checked ? "0" : "1")
+            this.$message.error('更新失败: ' + (res.message || '未知错误'))
+          }
+        })
+        .catch((error) => {
+          console.error('更新处理情况状态失败:', error)
+          // 如果请求失败，回滚状态
+          this.$set(record, 'processStatus', !checked)
+          this.$set(record, 'brokerChecked', checked ? "0" : "1")
+          this.$message.error('请求失败')
+        })
+    },
   },
   watch: {
     '$route.query.tab': {
@@ -585,7 +736,11 @@ export default {
         if (newVal) {
           this.taskTab.tabKey = newVal;
         } else {
-          this.taskTab.tabKey = '2' // 默认显示历史tab
+          if (['经纪公司'].some((role) => this.userInfo.roleNames.includes(role))) {
+            this.taskTab.tabKey = '4' // 经纪公司默认显示"全部"tab
+          } else {
+            this.taskTab.tabKey = '2' // 其他角色默认显示"历史"tab
+          }
         }
         this.$nextTick(() => {
           this.getData()

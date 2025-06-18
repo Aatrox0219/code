@@ -14,6 +14,19 @@
           <div id="taskList">
             <div>
               <a-tabs :tabBarStyle="{ textAlign: 'center' }" v-model="taskTab.tabKey">
+                <a-tab-pane key="3" tab="全部" v-if="['经纪公司'].some((role) => userInfo.roleNames.includes(role))">
+                  <div>
+                    <div class="card-table">
+                      <a-card :bordered="false">
+                        <div class="table-container">
+                          <commonTable ref="commonTableRef3" :configurationParameter="configurationParameter3"
+                            :seeHistory="seeHistory" :handleProcessStatusChange="handleProcessStatusChange">
+                          </commonTable>
+                        </div>
+                      </a-card>
+                    </div>
+                  </div>
+                </a-tab-pane>
                 <a-tab-pane key="2" tab="存缴历史">
                   <div>
                     <div class="card-table">
@@ -258,8 +271,103 @@ export default {
           },
         ],
       },
+      configurationParameter3: {
+        inquire: {
+          categoryId: depositCategoryId, //流程分类
+          processIdList: depositList, //存缴
+          applyState: ['instance', 'cancel', 'complete'],
+        },
+        useAllViewableData: true,
+        columnsData: [
+          {
+            title: '状态',
+            align: 'center',
+            dataIndex: 'nodeName',
+            dataLocation: 'nodeName',
+            show: true,
+            filterType: 'select',
+          },
+          {
+            title: '企业名称',
+            align: 'center',
+            dataIndex: 'companyName',
+            dataLocation: 'allData.main_payment.enterprise_name',
+            show: true,
+            filterType: 'select',
+          },
+          {
+            title: '项目名称',
+            align: 'center',
+            dataIndex: 'projectName',
+            dataLocation: 'allData.main_payment.project_name',
+            show: true,
+            filterType: 'mixedInput',
+          },
+          {
+            title: '所属区县',
+            align: 'center',
+            dataIndex: 'projectAddress',
+            dataLocation: 'allData.main_payment.project_address',
+            show: true,
+            filterType: 'mixedInput',
+          },
+          {
+            title: '合同金额（万元）',
+            align: 'center',
+            dataIndex: 'Money',
+            dataLocation: 'allData.main_payment.contract_amount',
+            show: true,
+          },
+          {
+            title: '负责人',
+            align: 'center',
+            dataIndex: 'responsiblePerson',
+            dataLocation: 'allData.main_payment.responsible_person',
+            show: true,
+            filterType: 'input',
+          },
+          {
+            title: '联系方式',
+            align: 'center',
+            dataIndex: 'mobile',
+            dataLocation: 'allData.main_payment.mobile',
+            show: true,
+          },
+          {
+            title: '创建时间',
+            align: 'center',
+            dataIndex: 'createDate',
+            dataLocation: 'allData.main_payment.create_time',
+            show: true,
+          },
+          {
+            dataIndex: 'is_export',
+            dataLocation: 'allData.main_payment.is_export',
+            show: false,
+          }, {
+            dataIndex: 'export_path',
+            dataLocation: 'allData.main_payment.export_path',
+            show: false,
+          },
+          {
+            title: '处理情况',
+            align: 'center',
+            dataIndex: 'processStatus',
+            scopedSlots: { customRender: 'processStatus' },
+            show: true,
+          },
+          {
+            title: '详情',
+            align: 'center',
+            dataIndex: 'brokerageDetails',
+            scopedSlots: { customRender: 'brokerageDetails' },
+            show: true,
+          },
+        ],
+      },
       annTaskData: {},
       backlogNumber: 0,
+
       selectedStatus: 'all', // 状态默认选择 "全部"
       taskTab: {
         tabKey: '2', // 默认显示存缴历史
@@ -275,12 +383,15 @@ export default {
       // 从 Vue.ls 中获取 USER_INFO
       return Vue.ls.get(USER_INFO) || {}
     },
-  },
-  mounted() {
+  }, mounted() {
     this.startFixedProcess(false)
     this.getData()
+    // 设置默认tab，如果是经纪公司则显示"全部"tab页
+    if (['经纪公司'].some((role) => this.userInfo.roleNames.includes(role))) {
+      this.taskTab.tabKey = '3'
+    }
     // 添加路由参数主动检查
-    if(this.$route.query.tab) {
+    if (this.$route.query.tab) {
       this.taskTab.tabKey = this.$route.query.tab
     }
     console.log('当前用户信息', this.userInfo)
@@ -384,13 +495,48 @@ export default {
         // 调用子组件的getAllList方法
         commonTableInstance1.getAllList()
       }
-
       const commonTableInstance2 = this.$refs.commonTableRef2
       if (commonTableInstance2) {
         commonTableInstance2.getAllList()
       }
+      // 刷新"全部"选项卡的数据
+      const commonTableInstance3 = this.$refs.commonTableRef3
+      if (commonTableInstance3) {
+        commonTableInstance3.getAllList()
+      }
     },
+    handleProcessStatusChange(record, checked) {
+      console.log('处理情况开关变化:', record, checked)
 
+      // 更新记录的状态
+      this.$set(record, 'processStatus', checked)
+      this.$set(record, 'brokerChecked', checked ? "1" : "0")
+
+      // 调用后端接口更新处理情况状态
+      const updateData = {
+        processInstanceId: record.processInstanceId,
+        brokerChecked: checked ? "1" : "0"
+      }
+
+      nw_postAction1('/generalList2/updateChecked', updateData)
+        .then((res) => {
+          if (res.success) {
+            this.$message.success(`已标记为${checked ? '已处理' : '未处理'}`)
+          } else {
+            // 如果更新失败，回滚状态
+            this.$set(record, 'processStatus', !checked)
+            this.$set(record, 'brokerChecked', checked ? "0" : "1")
+            this.$message.error('更新失败: ' + (res.message || '未知错误'))
+          }
+        })
+        .catch((error) => {
+          console.error('更新处理情况状态失败:', error)
+          // 如果请求失败，回滚状态
+          this.$set(record, 'processStatus', !checked)
+          this.$set(record, 'brokerChecked', checked ? "0" : "1")
+          this.$message.error('请求失败')
+        })
+    },
     //处理该任务
     announceTask(record) {
       console.log('record1', record)
@@ -402,10 +548,10 @@ export default {
     },
 
     downloadTemplate() {
-      const downloadTemplateApi = 'http://139.199.159.36:37192/file/download'; 
+      const downloadTemplateApi = 'http://139.199.159.36:37192/file/download';
 
       // 将 filePath 作为查询参数传递
-      const filePath = '/opt/temps/附件2：工资保证金存款协议书（样本）.docx';
+      const filePath = '/opt/temps/附件2：农民工工资保证金存款协议书（样本）.docx';
 
       axios.post(downloadTemplateApi, null, {
         params: {
@@ -436,7 +582,11 @@ export default {
         if (newVal) {
           this.taskTab.tabKey = newVal;
         } else {
-          this.taskTab.tabKey = '2'
+          if (['经纪公司'].some((role) => this.userInfo.roleNames.includes(role))) {
+            this.taskTab.tabKey = '3'
+          } else {
+            this.taskTab.tabKey = '2'
+          }
         }
         // 强制刷新表格数据
         this.$nextTick(() => {

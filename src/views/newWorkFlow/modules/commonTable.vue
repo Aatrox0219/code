@@ -39,20 +39,11 @@
     </a-row>
 
     <!-- 表格 -->
-    <a-table 
-      bordered 
-      :columns="columnsList" 
-      :dataSource="filteredDataSourceList" 
-      rowKey="id"
-      :locale="{ emptyText: '暂无数据' }"
-      :pagination="{ 
+    <a-table bordered :columns="columnsList" :dataSource="filteredDataSourceList" rowKey="id"
+      :locale="{ emptyText: '暂无数据' }" :pagination="{
         showTotal: (total, range) => `共 ${total} 条`,
         showQuickJumper: true
-      }"
-      class="custom-empty-table"
-      :defaultSortOrder="'descend'"
-      :rowClassName="() => 'custom-row'"
-    >
+      }" class="custom-empty-table" :defaultSortOrder="'descend'" :rowClassName="() => 'custom-row'">
       <!-- 自定义空状态 -->
       <template slot="emptyText">
         <div style="padding: 64px 0; text-align: center;">
@@ -96,12 +87,19 @@
       <span slot="flowReturncolumns" slot-scope="text, record, index">
         <a @click="startProcess(record)">申请返还</a>
       </span>
+      <span slot="brokerageDetails" slot-scope="text, record, index">
+        <a @click="seeHistory(record)">历史</a>
+      </span>
+      <span slot="processStatus" slot-scope="text, record, index">
+        <a-switch :checked="record.brokerChecked === '1' || record.processStatus === true" :disabled="false"
+          size="small" @change="(checked) => handleProcessStatusChange(record, checked)" />
+      </span>
     </a-table>
   </div>
 </template>
 
 <script>
-import { nw_getAllData } from '@api/newWorkApi'
+import { nw_getAllData, nw_postAction1 } from '@api/newWorkApi'
 import { taskStateMapping } from '../taskStateMapping'
 import axios from 'axios'
 
@@ -148,6 +146,10 @@ export default {
       type: Function,
       default: () => { },
     },
+    handleProcessStatusChange: {
+      type: Function,
+      default: () => { },
+    },
   },
   data() {
     return {
@@ -190,8 +192,18 @@ export default {
     }
   },
   methods: {
+    // 外部调用刷新数据的方法（兼容新接口）
+    getAllList() {
+      // 检查是否使用新的接口
+      if (this.configurationParameter.useAllViewableData) {
+        return this.getAllViewableData()
+      } else {
+        return this.getAllListOriginal()
+      }
+    },
+
     // 获取表格数据并初始化
-    async getAllList() {
+    async getAllListOriginal() {
       // 先设置数据源类型为all
       this.dataSource = 'all'
 
@@ -204,7 +216,7 @@ export default {
         // 处理可能的空响应
         if (!res || !res.result || !res.result.dataList) {
           console.warn('getAllList接口未返回有效数据，但仍保留表格列配置')
-          
+
           // 即使没有数据，也要生成columnsList
           const columnsList = this.configurationParameter.columnsData
             .filter((column) => column.show)
@@ -212,7 +224,7 @@ export default {
               const { dataLocation, show, filterType, ...rest } = column
               return rest
             })
-          
+
           // 更新columnsList
           this.columnsList = columnsList
           this.dataSourceList = []
@@ -233,10 +245,10 @@ export default {
             const { dataLocation, show, filterType, ...rest } = column
             return rest
           })
-        
+
         // 更新columnsList
         this.columnsList = columnsList
-        
+
         // 如果没有有效数据，提前返回空数组
         if (!validDataList.length) {
           console.warn('getAllList过滤后无有效数据，但仍保留表格列配置')
@@ -264,6 +276,9 @@ export default {
           const processMainTable = dataItem.processMainTable
           const processMainKey = dataItem.processMainKey
           item.frontId = dataItem.allData?.[processMainTable]?.[processMainKey] || null // 该流程的前置流程 id
+
+          // 保留处理情况开关状态
+          item.brokerChecked = dataItem.allData?.main_payment?.broker_checked || "0" // 从allData.main_payment.broker_checked字段获取，默认为"0"表示未处理
 
           // 遍历 columnsData 来生成 dataSource
           this.configurationParameter.columnsData.forEach((column) => {
@@ -311,7 +326,7 @@ export default {
         return this.dataSourceList
       } catch (error) {
         console.error('getAllList获取数据失败：', error)
-        
+
         // 错误处理：确保即使出错也会保留表头
         const columnsList = this.configurationParameter.columnsData
           .filter((column) => column.show)
@@ -319,7 +334,7 @@ export default {
             const { dataLocation, show, filterType, ...rest } = column
             return rest
           })
-        
+
         // 更新columnsList
         this.columnsList = columnsList
         this.dataSourceList = []
@@ -382,7 +397,7 @@ export default {
 
         // 从正确的嵌套结构中提取records数据
         const records = res.data.result.records || []
-        
+
         // 即使没有记录数据，也要保证生成columnsList
         // 这样即使表格数据为空，表头也能显示
         const columnsList = this.configurationParameter.columnsData
@@ -394,7 +409,7 @@ export default {
 
         // 更新columnsList，不管有没有数据都执行这一步
         this.columnsList = columnsList
-        
+
         if (!records.length) {
           console.warn('注册列表接口未返回记录数据，但仍保留表格列配置')
           this.registrationDataList = []
@@ -466,6 +481,168 @@ export default {
       }
     },
 
+    // 获取可查看的全部数据 - 新接口
+    async getAllViewableData() {
+      // 先设置数据源类型为allViewable
+      this.dataSource = 'allViewable'
+
+      // 构建请求参数，如果有inquire配置则传递
+      let params = {}
+      if (this.configurationParameter.inquire) {
+        params = {
+          ...this.configurationParameter.inquire,
+        }
+      }
+
+      try {
+        const res = await nw_postAction1('/generalList2/getAllList', params)
+
+        console.log('getAllViewableData - 接口响应:', res)
+
+        // 处理可能的空响应 - 新接口返回的是 res.result.dataList 是数组
+        if (!res || !res.result || !res.result.dataList || !Array.isArray(res.result.dataList) || res.result.dataList.length === 0) {
+          // 即使没有数据，也要生成columnsList
+          const columnsList = this.configurationParameter.columnsData
+            .filter((column) => column.show)
+            .map((column) => {
+              const { dataLocation, show, filterType, ...rest } = column
+              return rest
+            })
+
+          // 更新columnsList
+          this.columnsList = columnsList
+          this.dataSourceList = []
+          this.filteredDataSourceList = []
+          return []
+        }
+
+        // 使用 res.result.dataList 作为 dataList
+        const dataList = res.result.dataList
+
+        // 过滤掉 allData 为空的脏数据
+        const validDataList = dataList.filter((dataItem) => {
+          return dataItem.allData && Object.keys(dataItem.allData).length > 0 // 只有 allData 不为空对象时才保留
+        })
+
+        // 即使没有有效数据，也要生成columnsList
+        const columnsList = this.configurationParameter.columnsData
+          .filter((column) => column.show)
+          .map((column) => {
+            const { dataLocation, show, filterType, ...rest } = column
+            return rest
+          })
+
+        // 更新columnsList
+        this.columnsList = columnsList
+
+        // 如果没有有效数据，提前返回空数组
+        if (!validDataList.length) {
+          this.dataSourceList = []
+          this.filteredDataSourceList = []
+          return []
+        }
+
+        // 遍历 dataList 生成 dataSourceList
+        const dataSourceList = validDataList.map((dataItem) => {
+          const item = {}
+
+          // 流程基本值
+          item.processName = dataItem.processName
+          item.taskId = dataItem.taskId
+          item.processId = dataItem.processId
+          item.processInstanceId = dataItem.processInstanceId
+          item.processHisInstanceId = dataItem.processHisInstanceId
+
+          // 某些流程需要取下面这些值
+          if (dataItem.allData.main_payment) { // 确保main_payment存在
+            item.depositWay = dataItem.allData.main_payment.deposit_way // 保证金存缴方式
+          }
+          item.flag = dataItem.flag // 用于判断是否是撤回的任务
+
+          // 处理前置流程 id
+          const processMainTable = dataItem.processMainTable
+          const processMainKey = dataItem.processMainKey
+          item.frontId = dataItem.allData?.[processMainTable]?.[processMainKey] || null // 该流程的前置流程 id
+
+          // 保留处理情况开关状态
+          item.brokerChecked = dataItem.allData?.main_payment?.broker_checked || "0" // 从allData.main_payment.broker_checked字段获取，默认为"0"表示未处理
+
+          // 遍历 columnsData 来生成 dataSource
+          this.configurationParameter.columnsData.forEach((column) => {
+            if (column.dataLocation) {
+              // 判断 dataLocation 是否存在，并提取数据
+              const keys = column.dataLocation.split('.')
+              let value = dataItem
+              keys.forEach((key) => {
+                value = (value && value[key] !== undefined) ? value[key] : null
+              })
+
+              // 特殊处理 nodeName
+              if (column.dataLocation === 'nodeName') {
+                const dataType = dataItem.dataType // 获取 dataType 值,来判断流程是否已完成或者已终止
+                if (dataType === 'complete') {
+                  value = '已完成'
+                } else if (dataType === 'cancel') {
+                  value = '已终止'
+                } else {
+                  // 映射 nodeName 值
+                  value = taskStateMapping[value] || value
+                }
+              }
+              item[column.dataIndex] = value
+            }
+          })
+          return item
+        })
+
+        // 更新 dataSourceList
+        this.dataSourceList = dataSourceList
+
+        // 在allViewable数据源时，直接更新filteredDataSourceList
+        this.filteredDataSourceList = [...dataSourceList]
+
+        // 生成 dataSourceList 后添加以下代码
+        if (this.configurationParameter.filterFunction) {
+          this.dataSourceList = this.configurationParameter.filterFunction(this.dataSourceList);
+          this.filteredDataSourceList = [...this.dataSourceList];
+        }
+
+        return this.dataSourceList
+      } catch (error) {
+
+        // 错误处理：确保即使出错也会保留表头
+        const columnsList = this.configurationParameter.columnsData
+          .filter((column) => column.show)
+          .map((column) => {
+            const { dataLocation, show, filterType, ...rest } = column
+            return rest
+          })
+
+        this.columnsList = columnsList
+        this.dataSourceList = []
+        this.filteredDataSourceList = []
+        return []
+      }
+    },
+
+    // 获取表格数据并初始化（根据数据源类型选择不同的方法）
+    async getAllData() {
+      console.log('开始获取表格数据，当前数据源类型:', this.dataSource)
+
+      if (this.dataSource === 'registration') {
+        // 如果是注册数据，调用注册列表接口
+        await this.getRegistrationList()
+      } else if (this.dataSource === 'all') {
+        // 如果是全部数据，调用全量数据接口
+        await this.getAllList()
+      } else if (this.dataSource === 'allViewable') {
+        // 如果是可查看的全部数据，调用新接口
+        await this.getAllViewableData()
+      } else {
+        console.warn('未知的数据源类型，无法获取数据:', this.dataSource)
+      }
+    },
+
     // 获取 select 下拉选项的方法
     getSelectOptions(dataIndex) {
       const column = this.columnsList.find(col => col.dataIndex === dataIndex);
@@ -518,7 +695,7 @@ export default {
     filterItem(item) {
       if (this.dataSource === 'registration') {
         // 处理施工企业注册列表的筛选
-        
+
         // 处理状态筛选
         if (this.filterConditions.nodeName) {
           const statusFilter = this.filterConditions.nodeName
@@ -526,7 +703,7 @@ export default {
             return false
           }
         }
-        
+
         // 处理混合筛选 (企业账号/企业名称)
         if (this.mixedFilterValue && this.mixedFilterValue.trim() !== '') {
           const mixedMatch = this.mixedFilterColumns.some(column => {
@@ -537,7 +714,7 @@ export default {
             return false
           }
         }
-        
+
         return true
       } else {
         // 处理其他表格的筛选逻辑
@@ -609,8 +786,12 @@ export default {
     // 检查configurationParameter中的inquire参数，判断应该使用哪个数据源
     const inquire = this.configurationParameter.inquire || {}
 
-    // 如果有processIdList或categoryId参数，说明是flowRegister相关的流程数据，使用getAllList
-    if (inquire.processIdList || inquire.categoryId) {
+    // 检查是否使用新的全部数据接口
+    if (this.configurationParameter.useAllViewableData) {
+      console.log('检测到useAllViewableData标识，使用getAllViewableData获取数据')
+      this.getAllViewableData()
+    } else if (inquire.processIdList || inquire.categoryId) {
+      // 如果有processIdList或categoryId参数，说明是flowRegister相关的流程数据，使用getAllList
       console.log('检测到流程相关参数，使用getAllList获取数据')
       this.getAllList()
     } else {
@@ -626,19 +807,19 @@ export default {
 </script>
 
 <style scoped>
-.custom-empty-table >>> .ant-table-placeholder {
+.custom-empty-table>>>.ant-table-placeholder {
   padding: 80px 0;
 }
 
-.custom-empty-table >>> .ant-empty-normal {
+.custom-empty-table>>>.ant-empty-normal {
   margin: 32px 0;
 }
 
-.custom-empty-table >>> .ant-empty-normal .ant-empty-image {
+.custom-empty-table>>>.ant-empty-normal .ant-empty-image {
   height: 60px;
 }
 
-.custom-empty-table >>> .ant-empty-description {
+.custom-empty-table>>>.ant-empty-description {
   font-size: 16px;
   color: #999;
 }
