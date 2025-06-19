@@ -83,69 +83,55 @@ export function editQYUser(data) {
 
 
 //下载文书接口
-// export function downloadDocument(record) {
-//     console.log('下载文书参数:', record);
-//     return axios({
-//         url: `/file/static${record.export_path}`,
-//         // url: '/file/static/opt/export/pdfs/1876948644514078721-output.pdf',
-//         method: 'get',
-//         baseURL: api.server_url + api.global_course_baseURL,
-//         responseType: 'blob',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Accept': 'application/pdf,application/octet-stream'
-//         }
-//     }).then(response => {
-//         console.log('文件下载成功:', response);
-//         // 根据文件扩展名判断文件类型
-//         const fileName = record.export_path.split('/').pop() || 'downloaded-file.pdf';
-//         const fileExtension = fileName.split('.').pop().toLowerCase();
-
-//         // 设置正确的 MIME 类型
-//         let mimeType = 'application/octet-stream'; // 默认类型
-//         if (fileExtension === 'pdf') {
-//             mimeType = 'application/pdf';
-//         } else if (fileExtension === 'docx') {
-//             mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-//         } else if (fileExtension === 'xlsx') {
-//             mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-//         }
-
-//         // 创建 Blob 对象，直接使用 response.data
-//         const blob = new Blob([response.data], { type: mimeType });
-//         const downloadUrl = window.URL.createObjectURL(blob);
-
-//         // 创建下载链接
-//         const link = document.createElement('a');
-//         link.href = downloadUrl;
-//         link.setAttribute('download', fileName);
-
-//         // 触发下载
-//         document.body.appendChild(link);
-//         link.click();
-
-//         // 清理
-//         document.body.removeChild(link);
-//         window.URL.revokeObjectURL(downloadUrl);
-//     }).catch(error => {
-//         console.error('文件下载失败:', error);
-//     });
-// }
-
 export function downloadDocument(record) {
-    const url = api.server_url + api.global_course_baseURL + `/file/static${record.export_path}`;
-    window.open(url, '_blank');
-}
+    console.log('下载文书参数:', record);
+    return axios({
+        url: '/file/download',
+        method: 'post',
+        baseURL: api.server_url + api.global_course_baseURL,
+        params: {
+            filePath: record.export_path
+        },
+        responseType: 'blob',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        console.log('文件下载成功:', response);
 
-// export function downloadDocument(record) {
-//     const url = api.server_url + api.global_course_baseURL + `/file/static${record.export_path}`;
-//     const a = document.createElement('a');
-//     a.href = url;
-//     a.download = '';  // 可以指定文件名，如果为空，浏览器会使用文件的默认名称
-//     document.body.appendChild(a);
-//     a.click();
-//     document.body.removeChild(a);
-// }
+        // 获取实际的blob数据
+        const blob = response.data || response;
+
+        // 根据文件扩展名判断文件类型
+        const fileName = record.export_path.split('/').pop() || 'downloaded-file.pdf';
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+
+        // 设置正确的 MIME 类型
+        let mimeType = 'application/pdf'; // 默认类型
+
+
+        // 创建 Blob 对象并下载
+        const downloadBlob = new Blob([blob], { type: mimeType });
+        const downloadUrl = window.URL.createObjectURL(downloadBlob);
+
+        // 创建下载链接
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.setAttribute('download', fileName);
+
+        // 触发下载
+        document.body.appendChild(link);
+        link.click();
+
+        // 清理
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+
+        console.log('下载文件完成:', fileName);
+    }).catch(error => {
+        console.error('文件下载失败:', error);
+    });
+}
 
 //认领接口
 function claimTask(record) {
