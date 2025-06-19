@@ -471,22 +471,22 @@ export default {
       console.log('userData.value.username', userData.value.username)
       console.log('record.depositWay:', record.depositWay)
       if (record.depositWay === '担保公司保函') {
-        this.selectedProcessId = '10156'
+        this.selectedProcessId = '10026'
       } else if (record.depositWay === '保险公司保函') {
-        this.selectedProcessId = '10152'
+        this.selectedProcessId = '10022'
       } else if (record.depositWay === '银行保函') {
-        this.selectedProcessId = '10154'
+        this.selectedProcessId = '10024'
       } else if (record.depositWay === '银行现金存单') {
-        this.selectedProcessId = '10150'
+        this.selectedProcessId = '10020'
       }
       // if (record.depositWay === '担保公司保函') {
-      //   this.selectedProcessId = '51'
+      //   this.selectedProcessId = '5051'
       // } else if (record.depositWay === '保险公司保函') {
-      //   this.selectedProcessId = '47'
+      //   this.selectedProcessId = '5047'
       // } else if (record.depositWay === '银行保函') {
-      //   this.selectedProcessId = '49'
+      //   this.selectedProcessId = '5049'
       // } else if (record.depositWay === '银行现金存单') {
-      //   this.selectedProcessId = '45'
+      //   this.selectedProcessId = '5045'
       // }
       nw_getAction(`/process/startProcess/{processId}?processId=` + this.selectedProcessId)
         .then((res) => {
